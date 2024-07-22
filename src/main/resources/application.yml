@@ -3,7 +3,7 @@ spring:
     name: backend
 
   datasource:
-    url: ${LOCAL_DB_URL}
+    url: ${LOCAL_DB_IP}+${LOCAL_DB_SCHEMA}+${LOCAL_DB_SETTINGS}
     username: ${LOCAL_DB_USERNAME}
     password: ${LOCAL_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
