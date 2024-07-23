@@ -3,9 +3,9 @@ spring:
     name: backend
 
   datasource:
-    url: ${LOCAL_DB_IP}+${LOCAL_DB_SCHEMA}+${LOCAL_DB_SETTINGS}
-    username: ${LOCAL_DB_USERNAME}
-    password: ${LOCAL_DB_PASSWORD}
+    url: ${DB_IP}+${DB_SCHEMA}+${DB_SETTINGS}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
