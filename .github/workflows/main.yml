@@ -3,7 +3,7 @@ name: Docker Build and Push
 on:
   push:
     branches:
-      - 'develop'
+      - '#7-githubflow'
     paths:
       - '/'   # 트리거 설정
       
