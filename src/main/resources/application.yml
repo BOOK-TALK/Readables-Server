@@ -17,6 +17,6 @@ spring:
         format_sql: true
     open-in-view: false
 
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
+#  flyway:
+#    enabled: true
+#    baseline-on-migrate: true

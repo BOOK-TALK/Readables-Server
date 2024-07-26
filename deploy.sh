@@ -16,6 +16,6 @@ chmod +x gradlew
 ./gradlew build
 
 echo "<< 전체 재배포 >>"
-sudo docker compose up -d
+sudo docker compose up
 
 echo "<< 배포 성공 !! >>"
