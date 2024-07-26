@@ -9,11 +9,11 @@ echo "<< 전체 컨테이너 삭제 >>"
 sudo docker compose down
 
 echo "<< 전체 이미지 삭제 >>"
-sudo docker rmi $(sudo docker images -q)
+sudo docker rmi -f $(sudo docker images -q)
 
 echo "<< spring app 빌드 >>"
 chmod +x gradlew
-sudo ./gradlew build
+./gradlew build
 
 echo "<< 전체 재배포 >>"
 sudo docker compose up -d
