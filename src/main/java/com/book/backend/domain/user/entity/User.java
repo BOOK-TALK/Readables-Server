@@ -21,6 +21,8 @@ public class User {
     @Column(unique = true)
     private String loginId;
 
+    private String nickname;
+
     private String password;
 
     @Enumerated(EnumType.ORDINAL)
