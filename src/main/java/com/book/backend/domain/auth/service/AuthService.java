@@ -6,11 +6,14 @@ import com.book.backend.domain.user.dto.UserDto;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.repository.UserRepository;
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,12 @@ public class AuthService {
 
     @Transactional
     public UserDto signup(SignupDto signupDto) {
+        Optional<User> userOptional = userRepository.findByLoginId(signupDto.getLoginId());
+
+        if (userOptional.isPresent()) {
+            throw new CustomException(ErrorCode.LOGIN_ID_DUPLICATED);
+        }
+
         User user = authMapper.convertToUser(signupDto);
         user.setRegDate(LocalDateTime.now());
 
