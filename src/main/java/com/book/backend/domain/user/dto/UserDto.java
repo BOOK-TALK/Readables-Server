@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -18,13 +19,9 @@ public class UserDto {
 
     private String password;
 
-    private String sex;
+    private String gender;
 
-    private Integer birthYear;
-
-    private Integer birthMonth;
-
-    private Integer birthDay;
+    private LocalDate birthDate;
 
     private String email;
 

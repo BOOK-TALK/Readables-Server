@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum Sex {
-    S0("NOT_SELECTED"),
-    S1("MAN"),
-    S2("WOMAN");
+public enum Gender {
+    G0("NOT_SELECTED"),
+    G1("MAN"),
+    G2("WOMAN");
 
     public final String name;
 }
