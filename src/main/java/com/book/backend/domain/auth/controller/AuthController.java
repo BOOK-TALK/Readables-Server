@@ -43,4 +43,17 @@ public class AuthController {
         SecurityContextHolder.clearContext();
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteAccount(HttpServletRequest request) {
+        log.info("deleteAccount 호출");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loginId = authentication.getName();
+
+        authService.deleteAccountByLoginId(loginId);
+        request.getSession().invalidate();
+        SecurityContextHolder.clearContext();
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
