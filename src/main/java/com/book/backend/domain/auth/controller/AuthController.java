@@ -4,14 +4,15 @@ import com.book.backend.domain.auth.dto.LoginDto;
 import com.book.backend.domain.auth.dto.SignupDto;
 import com.book.backend.domain.auth.service.AuthService;
 import com.book.backend.domain.user.dto.UserDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,5 +34,13 @@ public class AuthController {
         log.info("login 호출");
         UserDto userDto = authService.login(loginDto);
         return ResponseEntity.ok(userDto);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        log.info("logout 호출");
+        request.getSession().invalidate();
+        SecurityContextHolder.clearContext();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
