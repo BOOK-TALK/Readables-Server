@@ -24,9 +24,9 @@ public class AuthMapper {
 
     private Gender convertStringToGender(String gender) {
         return switch (gender) {
-            case "NOT_SELECTED" -> Gender.G0;
             case "MAN" -> Gender.G1;
             case "WOMAN" -> Gender.G2;
+            default -> Gender.G0;
         };
     }
 }
