@@ -3,9 +3,7 @@ name: Docker Build and Push
 on:
   push:
     branches:
-      - '#4-setting'
-    paths:
-      - '/'   # 트리거 설정
+      - 'main'
       
 jobs:
   build-and-push:
@@ -30,9 +28,7 @@ jobs:
       run: ./gradlew build
       working-directory: ./
       env: # application.yml 에 들어갈 값
-        DB_IP: ${{ secrets.GLOBAL_DB_IP }}
-        DB_SCHEMA: ${{ secrets.GLOBAL_DB_SCHEMA }}
-        DB_SETTINGS: ${{ secrets.GLOBAL_DB_SETTINGS }}
+        DB_URL: ${{ secrets.GLOBAL_DB_URL }}
         DB_USERNAME: ${{ secrets.GLOBAL_DB_USERNAME }}
         DB_PASSWORD: ${{ secrets.GLOBAL_DB_PASSWORD }}     
         # JWT_SECRETKEY : ${{secrets.JWT_SECRETKEY}}

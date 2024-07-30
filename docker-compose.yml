@@ -3,9 +3,7 @@ services:
     env_file:
       - .env
     container_name: spring-container
-    build:
-      context: . #dockerfile 위치
-      dockerfile: Dockerfile
+    image: hyeesw/booktalk-spring:latest
     ports:
       - "8080:8080"
     depends_on:
