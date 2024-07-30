@@ -19,4 +19,12 @@ public class Opentalk {
     private Book book;
 
     // TODO: 다른 필드 추가 예정
+
+    // 연관관계 편의 메서드 (서비스 계층에서 관리할 시 삭제할 것)
+    public void setBook(Book book) {
+        this.book = book;
+        if (book.getOpentalk() != this) {
+            book.setOpentalk(this);
+        }
+    }
 }
