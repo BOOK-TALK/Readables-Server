@@ -12,8 +12,8 @@ echo "<< 전체 이미지 삭제 >>"
 sudo docker rmi -f $(sudo docker images -q)
 
 echo "<< spring app 빌드 >>"
-chmod +x gradlew
-./gradlew build
+sudo chmod +x gradlew
+sudo ./gradlew build
 
 echo "<< 전체 재배포 >>"
 sudo docker compose up -d
