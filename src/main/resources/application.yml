@@ -15,6 +15,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create # entity 기반 스키마 생성
+
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
