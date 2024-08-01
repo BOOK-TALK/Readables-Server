@@ -5,8 +5,10 @@ import com.book.backend.domain.book.dto.TestDto;
 import com.book.backend.domain.user.dto.UserDto;
 import com.book.backend.global.log.RequestLogger;
 import jakarta.validation.Valid;
+import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.mapper.Mapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookController {
     @GetMapping("/")
     public ResponseEntity<String> get(@RequestParam String name, int age) {
-        RequestLogger.param("name", name);
-        RequestLogger.param("age", age);
+        RequestLogger.param(new String[] {"name", "age"}, name, age);
 
         return ResponseEntity.ok("Hi");
     }
@@ -35,7 +36,7 @@ public class BookController {
     }
     @PostMapping("/both")
     public ResponseEntity<String> both(@RequestParam int grade, @RequestBody TestDto dto) {
-        RequestLogger.param("grade", grade);
+        RequestLogger.param(new String[]{"grade"}, grade);
         RequestLogger.body(dto);
 
         return ResponseEntity.ok("Hi");
