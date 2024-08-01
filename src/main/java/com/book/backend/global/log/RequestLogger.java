@@ -17,8 +17,8 @@ public class RequestLogger {
         sb.append("RequestParam : {");
         for(String key : keys){
             if(paramIter.hasNext()){
-                String valueType = paramIter.next().getClass().getSimpleName();
-                sb.append(key).append(": ").append(valueType);
+                String value = paramIter.next().toString();
+                sb.append(key).append(": ").append(value);
                 if(paramIter.hasNext()) sb.append(", ");
             }
         }
