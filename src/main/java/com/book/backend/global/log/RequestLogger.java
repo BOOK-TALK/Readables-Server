@@ -1,6 +1,8 @@
 package com.book.backend.global.log;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,11 +10,21 @@ import org.slf4j.LoggerFactory;
 public class RequestLogger {
     private static final Logger logger = LoggerFactory.getLogger(RequestLogger.class);
 
-    public static void param(String key, Object value) {
-        StringBuilder logMessage = new StringBuilder();
-        String valueType = value.getClass().getSimpleName();
-        logMessage.append("RequestParam : {").append(key).append(" : ").append(valueType).append("}");
-        logger.trace(logMessage.toString());
+    public static void param(String[] keys, Object ... params) {
+        StringBuilder sb = new StringBuilder();
+        Iterator<Object> paramIter = Arrays.stream(params).iterator();
+
+        sb.append("RequestParam : {");
+        for(String key : keys){
+            if(paramIter.hasNext()){
+                String valueType = paramIter.next().getClass().getSimpleName();
+                sb.append(key).append(": ").append(valueType);
+                if(paramIter.hasNext()) sb.append(", ");
+            }
+        }
+        sb.append("}");
+
+        logger.trace(sb.toString());
     }
 
     public static void body(Object dto) {
