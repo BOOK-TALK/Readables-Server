@@ -1,36 +1,70 @@
 package com.book.backend.domain.openapi.service;
 
+import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.ManiaResponseDto;
-import java.util.Arrays;
 import java.util.LinkedList;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 public class ResponseParser {
+    // TODO : API 별로 파싱 메소드 추가
 
     public LinkedList<ManiaResponseDto> mania(JSONObject jsonResponse) {
-        JSONArray docs = (JSONArray) jsonResponse.get("docs");
+        JSONArray step0 = (JSONArray) jsonResponse.get("docs");
 
         LinkedList<ManiaResponseDto> responseList = new LinkedList<>();
-        for (int i = 0; i < docs.size(); i++) {
-            JSONObject temp = (JSONObject) docs.get(i);
-            JSONObject doc = (JSONObject) temp.get("book");
+        for (int i = 0; i < step0.size(); i++) {
+            JSONObject temp = (JSONObject) step0.get(i);
+            JSONObject step1 = (JSONObject) temp.get("book");
 
             responseList.add(ManiaResponseDto.builder()
-                    .bookname(doc.getAsString("bookname"))
-                    .authors(doc.getAsString("authors"))
-                    .publisher(doc.getAsString("publisher"))
-                    .publication_year(doc.getAsString("publication_year"))
-                    .isbn13(doc.getAsString("isbn13"))
-                    .additional_symbol(doc.getAsString("additional_symbol"))
-                    .vol(doc.getAsString("vol"))
-                    .class_no(doc.getAsString("class_no"))
-                    .class_nm(doc.getAsString("class_nm"))
-                    .bookImageURL(doc.getAsString("bookImageURL"))
+                    .bookname(step1.getAsString("bookname"))
+                    .authors(step1.getAsString("authors"))
+                    .publisher(step1.getAsString("publisher"))
+                    .publication_year(step1.getAsString("publication_year"))
+                    .isbn13(step1.getAsString("isbn13"))
+                    .additional_symbol(step1.getAsString("additional_symbol"))
+                    .vol(step1.getAsString("vol"))
+                    .class_no(step1.getAsString("class_no"))
+                    .class_nm(step1.getAsString("class_nm"))
+                    .bookImageURL(step1.getAsString("bookImageURL"))
                     .build());
         }
         return responseList;
     }
-    // TODO : API 별로 파싱 메소드 추가
-}
 
+    public LinkedList<HotTrendResponseDto> hotTrend(JSONObject jsonResponse) {
+        // TODO : 오늘 날짜 3일 이전부터 조회 제한
+        JSONArray step0 = (JSONArray) jsonResponse.get("results");
+        LinkedList<HotTrendResponseDto> responseList = new LinkedList<>();
+
+        for(int i = 0; i < step0.size(); i++) {
+            JSONObject temp1 = (JSONObject) step0.get(0);
+            JSONObject step1 = (JSONObject) temp1.get("result");
+            JSONArray step2 = (JSONArray) step1.get("docs");
+            for (int j = 0; j < step2.size(); j++) {
+                JSONObject temp3 = (JSONObject) step2.get(j);
+                JSONObject step3 = (JSONObject) temp3.get("doc");
+
+                responseList.add(HotTrendResponseDto.builder()
+                        .no(step3.getAsString("no"))
+                        .difference(step3.getAsString("difference"))
+                        .baseWeekRank(step3.getAsString("baseWeekRank"))
+                        .pastWeekRank(step3.getAsString("pastWeekRank"))
+                        .bookname(step3.getAsString("bookname"))
+                        .authors(step3.getAsString("authors"))
+                        .publisher(step3.getAsString("publisher"))
+                        .publication_year(step3.getAsString("publication_year"))
+                        .isbn13(step3.getAsString("isbn13"))
+                        .additional_symbol(step3.getAsString("additional_symbol"))
+                        .vol(step3.getAsString("vol"))
+                        .class_no(step3.getAsString("class_no"))
+                        .class_nm(step3.getAsString("class_nm"))
+                        .bookImageURL(step3.getAsString("bookImageURL"))
+                        .bookDtlUrl(step3.getAsString("bookDtlUrl"))
+                        .build());
+            }
+        }
+        return responseList;
+    }
+}

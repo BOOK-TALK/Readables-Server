@@ -2,6 +2,7 @@ package com.book.backend.domain.book.controller;
 
 import com.book.backend.domain.book.service.BookService;
 import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
+import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.ManiaResponseDto;
 import com.book.backend.domain.openapi.dto.response.OpenAPIResponseInterface;
 import com.book.backend.domain.openapi.dto.request.ManiaRequestDto;
@@ -33,10 +34,10 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @GetMapping("/hotTrend")
-//    public ResponseEntity<List<JSONArray>> hotTrend(@RequestParam String searchDt) throws Exception {
-//        HotTrendRequestDto requestDto = HotTrendRequestDto.builder().searchDt(searchDt).build();
-//        List<JSONArray> response = bookService.hotTrend(requestDto);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+    @GetMapping("/hotTrend")
+    public ResponseEntity<LinkedList<HotTrendResponseDto>>hotTrend(@RequestParam String searchDt) throws Exception {
+        HotTrendRequestDto requestDto = HotTrendRequestDto.builder().searchDt(searchDt).build();
+        LinkedList<HotTrendResponseDto> response = bookService.hotTrend(requestDto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

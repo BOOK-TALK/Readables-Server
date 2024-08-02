@@ -29,8 +29,10 @@ public class BookService {
         return responseParser.mania(jsonResponse);
     }
 
-//    public List<JSONArray> hotTrend(HotTrendRequestDto requestDto) throws Exception{
-//        String subUrl = "hotTrend";
-//        return openAPI.connect(subUrl, requestDto, new HotTrendResponseDto()); //반환값
-//    }
+    public LinkedList<HotTrendResponseDto> hotTrend(HotTrendRequestDto requestDto) throws Exception{
+        String subUrl = "hotTrend";
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new HotTrendResponseDto()); //반환값
+        ResponseParser responseParser = new ResponseParser();
+        return responseParser.hotTrend(jsonResponse);
+    }
 }
