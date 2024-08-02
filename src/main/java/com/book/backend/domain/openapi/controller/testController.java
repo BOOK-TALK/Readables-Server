@@ -31,9 +31,7 @@ public class testController {
                     "&pageSize=" +pageSize +
                     "&authKey=" + authKey + "&format=json&");
 
-            BufferedReader bf;
-
-            bf = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+            BufferedReader bf = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
 
             String result = bf.readLine();
 

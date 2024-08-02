@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ManiaDto implements OpenAPIDtoInterface {
+public class ManiaRequestDto implements OpenAPIDtoInterface {
     @NotBlank(message = "isbn13은 필수 입력값입니다.")
     private String isbn13;
 
