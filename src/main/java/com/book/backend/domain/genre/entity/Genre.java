@@ -38,7 +38,7 @@ public class Genre {
     }
 
     public List<Book> getBooks() {
-        if (this.getLevel() == 3) {
+        if (this.getLevel() == 2) {
             return books;
         } else {
             return null;
@@ -46,7 +46,7 @@ public class Genre {
     }
 
     public void addBook(Book book) {
-        if (this.getLevel() == 3) {
+        if (this.getLevel() == 2) {
             this.books.add(book);
             if (book.getGenre() != this) {
                 book.setGenre(this);
