@@ -32,4 +32,13 @@ public class GenreService {
         }
     }
 
+    public List<Book> getBooksByTwoDigitsKdcNum(Integer kdcNum) {
+        String firstKdcNum = String.valueOf(kdcNum / 10);
+        String secondKdcNum = String.valueOf(kdcNum % 10);
+
+        Genre findGenre = genreRepository.findByParentGenreKdcNumAndKdcNum(firstKdcNum, secondKdcNum)
+                .orElseThrow(() -> new IllegalArgumentException("KDC 번호가" + kdcNum + "인 장르를 찾을 수 없습니다."));
+        return findGenre.getBooks();
+    }
+
 }
