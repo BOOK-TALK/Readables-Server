@@ -45,15 +45,4 @@ public class Genre {
         }
     }
 
-    public void addBook(Book book) {
-        if (this.getLevel() == 2) {
-            this.books.add(book);
-            if (book.getGenre() != this) {
-                book.setGenre(this);
-            }
-        } else {
-            throw new UnsupportedOperationException("2단계 장르만 책 리스트를 가질 수 있습니다.");
-        }
-    }
-
 }
