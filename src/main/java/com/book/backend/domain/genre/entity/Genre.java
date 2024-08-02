@@ -40,14 +40,6 @@ public class Genre {
         }
     }
 
-    // 연관관계 편의 메서드 (서비스 계층에서 관리할 시 삭제할 것)
-    public void addSubGenre(Genre subGenre) {
-        this.subGenres.add(subGenre);
-        if (subGenre.getParentGenre() != this) {
-            subGenre.setParentGenre(this);
-        }
-    }
-
     public void addBook(Book book) {
         if (isLeaf()) {
             this.books.add(book);
