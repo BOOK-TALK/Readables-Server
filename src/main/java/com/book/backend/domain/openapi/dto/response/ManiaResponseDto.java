@@ -1,6 +1,5 @@
-package com.book.backend.domain.openapi.dto;
+package com.book.backend.domain.openapi.dto.response;
 
-import java.util.HashMap;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ManiaDto {
+@AllArgsConstructor
+@Builder
+public class ManiaResponseDto implements OpenAPIResponseInterface {
     private String bookname;
     private String authors;
     private String publisher;

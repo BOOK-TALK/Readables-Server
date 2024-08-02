@@ -1,13 +1,15 @@
 package com.book.backend.domain.book.controller;
 
 import com.book.backend.domain.book.service.BookService;
-import com.book.backend.domain.openapi.dto.ManiaDto;
-import com.book.backend.domain.openapi.dto.ManiaRequestDto;
-import com.book.backend.domain.openapi.dto.TestDto;
-import java.net.HttpURLConnection;
+import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
+import com.book.backend.domain.openapi.dto.response.ManiaResponseDto;
+import com.book.backend.domain.openapi.dto.response.OpenAPIResponseInterface;
+import com.book.backend.domain.openapi.dto.request.ManiaRequestDto;
 import java.util.LinkedList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +27,16 @@ public class BookController {
     BookService bookService;
 
     @GetMapping("/mania")
-    public ResponseEntity<LinkedList<ManiaDto>> mania(@RequestParam String isbn) throws Exception {
-        //TODO : RequestLogger
-        LinkedList<ManiaDto> response = bookService.mania(ManiaRequestDto.builder().isbn13(isbn).build()); //TODO : 반환값
+    public ResponseEntity<LinkedList<ManiaResponseDto>> mania(@RequestParam String isbn) throws Exception {
+        ManiaRequestDto requestDto = ManiaRequestDto.builder().isbn13(isbn).build();
+        LinkedList<ManiaResponseDto> response = bookService.mania(requestDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @GetMapping("/test")
-    public ResponseEntity<String> test() throws Exception {
-        //TODO : RequestLogger
-        bookService.test(TestDto.builder().pageSize(5).build()); //TODO : 반환값
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+
+//    @GetMapping("/hotTrend")
+//    public ResponseEntity<List<JSONArray>> hotTrend(@RequestParam String searchDt) throws Exception {
+//        HotTrendRequestDto requestDto = HotTrendRequestDto.builder().searchDt(searchDt).build();
+//        List<JSONArray> response = bookService.hotTrend(requestDto);
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 }
