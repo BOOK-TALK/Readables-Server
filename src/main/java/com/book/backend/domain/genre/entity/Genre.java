@@ -18,8 +18,10 @@ public class Genre {
 
     private String name;
 
+    private String kdcNum;
+
     @ManyToOne
-    @JoinColumn(name = "parent_id", nullable = true)
+    @JoinColumn(name = "parent_genre_id", nullable = true)
     private Genre parentGenre;
 
     @OneToMany(mappedBy = "parentGenre", cascade = CascadeType.ALL)
@@ -28,12 +30,15 @@ public class Genre {
     @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
     private List<Book> books;
 
-    public boolean isLeaf() {
-        return subGenres == null || subGenres.isEmpty();
+    public Integer getLevel() {
+        if (parentGenre == null) {
+            return 1;
+        }
+        return 2;
     }
 
     public List<Book> getBooks() {
-        if (isLeaf()) {
+        if (this.getLevel() == 3) {
             return books;
         } else {
             return null;
@@ -41,13 +46,13 @@ public class Genre {
     }
 
     public void addBook(Book book) {
-        if (isLeaf()) {
+        if (this.getLevel() == 3) {
             this.books.add(book);
             if (book.getGenre() != this) {
                 book.setGenre(this);
             }
         } else {
-            throw new UnsupportedOperationException("최하위 장르만 책 리스트를 가질 수 있습니다.");
+            throw new UnsupportedOperationException("2단계 장르만 책 리스트를 가질 수 있습니다.");
         }
     }
 
