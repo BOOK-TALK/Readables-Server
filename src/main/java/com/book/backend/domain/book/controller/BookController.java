@@ -1,9 +1,11 @@
 package com.book.backend.domain.book.controller;
 
 import com.book.backend.domain.book.service.BookService;
+import com.book.backend.domain.openapi.dto.ManiaDto;
 import com.book.backend.domain.openapi.dto.ManiaRequestDto;
 import com.book.backend.domain.openapi.dto.TestDto;
 import java.net.HttpURLConnection;
+import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +25,10 @@ public class BookController {
     BookService bookService;
 
     @GetMapping("/mania")
-    public ResponseEntity<HttpURLConnection> mania(@RequestParam String isbn) throws Exception {
+    public ResponseEntity<LinkedList<ManiaDto>> mania(@RequestParam String isbn) throws Exception {
         //TODO : RequestLogger
-        bookService.mania(ManiaRequestDto.builder().isbn13(isbn).build()); //TODO : 반환값
-        return new ResponseEntity<>(HttpStatus.OK);
+        LinkedList<ManiaDto> response = bookService.mania(ManiaRequestDto.builder().isbn13(isbn).build()); //TODO : 반환값
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/test")
     public ResponseEntity<String> test() throws Exception {

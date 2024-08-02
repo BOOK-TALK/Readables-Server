@@ -1,12 +1,13 @@
 package com.book.backend.domain.openapi.controller;
 
+import com.book.backend.domain.openapi.dto.ManiaDto;
 import com.book.backend.domain.openapi.dto.ManiaEnum;
-import com.book.backend.domain.openapi.dto.ManiaResponseDto;
 import com.book.backend.domain.openapi.dto.OpenAPIDtoInterface;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -27,10 +28,10 @@ public class OpenAPI {
     private final String format = "json";
 
 
-    public void connect(String subUrl, OpenAPIDtoInterface dto) throws Exception {
+    public LinkedList<ManiaDto> connect(String subUrl, OpenAPIDtoInterface dto) throws Exception {
         URL url = setRequest(subUrl, dto); // 요청 만들기
         InputStreamReader streamResponse = new InputStreamReader(url.openStream(), "UTF-8"); // 요청 보내기
-        readStreamToString(streamResponse); // 응답 stream 을 string 으로 변환
+        return readStreamToString(streamResponse); // 응답 stream 을 string 으로 변환
     }
 
     /* 요청 셋팅 */
@@ -51,7 +52,7 @@ public class OpenAPI {
     }
 
     /* InputStream 을 json 파싱 */
-    private void readStreamToString(InputStreamReader streamResponse) throws Exception {
+    private LinkedList<ManiaDto> readStreamToString(InputStreamReader streamResponse) throws Exception {
         String fullResponse = new BufferedReader(streamResponse).readLine();
 
         // response 를 파싱
@@ -65,17 +66,26 @@ public class OpenAPI {
 //        HashMap<String, HashMap<String, String[]>> responseDto = new ManiaResponseDto().makeTemplate();
 
         JSONArray docs = (JSONArray) jsonResponse.get("docs"); // TODO : response 에 따라 달라지는 듯
+        LinkedList<ManiaDto> finalResponse = new LinkedList<>();
 
         /* step1:docs,  step2:book, step3:{bookname=, authors=, ...} */
         for(int i = 0; i<docs.size();i++) {
             JSONObject temp = (JSONObject) docs.get(i);
             temp.forEach((step2, step3) -> {
-                ((JSONObject) step3).forEach((key, value) -> {
-                    System.out.println(key + " : " + value);
+                ManiaDto maniaDto = new ManiaDto();
+                // Dto 채우기
+                Arrays.stream(maniaDto.getClass().getDeclaredFields()).iterator().forEachRemaining( field -> {
+                    field.setAccessible(true); // private 필드 접근 가능하게
+                    try {
+                        field.set(maniaDto, ((JSONObject) step3).get(field.getName()));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 });
-                System.out.println();
+                finalResponse.add(maniaDto);
             });
         }
+        return finalResponse;
     }
 }
 
