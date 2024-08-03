@@ -2,33 +2,47 @@ package com.book.backend.domain.openapi.service;
 
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
+import java.util.HashSet;
 import java.util.LinkedList;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 public class ResponseParser {
     // TODO : API 별로 파싱 메소드 추가
+    /*
+    * hashSet에 isbn을 담고, 만약 이미 있는 isbn 이라면 list 에 추가 x
+    * 없는 값이라면 list에 추가
+    * if(set.add(isbn13)) list에 추가
+    * */
+    private boolean duplicateChecker(String duplicateCheckKey, HashSet<String> set){
+        return set.add(duplicateCheckKey);
+    }
 
     public LinkedList<RecommendResponseDto> recommend(JSONObject jsonResponse) {
         JSONArray step0 = (JSONArray) jsonResponse.get("docs");
 
         LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
+        HashSet<String> duplicateCheckSet = new HashSet<>();
         for (int i = 0; i < step0.size(); i++) {
             JSONObject temp = (JSONObject) step0.get(i);
             JSONObject step1 = (JSONObject) temp.get("book");
 
-            responseList.add(RecommendResponseDto.builder()
-                    .bookname(step1.getAsString("bookname"))
-                    .authors(step1.getAsString("authors"))
-                    .publisher(step1.getAsString("publisher"))
-                    .publication_year(step1.getAsString("publication_year"))
-                    .isbn13(step1.getAsString("isbn13"))
-                    .additional_symbol(step1.getAsString("additional_symbol"))
-                    .vol(step1.getAsString("vol"))
-                    .class_no(step1.getAsString("class_no"))
-                    .class_nm(step1.getAsString("class_nm"))
-                    .bookImageURL(step1.getAsString("bookImageURL"))
-                    .build());
+            // 중복 추천 체크 (open api 가 중복되는 책을 추천함;;)
+            String duplicateCheckKey = step1.getAsString("bookname") + step1.getAsString("authors");
+            if(duplicateChecker(duplicateCheckKey, duplicateCheckSet)){
+                responseList.add(RecommendResponseDto.builder()
+                        .bookname(step1.getAsString("bookname"))
+                        .authors(step1.getAsString("authors"))
+                        .publisher(step1.getAsString("publisher"))
+                        .publication_year(step1.getAsString("publication_year"))
+                        .isbn13(step1.getAsString("isbn13"))
+                        .additional_symbol(step1.getAsString("additional_symbol"))
+                        .vol(step1.getAsString("vol"))
+                        .class_no(step1.getAsString("class_no"))
+                        .class_nm(step1.getAsString("class_nm"))
+                        .bookImageURL(step1.getAsString("bookImageURL"))
+                        .build());
+            }
         }
         return responseList;
     }

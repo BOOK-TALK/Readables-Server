@@ -26,8 +26,8 @@ public class BookController {
 
     // 마니아(4), 다독자(5) 추천 API
     @GetMapping("/recommend")
-    public ResponseEntity<LinkedList<RecommendResponseDto>> recommend(@RequestParam String isbn, String type) throws Exception {
-        RecommendRequestDto requestDto = RecommendRequestDto.builder().isbn13(isbn).type(type).build();
+    public ResponseEntity<LinkedList<RecommendResponseDto>> recommend(@RequestParam String isbn) throws Exception {
+        RecommendRequestDto requestDto = RecommendRequestDto.builder().isbn13(isbn).build();
         LinkedList<RecommendResponseDto> response = bookService.recommend(requestDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

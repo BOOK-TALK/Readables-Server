@@ -6,6 +6,7 @@ import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
+import java.util.HashSet;
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
@@ -22,9 +23,29 @@ public class BookService {
 
     public LinkedList<RecommendResponseDto> recommend(RecommendRequestDto requestDto) throws Exception {
         String subUrl = "recommandList";
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new RecommendResponseDto()); //반환값
-        ResponseParser responseParser = new ResponseParser();
-        return responseParser.recommend(jsonResponse);
+
+        requestDto.setType("mania");
+        JSONObject maniaJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendResponseDto()); //반환값
+        ResponseParser maniaResponseParser = new ResponseParser();
+        LinkedList<RecommendResponseDto> maniaResponse = maniaResponseParser.recommend(maniaJsonResponse);
+
+        requestDto.setType("reader");
+        JSONObject readerJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendResponseDto()); //반환값
+        ResponseParser readerResponseParser = new ResponseParser();
+        LinkedList<RecommendResponseDto> readerResponse = readerResponseParser.recommend(readerJsonResponse);
+
+        LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
+
+        HashSet<String> duplicateCheckSet = new HashSet<>();
+        for (RecommendResponseDto dto : maniaResponse) {
+            String key = dto.getBookname() + dto.getAuthors();
+            if (duplicateCheckSet.add(key)) responseList.add(dto);
+        }
+        for (RecommendResponseDto dto : readerResponse) {
+            String key = dto.getBookname() + dto.getAuthors();
+            if (duplicateCheckSet.add(key)) responseList.add(dto);
+        }
+        return responseList;
     }
 
     public LinkedList<HotTrendResponseDto> hotTrend(HotTrendRequestDto requestDto) throws Exception{
