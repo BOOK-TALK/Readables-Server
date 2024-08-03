@@ -9,7 +9,11 @@ echo "<< 전체 컨테이너 삭제 >>"
 sudo docker compose down
 
 echo "<< 전체 이미지 삭제 >>"
-sudo docker rmi -f $(sudo docker images -q)
+images=$(sudo docker images -q)
+
+if [ -n "$images" ]; then # 이미지가 있을때 삭제하도록
+  sudo docker rmi -f $images
+fi
 
 echo "<< spring app 빌드 >>"
 sudo chmod +x gradlew
