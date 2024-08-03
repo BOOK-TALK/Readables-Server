@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ManiaResponseDto implements OpenAPIResponseInterface {
+public class RecommendResponseDto implements OpenAPIResponseInterface {
     private String bookname;
     private String authors;
     private String publisher;

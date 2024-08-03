@@ -1,7 +1,7 @@
 package com.book.backend.domain.openapi.service;
 
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
-import com.book.backend.domain.openapi.dto.response.ManiaResponseDto;
+import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import java.util.LinkedList;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -9,15 +9,15 @@ import net.minidev.json.JSONObject;
 public class ResponseParser {
     // TODO : API 별로 파싱 메소드 추가
 
-    public LinkedList<ManiaResponseDto> mania(JSONObject jsonResponse) {
+    public LinkedList<RecommendResponseDto> recommend(JSONObject jsonResponse) {
         JSONArray step0 = (JSONArray) jsonResponse.get("docs");
 
-        LinkedList<ManiaResponseDto> responseList = new LinkedList<>();
+        LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
         for (int i = 0; i < step0.size(); i++) {
             JSONObject temp = (JSONObject) step0.get(i);
             JSONObject step1 = (JSONObject) temp.get("book");
 
-            responseList.add(ManiaResponseDto.builder()
+            responseList.add(RecommendResponseDto.builder()
                     .bookname(step1.getAsString("bookname"))
                     .authors(step1.getAsString("authors"))
                     .publisher(step1.getAsString("publisher"))
