@@ -14,9 +14,6 @@ public class ResponseParser {
     * 없는 값이라면 list에 추가
     * if(set.add(isbn13)) list에 추가
     * */
-    private boolean duplicateChecker(String duplicateCheckKey, HashSet<String> set){
-        return set.add(duplicateCheckKey);
-    }
 
     public LinkedList<RecommendResponseDto> recommend(JSONObject jsonResponse) {
         JSONArray step0 = (JSONArray) jsonResponse.get("docs");
@@ -29,7 +26,7 @@ public class ResponseParser {
 
             // 중복 추천 체크 (open api 가 중복되는 책을 추천함;;)
             String duplicateCheckKey = step1.getAsString("bookname") + step1.getAsString("authors");
-            if(duplicateChecker(duplicateCheckKey, duplicateCheckSet)){
+            if(duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
                 responseList.add(RecommendResponseDto.builder()
                         .bookname(step1.getAsString("bookname"))
                         .authors(step1.getAsString("authors"))

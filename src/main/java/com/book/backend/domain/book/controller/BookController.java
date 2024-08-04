@@ -5,6 +5,7 @@ import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import com.book.backend.domain.openapi.dto.request.RecommendRequestDto;
+import java.util.HashSet;
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,11 @@ public class BookController {
     public ResponseEntity<LinkedList<RecommendResponseDto>> recommend(@RequestParam String isbn) throws Exception {
         RecommendRequestDto requestDto = RecommendRequestDto.builder().isbn13(isbn).build();
         LinkedList<RecommendResponseDto> response = bookService.recommend(requestDto);
+
+        HashSet<String> duplicateCheckSet = new HashSet<>();
+        LinkedList<RecommendResponseDto> duplicateRemovedList = bookService.duplicateChecker(response, duplicateCheckSet);
+        bookService.ensureRecommendationsCount(duplicateRemovedList, duplicateCheckSet);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

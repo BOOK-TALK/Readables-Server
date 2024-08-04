@@ -7,6 +7,7 @@ import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
@@ -24,29 +25,48 @@ public class BookService {
     public LinkedList<RecommendResponseDto> recommend(RecommendRequestDto requestDto) throws Exception {
         String subUrl = "recommandList";
 
+        LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
+
         requestDto.setType("mania");
         JSONObject maniaJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendResponseDto()); //반환값
         ResponseParser maniaResponseParser = new ResponseParser();
-        LinkedList<RecommendResponseDto> maniaResponse = maniaResponseParser.recommend(maniaJsonResponse);
+        responseList.addAll(maniaResponseParser.recommend(maniaJsonResponse));
 
         requestDto.setType("reader");
         JSONObject readerJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendResponseDto()); //반환값
         ResponseParser readerResponseParser = new ResponseParser();
-        LinkedList<RecommendResponseDto> readerResponse = readerResponseParser.recommend(readerJsonResponse);
+        responseList.addAll(readerResponseParser.recommend(readerJsonResponse));
 
-        LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
-
-        HashSet<String> duplicateCheckSet = new HashSet<>();
-        for (RecommendResponseDto dto : maniaResponse) {
-            String key = dto.getBookname() + dto.getAuthors();
-            if (duplicateCheckSet.add(key)) responseList.add(dto);
-        }
-        for (RecommendResponseDto dto : readerResponse) {
-            String key = dto.getBookname() + dto.getAuthors();
-            if (duplicateCheckSet.add(key)) responseList.add(dto);
-        }
         return responseList;
     }
+
+    /* 추천 책 수가 5보다 작으면 추천된 isbn 으로 recommend() 다시 호출 */
+    public void ensureRecommendationsCount(LinkedList<RecommendResponseDto> list, HashSet<String> set) throws Exception {
+        LinkedList<RecommendResponseDto> originalList = new LinkedList<>(list);
+        Iterator<RecommendResponseDto> iterator = originalList.iterator();
+        while (originalList.size() < 5 && iterator.hasNext()) {
+            RecommendRequestDto newRequestDto =  RecommendRequestDto.builder().isbn13(iterator.next().getIsbn13()).build(); // 추천된 다른 책의 isbn13
+            LinkedList<RecommendResponseDto> newRecommendList = recommend(newRequestDto);
+            // 기존에 추가된 책인지 확인
+            for(RecommendResponseDto dto : newRecommendList){
+                String key = dto.getBookname() + dto.getAuthors();
+                if(set.add(key)) list.add(dto);
+            }
+        }
+    }
+
+    public LinkedList<RecommendResponseDto> duplicateChecker(LinkedList<RecommendResponseDto> list, HashSet<String> set){
+        LinkedList<RecommendResponseDto> duplicateRemovedList = new LinkedList<>();
+        for(RecommendResponseDto dto : list){
+            String key = dto.getBookname() + dto.getAuthors();
+            if(set.add(key)) duplicateRemovedList.add(dto);
+        }
+        return duplicateRemovedList;
+    }
+
+
+
+
 
     public LinkedList<HotTrendResponseDto> hotTrend(HotTrendRequestDto requestDto) throws Exception{
         String subUrl = "hotTrend";
