@@ -64,10 +64,6 @@ public class BookService {
         return duplicateRemovedList;
     }
 
-
-
-
-
     public LinkedList<HotTrendResponseDto> hotTrend(HotTrendRequestDto requestDto) throws Exception{
         String subUrl = "hotTrend";
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new HotTrendResponseDto()); //반환값

@@ -8,12 +8,6 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 public class ResponseParser {
-    // TODO : API 별로 파싱 메소드 추가
-    /*
-    * hashSet에 isbn을 담고, 만약 이미 있는 isbn 이라면 list 에 추가 x
-    * 없는 값이라면 list에 추가
-    * if(set.add(isbn13)) list에 추가
-    * */
 
     public LinkedList<RecommendResponseDto> recommend(JSONObject jsonResponse) {
         JSONArray step0 = (JSONArray) jsonResponse.get("docs");
@@ -45,7 +39,6 @@ public class ResponseParser {
     }
 
     public LinkedList<HotTrendResponseDto> hotTrend(JSONObject jsonResponse) {
-        // TODO : 오늘 날짜 3일 이전부터 조회 제한
         JSONArray step0 = (JSONArray) jsonResponse.get("results");
         LinkedList<HotTrendResponseDto> responseList = new LinkedList<>();
 
