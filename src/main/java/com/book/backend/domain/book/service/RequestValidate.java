@@ -3,7 +3,13 @@ package com.book.backend.domain.book.service;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import java.time.LocalDate;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+@Component
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RequestValidate {
 
     public void isValidSearchDt(String searchDt) {
@@ -19,7 +25,8 @@ public class RequestValidate {
     }
 
     public void isValidIsbn(String isbn) {
-        if(isbn.length() != 13) {
+        // 숫자로 구성된 13자리 ISBN
+        if(!(isbn.matches("^[0-9]*$") && isbn.length() == 13)) {
             throw new CustomException(ErrorCode.INVALID_ISBN);
         }
     }

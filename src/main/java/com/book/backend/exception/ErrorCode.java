@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-    INVALID_ISBN(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 ISBN입니다."),
+    INVALID_ISBN(HttpStatus.BAD_REQUEST, "400", "숫자로만 구성된 13자리 ISBN을 입력해주세요."),
     INVALID_SEARCH_DT_FORMAT(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 검색일자입니다. (yyyy-mm-dd) 형식을 맞춰주세요."),
     INVALID_SEARCH_DT_DATE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 검색일자입니다. (현재 일자로부터 2일 이전 날짜로 검색해주세요)"),
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "401", "인증 오류가 발생했습니다."),
