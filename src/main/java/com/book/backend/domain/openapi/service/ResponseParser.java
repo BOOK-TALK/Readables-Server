@@ -1,6 +1,7 @@
 package com.book.backend.domain.openapi.service;
 
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
+import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -8,25 +9,19 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 public class ResponseParser {
-    // TODO : API 별로 파싱 메소드 추가
-    /*
-    * hashSet에 isbn을 담고, 만약 이미 있는 isbn 이라면 list 에 추가 x
-    * 없는 값이라면 list에 추가
-    * if(set.add(isbn13)) list에 추가
-    * */
 
     public LinkedList<RecommendResponseDto> recommend(JSONObject jsonResponse) {
         JSONArray step0 = (JSONArray) jsonResponse.get("docs");
 
         LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
-        for (int i = 0; i < step0.size(); i++) {
-            JSONObject temp = (JSONObject) step0.get(i);
+        for (Object obj : step0) {
+            JSONObject temp = (JSONObject) obj;
             JSONObject step1 = (JSONObject) temp.get("book");
 
             // 중복 추천 체크 (open api 가 중복되는 책을 추천함;;)
             String duplicateCheckKey = step1.getAsString("bookname") + step1.getAsString("authors");
-            if(duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
+            if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
                 responseList.add(RecommendResponseDto.builder()
                         .bookname(step1.getAsString("bookname"))
                         .authors(step1.getAsString("authors"))
@@ -49,12 +44,12 @@ public class ResponseParser {
         JSONArray step0 = (JSONArray) jsonResponse.get("results");
         LinkedList<HotTrendResponseDto> responseList = new LinkedList<>();
 
-        for(int i = 0; i < step0.size(); i++) {
+        for (int i = 0; i < step0.size(); i++) {
             JSONObject temp1 = (JSONObject) step0.get(0);
             JSONObject step1 = (JSONObject) temp1.get("result");
             JSONArray step2 = (JSONArray) step1.get("docs");
-            for (int j = 0; j < step2.size(); j++) {
-                JSONObject temp3 = (JSONObject) step2.get(j);
+            for (Object obj : step2) {
+                JSONObject temp3 = (JSONObject) obj;
                 JSONObject step3 = (JSONObject) temp3.get("doc");
 
                 responseList.add(HotTrendResponseDto.builder()
@@ -75,6 +70,22 @@ public class ResponseParser {
                         .bookDtlUrl(step3.getAsString("bookDtlUrl"))
                         .build());
             }
+        }
+        return responseList;
+    }
+
+    public LinkedList<KeywordResponseDto> keywords(JSONObject jsonResponse) {
+        JSONArray step0 = (JSONArray) jsonResponse.get("keywords");
+        LinkedList<KeywordResponseDto> responseList = new LinkedList<>();
+
+        for (Object obj : step0) {
+            JSONObject temp = (JSONObject) obj;
+            JSONObject step1 = (JSONObject) temp.get("keyword");
+
+            responseList.add(KeywordResponseDto.builder()
+                    .keyword(step1.getAsString("word"))
+                    .weight(step1.getAsString("weight"))
+                    .build());
         }
         return responseList;
     }

@@ -1,8 +1,10 @@
 package com.book.backend.domain.book.service;
 
 import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
+import com.book.backend.domain.openapi.dto.request.KeywordRequestDto;
 import com.book.backend.domain.openapi.dto.request.RecommendRequestDto;
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
+import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
@@ -28,12 +30,12 @@ public class BookService {
         LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
 
         requestDto.setType("mania");
-        JSONObject maniaJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendResponseDto()); //반환값
+        JSONObject maniaJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendResponseDto());
         ResponseParser maniaResponseParser = new ResponseParser();
         responseList.addAll(maniaResponseParser.recommend(maniaJsonResponse));
 
         requestDto.setType("reader");
-        JSONObject readerJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendResponseDto()); //반환값
+        JSONObject readerJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendResponseDto());
         ResponseParser readerResponseParser = new ResponseParser();
         responseList.addAll(readerResponseParser.recommend(readerJsonResponse));
 
@@ -64,14 +66,17 @@ public class BookService {
         return duplicateRemovedList;
     }
 
-
-
-
-
     public LinkedList<HotTrendResponseDto> hotTrend(HotTrendRequestDto requestDto) throws Exception{
         String subUrl = "hotTrend";
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new HotTrendResponseDto()); //반환값
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new HotTrendResponseDto());
         ResponseParser responseParser = new ResponseParser();
         return responseParser.hotTrend(jsonResponse);
+    }
+
+    public LinkedList<KeywordResponseDto> keywords(KeywordRequestDto requestDto) throws Exception{
+        String subUrl = "monthlyKeywords";
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new KeywordResponseDto());
+        ResponseParser responseParser = new ResponseParser();
+        return responseParser.keywords(jsonResponse);
     }
 }

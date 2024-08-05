@@ -3,7 +3,9 @@ package com.book.backend.domain.book.controller;
 import com.book.backend.domain.book.service.BookService;
 import com.book.backend.domain.book.service.RequestValidate;
 import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
+import com.book.backend.domain.openapi.dto.request.KeywordRequestDto;
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
+import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import com.book.backend.domain.openapi.dto.request.RecommendRequestDto;
 import com.book.backend.global.ResponseTemplate;
@@ -56,6 +58,17 @@ public class BookController {
 
         HotTrendRequestDto requestDto = HotTrendRequestDto.builder().searchDt(searchDt).build();
         LinkedList<HotTrendResponseDto> response = bookService.hotTrend(requestDto);
+
+        return responseTemplate.success(response, HttpStatus.OK);
+    }
+
+    // 지난달 키워드 (17)
+    @GetMapping("/keyword")
+    public ResponseEntity<?> keywords() throws Exception {
+        KeywordRequestDto requestDto = new KeywordRequestDto();
+        requestDto.setSearchDt();
+
+        LinkedList<KeywordResponseDto> response = bookService.keywords(requestDto);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
