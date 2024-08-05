@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/genre")
+@RequestMapping("/api/genre")
 @RequiredArgsConstructor
 @Slf4j
 public class GenreController {
@@ -21,7 +21,7 @@ public class GenreController {
     /**
      * 대주제 KDC 번호(1자리) 입력 시 저장된 책 목록 리턴
      */
-    @GetMapping("/books/main")
+    @GetMapping("/main")
     public List<Book> findBooksByMainKdcNum(@RequestParam @Pattern(regexp = "\\d") Integer kdcNum) {
         RequestLogger.param(new String[]{"대주제 KDC 번호"}, kdcNum);
 
@@ -32,7 +32,7 @@ public class GenreController {
     /**
      * 중주제 KDC 번호(2자리) 입력 시 저장된 책 목록 리턴
      */
-    @GetMapping("/books/middle")
+    @GetMapping("/sub")
     public List<Book> findBooksBySubKdcNum(@RequestParam @Pattern(regexp = "\\d{2}") Integer kdcNum) {
         RequestLogger.param(new String[] {"중주제 KDC 번호"}, kdcNum);
 
