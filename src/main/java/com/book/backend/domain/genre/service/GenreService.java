@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,11 +34,33 @@ public class GenreService {
         }
     }
 
-    public List<Book> getBooksByTwoDigitsKdcNum(Integer kdcNum) {
-        String firstKdcNum = String.valueOf(kdcNum / 10);
-        String secondKdcNum = String.valueOf(kdcNum % 10);
+    public List<Genre> findSubGenresByKdcNum(String kdcNum) {
+        Optional<Genre> genre = genreRepository.findByKdcNum(kdcNum);
+        return genre.map(Genre::getSubGenres).orElse(null);
+    }
 
-        Genre findGenre = genreRepository.findByParentGenreKdcNumAndKdcNum(firstKdcNum, secondKdcNum)
+    public List<Book> getBooksByMainKdcNum(Integer kdcNum) {
+        String mainKdcNum = String.valueOf(kdcNum);
+
+        List<Book> allBooks = new ArrayList<>();
+        List<Genre> subGenres = findSubGenresByKdcNum(mainKdcNum);
+
+        if (subGenres != null) {
+            for (Genre subGenre : subGenres) {
+                if (subGenre.getBooks() != null) {
+                    allBooks.addAll(subGenre.getBooks());
+                }
+            }
+        }
+
+        return allBooks;
+    }
+
+    public List<Book> getBooksByMiddleKdcNum(Integer kdcNum) {
+        String mainKdcNum = String.valueOf(kdcNum / 10);
+        String middleKdcNum = String.valueOf(kdcNum % 10);
+
+        Genre findGenre = genreRepository.findByParentGenreKdcNumAndKdcNum(mainKdcNum, middleKdcNum)
                 .orElseThrow(() -> new IllegalArgumentException("KDC 번호가" + kdcNum + "인 장르를 찾을 수 없습니다."));
         return findGenre.getBooks();
     }
