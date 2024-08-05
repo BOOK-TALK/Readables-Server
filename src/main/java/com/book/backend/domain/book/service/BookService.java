@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BookService {
-    @Autowired
     private final OpenAPI openAPI;
 
     public LinkedList<RecommendResponseDto> recommend(RecommendRequestDto requestDto) throws Exception {

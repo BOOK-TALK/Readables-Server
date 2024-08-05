@@ -25,12 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class BookController {
-    @Autowired // FIXME : 여기에 AutoWired 추가 안 할 수 있는지?
-    BookService bookService;
-    @Autowired
-    RequestValidate requestValidate;
-    @Autowired
-    ResponseTemplate responseTemplate;
+    private final BookService bookService;
+    private final RequestValidate requestValidate;
+    private final ResponseTemplate responseTemplate;
 
     // 마니아(4), 다독자(5) 추천 API
     @GetMapping("/recommend")
