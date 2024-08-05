@@ -1,20 +1,21 @@
 package com.book.backend.domain.book.controller;
 
-import com.book.backend.domain.auth.dto.SignupDto;
-import com.book.backend.domain.book.dto.TestDto;
 import com.book.backend.domain.book.service.BookService;
-import com.book.backend.domain.user.dto.UserDto;
+import com.book.backend.domain.book.service.RequestValidate;
+import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
+import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
+import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
+import com.book.backend.domain.openapi.dto.request.RecommendRequestDto;
+import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
-import jakarta.validation.Valid;
+import java.util.HashSet;
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,29 +25,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class BookController {
-    @Autowired
-    BookService bookService;
+    private final BookService bookService;
+    private final RequestValidate requestValidate;
+    private final ResponseTemplate responseTemplate;
 
-    @GetMapping("/get")
-    public ResponseEntity<String> get(@RequestParam String name, int age) {
-        RequestLogger.param(new String[] {"name", "age"}, name, age);
+    // 마니아(4), 다독자(5) 추천 API
+    @GetMapping("/recommend")
+    public ResponseEntity<?> recommend(@RequestParam(required = true) String isbn) throws Exception {
+        RequestLogger.param(new String[]{"isbn"}, isbn);
+        requestValidate.isValidIsbn(isbn);
 
-        bookService.logTest();
-        return ResponseEntity.ok("Hi");
+        RecommendRequestDto requestDto = RecommendRequestDto.builder().isbn13(isbn).build();
+        LinkedList<RecommendResponseDto> response = bookService.recommend(requestDto);
+
+        HashSet<String> duplicateCheckSet = new HashSet<>();
+        LinkedList<RecommendResponseDto> duplicateRemovedList = bookService.duplicateChecker(response, duplicateCheckSet);
+        bookService.ensureRecommendationsCount(duplicateRemovedList, duplicateCheckSet);
+
+        return responseTemplate.success(response, HttpStatus.OK);
     }
 
-    @PostMapping("/post")
-    public ResponseEntity<String> post(@RequestBody TestDto dto) {
-        RequestLogger.body(dto);
-        bookService.logTest();
-        return ResponseEntity.ok("Hi");
-    }
+    // 대출급상승(12) API
+    @GetMapping("/hotTrend")
+    public ResponseEntity<?> hotTrend(@RequestParam(required = true) String searchDt) throws Exception {
+        RequestLogger.param(new String[]{"searchDt"}, searchDt);
+        requestValidate.isValidSearchDt(searchDt);
 
-    @PostMapping("/both")
-    public ResponseEntity<String> both(@RequestParam int grade, @RequestBody TestDto dto) {
-        RequestLogger.param(new String[]{"grade"}, grade);
-        RequestLogger.body(dto);
-        bookService.logTest();
-        return ResponseEntity.ok("Hi");
+        HotTrendRequestDto requestDto = HotTrendRequestDto.builder().searchDt(searchDt).build();
+        LinkedList<HotTrendResponseDto> response = bookService.hotTrend(requestDto);
+
+        return responseTemplate.success(response, HttpStatus.OK);
     }
 }

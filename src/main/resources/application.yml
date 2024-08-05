@@ -26,3 +26,7 @@ spring:
   sql: #import.sql 의 DDL 실행
     init:
       mode: always
+
+openapi:
+  url: ${OPENAPI_URL}
+  authKey: ${OPENAPI_AUTH_KEY}
