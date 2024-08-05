@@ -39,7 +39,12 @@ public class GenreService {
         return genre.map(Genre::getSubGenres).orElse(null);
     }
 
-    public List<Book> getBooksByMainKdcNum(Integer kdcNum) {
+    public Genre findByMainKdcNumAndSubKdcNum(String mainKdcNum, String subKdcNum) {
+        return genreRepository.findByParentGenreKdcNumAndKdcNum(mainKdcNum, subKdcNum)
+                .orElseThrow(() -> new IllegalArgumentException("KDC 번호가" + mainKdcNum + subKdcNum + "인 장르를 찾을 수 없습니다."));
+    }
+
+    public List<Book> findBooksByMainKdcNum(Integer kdcNum) {
         String mainKdcNum = String.valueOf(kdcNum);
 
         List<Book> allBooks = new ArrayList<>();
@@ -56,12 +61,11 @@ public class GenreService {
         return allBooks;
     }
 
-    public List<Book> getBooksByMiddleKdcNum(Integer kdcNum) {
+    public List<Book> findBooksBySubKdcNum(Integer kdcNum) {
         String mainKdcNum = String.valueOf(kdcNum / 10);
-        String middleKdcNum = String.valueOf(kdcNum % 10);
+        String subKdcNum = String.valueOf(kdcNum % 10);
 
-        Genre findGenre = genreRepository.findByParentGenreKdcNumAndKdcNum(mainKdcNum, middleKdcNum)
-                .orElseThrow(() -> new IllegalArgumentException("KDC 번호가" + kdcNum + "인 장르를 찾을 수 없습니다."));
+        Genre findGenre = findByMainKdcNumAndSubKdcNum(mainKdcNum, subKdcNum);
         return findGenre.getBooks();
     }
 
