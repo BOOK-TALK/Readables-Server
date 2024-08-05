@@ -9,12 +9,15 @@ import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +49,7 @@ public class AuthService {
         return userMapper.convertToUserDto(savedUser);
     }
 
-    public UserDto login(LoginDto loginDto) {
+    public UserDto login(HttpServletRequest request, LoginDto loginDto) {
         try {
             // 사용자 인증 시도
             Authentication authentication = authenticationManager.authenticate(
@@ -54,6 +57,10 @@ public class AuthService {
 
             // 인증 성공 시 SecurityContextHolder에 인증 정보 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // 세션에 SecurityContext 저장
+            HttpSession session = request.getSession(true);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 
             User user = userRepository.findByLoginId(loginDto.getLoginId())
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
