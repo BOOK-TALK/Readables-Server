@@ -6,11 +6,14 @@ import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import java.util.*;
 import java.util.stream.IntStream;
 
+import com.book.backend.domain.openapi.dto.response.genre.NewTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.genre.PeriodTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.genre.RandomResponseDto;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
+@Slf4j
 public class ResponseParser {
 
     public LinkedList<RecommendResponseDto> recommend(JSONObject jsonResponse) {
@@ -130,6 +133,43 @@ public class ResponseParser {
                     .bookDtlUrl(doc.getAsString("bookDtlUrl"))
                     .build());
         }
+        return responseList;
+    }
+
+    public LinkedList<NewTrendResponseDto> newTrend(JSONObject jsonResponse, int currentYear) {
+        JSONArray docs = (JSONArray) jsonResponse.get("docs");
+        LinkedList<NewTrendResponseDto> responseList = new LinkedList<>();
+        int cnt = 0;
+
+        for (Object o : docs) {
+            JSONObject docsElement = (JSONObject) o;
+            JSONObject doc = (JSONObject) docsElement.get("doc");
+
+            String publication_year = doc.getAsString("publication_year");
+
+            if (Objects.equals(publication_year, "")
+                    || Integer.parseInt(publication_year) < currentYear - 2) {
+                continue;
+            }
+
+            responseList.add(NewTrendResponseDto.builder()
+                    .no(doc.getAsString("no"))
+                    .ranking(doc.getAsString("ranking"))
+                    .bookname(doc.getAsString("bookname"))
+                    .authors(doc.getAsString("authors"))
+                    .publisher(doc.getAsString("publisher"))
+                    .publication_year(doc.getAsString("publication_year"))
+                    .isbn13(doc.getAsString("isbn13"))
+                    .addition_symbol(doc.getAsString("addition_symbol"))
+                    .class_no(doc.getAsString("class_no"))
+                    .class_nm(doc.getAsString("class_nm"))
+                    .loan_count(doc.getAsString("loan_count"))
+                    .bookImageURL(doc.getAsString("bookImageURL"))
+                    .bookDtlUrl(doc.getAsString("bookDtlUrl"))
+                    .build());
+            cnt++;
+        }
+        log.info(String.valueOf(cnt));
         return responseList;
     }
 }

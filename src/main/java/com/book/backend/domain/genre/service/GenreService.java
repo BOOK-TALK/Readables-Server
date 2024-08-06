@@ -3,8 +3,10 @@ package com.book.backend.domain.genre.service;
 import com.book.backend.domain.book.entity.Book;
 import com.book.backend.domain.genre.entity.Genre;
 import com.book.backend.domain.genre.repository.GenreRepository;
+import com.book.backend.domain.openapi.dto.request.genre.NewTrendRequestDto;
 import com.book.backend.domain.openapi.dto.request.genre.PeriodTrendRequestDto;
 import com.book.backend.domain.openapi.dto.request.genre.RandomRequestDto;
+import com.book.backend.domain.openapi.dto.response.genre.NewTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.genre.PeriodTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.genre.RandomResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
@@ -99,7 +101,7 @@ public class GenreService {
         String subUrl = "loanItemSrch";
         int resultSize = 200;
 
-        requestDto.setPageSize(500);  // 셔플할 리스트의 페이지 사이즈를 500으로 설정
+        requestDto.setPageSize(500);  // 셔플할 리스트의 페이지 크기 설정
 
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new RandomResponseDto());
         ResponseParser responseParser = new ResponseParser();
@@ -107,5 +109,17 @@ public class GenreService {
         return new LinkedList<>(responseParser.random(JsonResponse, resultSize));
     }
 
+    public LinkedList<NewTrendResponseDto> newTrend(NewTrendRequestDto requestDto) throws Exception {
+        String subUrl = "loanItemSrch";
+
+        requestDto.setPageSize(1500);  // 연도로 필터링하기 전 페이지 크기 설정
+        LocalDate today = LocalDate.now();
+        int currentYear = Integer.parseInt(today.format(DateTimeFormatter.ofPattern("yyyy")));
+
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new NewTrendResponseDto());
+        ResponseParser responseParser = new ResponseParser();
+
+        return new LinkedList<>(responseParser.newTrend(JsonResponse, currentYear));
+    }
 
 }
