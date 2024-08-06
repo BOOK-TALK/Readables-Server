@@ -3,11 +3,12 @@ package com.book.backend.domain.openapi.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
+@NoArgsConstructor
 public class CustomHotTrendRequestDto implements OpenAPIRequestInterface {
     private String startDt; // yyy-mm-dd 조회 시작일
     private String endDt;

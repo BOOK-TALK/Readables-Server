@@ -1,5 +1,6 @@
 package com.book.backend.domain.book.service;
 
+import com.book.backend.domain.openapi.dto.request.CustomHotTrendRequestDto;
 import com.book.backend.domain.openapi.entity.AgeRangeCode;
 import com.book.backend.domain.openapi.entity.RegionCode;
 import com.book.backend.exception.CustomException;
@@ -32,16 +33,37 @@ public class RequestValidate {
         }
     }
 
-    public void validCustomHotTrendRequest (String weekMonth, String peerAge, String ageRange, String gender,
-                                            String genreCode, String regionCode, String libCode){
-        // null 이 아닌 애들만 아래 로직 실행
-        if(weekMonth != null) isValidWeekMonth(weekMonth);
-        if(peerAge != null) isValidAge(peerAge);
+    public CustomHotTrendRequestDto set_validCustomHotTrendRequest (String weekMonth, String peerAge, String ageRange, String gender,
+                                                                    String genreCode, String regionCode, String libCode){
+        CustomHotTrendRequestDto request = new CustomHotTrendRequestDto();
+
+        if(weekMonth != null) {
+            isValidWeekMonth(weekMonth);
+            LocalDate today = LocalDate.now();
+            if(weekMonth.equals("week")) {
+                request.setStartDt(today.minusDays(7).toString());
+                request.setEndDt(today.toString());
+            } else {
+                request.setStartDt(today.minusMonths(1).toString());
+                request.setEndDt(today.toString());
+            }
+        }
+        if(peerAge != null) {
+            isValidAge(peerAge);
+            request.setFrom_age(Integer.toString(Integer.parseInt(peerAge) - 2));
+            request.setTo_age(Integer.toString(Integer.parseInt(peerAge) + 2));
+        }
         if(ageRange != null) isValidAgeRange(ageRange);
-        if(gender != null) isValidGender(gender);
+        if(gender != null) {
+            isValidGender(gender);
+            if(gender.equals("man")) request.setGender("0");
+            else request.setGender("1");
+        }
         if(genreCode != null) isValidGenreCode(genreCode);
         if(regionCode != null) isValidRegionCode(regionCode);
         if(libCode != null) isValidLibCode(libCode);
+
+        return request;
     }
 
     public void isValidWeekMonth(String weekMonth){
