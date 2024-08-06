@@ -40,7 +40,6 @@ public class ResponseParser {
     }
 
     public LinkedList<HotTrendResponseDto> hotTrend(JSONObject jsonResponse) {
-        // TODO : 오늘 날짜 3일 이전부터 조회 제한
         JSONArray step0 = (JSONArray) jsonResponse.get("results");
         LinkedList<HotTrendResponseDto> responseList = new LinkedList<>();
 
