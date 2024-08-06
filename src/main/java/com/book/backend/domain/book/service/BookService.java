@@ -10,10 +10,12 @@ import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
+import com.book.backend.global.log.RequestLogger;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class BookService {
     private final OpenAPI openAPI;
 
     public LinkedList<RecommendResponseDto> recommend(RecommendRequestDto requestDto) throws Exception {
+        log.trace("recommend()");
         String subUrl = "recommandList";
 
         LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
@@ -44,6 +48,7 @@ public class BookService {
 
     /* 추천 책 수가 5보다 작으면 추천된 isbn 으로 recommend() 다시 호출 */
     public void ensureRecommendationsCount(LinkedList<RecommendResponseDto> list, HashSet<String> set) throws Exception {
+        log.trace("ensureRecommendationsCount()");
         LinkedList<RecommendResponseDto> originalList = new LinkedList<>(list);
         Iterator<RecommendResponseDto> iterator = originalList.iterator();
         while (originalList.size() < 5 && iterator.hasNext()) {
@@ -58,6 +63,7 @@ public class BookService {
     }
 
     public LinkedList<RecommendResponseDto> duplicateChecker(LinkedList<RecommendResponseDto> list, HashSet<String> set){
+        log.trace("duplicateChecker()");
         LinkedList<RecommendResponseDto> duplicateRemovedList = new LinkedList<>();
         for(RecommendResponseDto dto : list){
             String key = dto.getBookname() + dto.getAuthors();
@@ -67,6 +73,7 @@ public class BookService {
     }
 
     public LinkedList<HotTrendResponseDto> hotTrend(HotTrendRequestDto requestDto) throws Exception{
+        log.trace("hotTrend()");
         String subUrl = "hotTrend";
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new HotTrendResponseDto());
         ResponseParser responseParser = new ResponseParser();
@@ -74,6 +81,7 @@ public class BookService {
     }
 
     public LinkedList<KeywordResponseDto> keywords(KeywordRequestDto requestDto) throws Exception{
+        log.trace("keywords()");
         String subUrl = "monthlyKeywords";
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new KeywordResponseDto());
         ResponseParser responseParser = new ResponseParser();
@@ -81,6 +89,7 @@ public class BookService {
     }
 
     public LinkedList<CustomHotTrendResponseDto> customHotTrend(CustomHotTrendRequestDto requestDto) throws Exception{
+        log.trace("customHotTrend()");
         String subUrl = "loanItemSrch";
         requestDto.setPageSize("10"); // 10개만 출력하도록 제한
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new CustomHotTrendResponseDto());

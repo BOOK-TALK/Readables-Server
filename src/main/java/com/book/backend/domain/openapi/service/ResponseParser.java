@@ -6,14 +6,17 @@ import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import java.util.HashSet;
 import java.util.LinkedList;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
+@Slf4j
 public class ResponseParser {
 
     public LinkedList<RecommendResponseDto> recommend(JSONObject jsonResponse) {
-        JSONArray step0 = (JSONArray) jsonResponse.get("docs");
+        log.trace("ResponseParser > recommend()");
 
+        JSONArray step0 = (JSONArray) jsonResponse.get("docs");
         LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
         for (Object obj : step0) {
@@ -41,6 +44,8 @@ public class ResponseParser {
     }
 
     public LinkedList<HotTrendResponseDto> hotTrend(JSONObject jsonResponse) {
+        log.trace("ResponseParser > hotTrend()");
+
         JSONArray step0 = (JSONArray) jsonResponse.get("results");
         LinkedList<HotTrendResponseDto> responseList = new LinkedList<>();
 
@@ -75,6 +80,8 @@ public class ResponseParser {
     }
 
     public LinkedList<KeywordResponseDto> keywords(JSONObject jsonResponse) {
+        log.trace("ResponseParser > keywords()");
+
         JSONArray step0 = (JSONArray) jsonResponse.get("keywords");
         LinkedList<KeywordResponseDto> responseList = new LinkedList<>();
 
@@ -91,6 +98,8 @@ public class ResponseParser {
     }
 
     public LinkedList<CustomHotTrendResponseDto> customHotTrend(JSONObject jsonResponse) {
+        log.trace("ResponseParser > customHotTrend()");
+
         JSONArray step0 = (JSONArray) jsonResponse.get("docs");
 
         LinkedList<CustomHotTrendResponseDto> responseList = new LinkedList<>();

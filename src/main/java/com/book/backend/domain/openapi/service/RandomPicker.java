@@ -4,10 +4,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Random;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class RandomPicker {
     // list 에서 nums 갯수를 랜덤 추출, 결과를 섞을지
     public static <T> LinkedList<T> randomPick(LinkedList<T> list, int nums, boolean shuffle){
+        log.trace("RandomPicker > randomPick()");
+
         Random random = new Random();
         LinkedList<T> randomList = new LinkedList<>();
         HashSet<Integer> idxSet = new HashSet<>();  // 중복 확인용

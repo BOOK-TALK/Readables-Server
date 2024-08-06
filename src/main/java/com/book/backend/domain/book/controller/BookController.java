@@ -81,6 +81,8 @@ public class BookController {
                                             @RequestParam(required = false) String genreCode,
                                             @RequestParam(required = false) String region,
                                             @RequestParam(required = false) String libCode) throws Exception {
+        RequestLogger.param(new String[]{"weekMonth", "peerAge", "ageRange", "gender", "genreCode", "region", "libCode"},
+                weekMonth, peerAge, ageRange, gender, genreCode, region, libCode);
         CustomHotTrendRequestDto requestDto = requestValidate.set_validCustomHotTrendRequest(weekMonth, peerAge, ageRange, gender, genreCode, region, libCode);
 
         LinkedList<CustomHotTrendResponseDto> response = bookService.customHotTrend(requestDto);
