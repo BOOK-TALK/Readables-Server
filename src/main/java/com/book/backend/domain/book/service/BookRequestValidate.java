@@ -2,7 +2,6 @@ package com.book.backend.domain.book.service;
 
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class RequestValidate {
+public class BookRequestValidate {
 
     public void isValidSearchDt(String searchDt) {
         //yyyy-mm-dd 형식인지 확인

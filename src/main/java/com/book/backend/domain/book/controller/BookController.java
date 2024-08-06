@@ -1,7 +1,7 @@
 package com.book.backend.domain.book.controller;
 
+import com.book.backend.domain.book.service.BookRequestValidate;
 import com.book.backend.domain.book.service.BookService;
-import com.book.backend.domain.book.service.RequestValidate;
 import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,14 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class BookController {
     private final BookService bookService;
-    private final RequestValidate requestValidate;
+    private final BookRequestValidate bookRequestValidate;
     private final ResponseTemplate responseTemplate;
 
     // 마니아(4), 다독자(5) 추천 API
     @GetMapping("/recommend")
     public ResponseEntity<?> recommend(@RequestParam(required = true) String isbn) throws Exception {
         RequestLogger.param(new String[]{"isbn"}, isbn);
-        requestValidate.isValidIsbn(isbn);
+        bookRequestValidate.isValidIsbn(isbn);
 
         RecommendRequestDto requestDto = RecommendRequestDto.builder().isbn13(isbn).build();
         LinkedList<RecommendResponseDto> response = bookService.recommend(requestDto);
@@ -49,7 +48,7 @@ public class BookController {
     @GetMapping("/hotTrend")
     public ResponseEntity<?> hotTrend(@RequestParam(required = true) String searchDt) throws Exception {
         RequestLogger.param(new String[]{"searchDt"}, searchDt);
-        requestValidate.isValidSearchDt(searchDt);
+        bookRequestValidate.isValidSearchDt(searchDt);
 
         HotTrendRequestDto requestDto = HotTrendRequestDto.builder().searchDt(searchDt).build();
         LinkedList<HotTrendResponseDto> response = bookService.hotTrend(requestDto);
