@@ -9,11 +9,9 @@ import java.util.stream.IntStream;
 import com.book.backend.domain.openapi.dto.response.genre.NewTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.genre.PeriodTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.genre.RandomResponseDto;
-import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
-@Slf4j
 public class ResponseParser {
 
     public LinkedList<RecommendResponseDto> recommend(JSONObject jsonResponse) {
@@ -78,11 +76,15 @@ public class ResponseParser {
         return responseList;
     }
 
-    public LinkedList<PeriodTrendResponseDto> periodTrend(JSONObject jsonResponse) {
+    public LinkedList<PeriodTrendResponseDto> periodTrend(JSONObject jsonResponse, Integer maxSize) {
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
         LinkedList<PeriodTrendResponseDto> responseList = new LinkedList<>();
 
         for (Object o : docs) {
+            if (maxSize != null && responseList.size() >= maxSize) {
+                break;
+            }
+
             JSONObject docsElement = (JSONObject) o;
             JSONObject doc = (JSONObject) docsElement.get("doc");
 
@@ -105,7 +107,7 @@ public class ResponseParser {
         return responseList;
     }
 
-    public LinkedList<RandomResponseDto> random(JSONObject jsonResponse, int resultSize) {
+    public LinkedList<RandomResponseDto> random(JSONObject jsonResponse, int resultSize, Integer maxSize) {
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
         LinkedList<RandomResponseDto> responseList = new LinkedList<>();
 
@@ -114,6 +116,10 @@ public class ResponseParser {
         List<Integer> resultIdxs = idxs.subList(0, resultSize);
 
         for (int i = 0; i < resultSize; i++) {
+            if (maxSize != null && responseList.size() >= maxSize) {
+                break;
+            }
+
             int idx = resultIdxs.get(i);
             JSONObject docsElement = (JSONObject) docs.get(idx);
             JSONObject doc = (JSONObject) docsElement.get("doc");
@@ -136,12 +142,15 @@ public class ResponseParser {
         return responseList;
     }
 
-    public LinkedList<NewTrendResponseDto> newTrend(JSONObject jsonResponse, int currentYear) {
+    public LinkedList<NewTrendResponseDto> newTrend(JSONObject jsonResponse, int currentYear, Integer maxSize) {
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
         LinkedList<NewTrendResponseDto> responseList = new LinkedList<>();
-        int cnt = 0;
 
         for (Object o : docs) {
+            if (maxSize != null && responseList.size() >= maxSize) {
+                break;
+            }
+
             JSONObject docsElement = (JSONObject) o;
             JSONObject doc = (JSONObject) docsElement.get("doc");
 
@@ -168,10 +177,8 @@ public class ResponseParser {
                         .bookImageURL(doc.getAsString("bookImageURL"))
                         .bookDtlUrl(doc.getAsString("bookDtlUrl"))
                         .build());
-                cnt++;
             }
         }
-        log.info(String.valueOf(cnt));
         return responseList;
     }
 }

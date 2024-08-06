@@ -12,7 +12,6 @@ import com.book.backend.domain.openapi.dto.response.genre.RandomResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +26,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
 public class GenreService {
     private final GenreRepository genreRepository;
     private final OpenAPI openAPI;
@@ -84,7 +82,7 @@ public class GenreService {
         return findGenre.getBooks();
     }
 
-    public LinkedList<PeriodTrendResponseDto> periodTrend(PeriodTrendRequestDto requestDto, Integer dayPeriod) throws Exception {
+    public LinkedList<PeriodTrendResponseDto> periodTrend(PeriodTrendRequestDto requestDto, Integer dayPeriod, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
 
         LocalDate today = LocalDate.now();
@@ -94,10 +92,10 @@ public class GenreService {
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new PeriodTrendResponseDto());
         ResponseParser responseParser = new ResponseParser();
 
-        return new LinkedList<>(responseParser.periodTrend(JsonResponse));
+        return new LinkedList<>(responseParser.periodTrend(JsonResponse, maxSize));
     }
 
-    public LinkedList<RandomResponseDto> random(RandomRequestDto requestDto) throws Exception {
+    public LinkedList<RandomResponseDto> random(RandomRequestDto requestDto, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
         int resultSize = 200;
 
@@ -106,10 +104,10 @@ public class GenreService {
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new RandomResponseDto());
         ResponseParser responseParser = new ResponseParser();
 
-        return new LinkedList<>(responseParser.random(JsonResponse, resultSize));
+        return new LinkedList<>(responseParser.random(JsonResponse, resultSize, maxSize));
     }
 
-    public LinkedList<NewTrendResponseDto> newTrend(NewTrendRequestDto requestDto) throws Exception {
+    public LinkedList<NewTrendResponseDto> newTrend(NewTrendRequestDto requestDto, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
 
         requestDto.setPageSize(1500);  // 연도로 필터링하기 전 페이지 크기 설정
@@ -119,7 +117,7 @@ public class GenreService {
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new NewTrendResponseDto());
         ResponseParser responseParser = new ResponseParser();
 
-        return new LinkedList<>(responseParser.newTrend(JsonResponse, currentYear));
+        return new LinkedList<>(responseParser.newTrend(JsonResponse, currentYear, maxSize));
     }
 
 }

@@ -55,12 +55,13 @@ public class GenreController {
      * 일주일 인기순 - 중주제 KDC 번호(2자리) 입력 시 1주일 인기순 도서 목록 리턴
      */
     @GetMapping("/aWeekTrend")
-    public ResponseEntity<?> aWeekTrend(@RequestParam(required = true) String subKdc) throws Exception {
+    public ResponseEntity<?> aWeekTrend(@RequestParam(required = true) String subKdc,
+                                        @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         genreRequestValidate.isValidSubKdc(subKdc);
 
         PeriodTrendRequestDto requestDto = PeriodTrendRequestDto.builder().dtl_kdc(subKdc).build();
-        LinkedList<PeriodTrendResponseDto> response = genreService.periodTrend(requestDto, 7);
+        LinkedList<PeriodTrendResponseDto> response = genreService.periodTrend(requestDto, 7, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -69,12 +70,13 @@ public class GenreController {
      * 한달 인기순 - 중주제 KDC 번호(2자리) 입력 시 1개월 인기순 도서 목록 리턴
      */
     @GetMapping("/aMonthTrend")
-    public ResponseEntity<?> aMonthTrend(@RequestParam(required = true) String subKdc) throws Exception {
+    public ResponseEntity<?> aMonthTrend(@RequestParam(required = true) String subKdc,
+                                         @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         genreRequestValidate.isValidSubKdc(subKdc);
 
         PeriodTrendRequestDto requestDto = PeriodTrendRequestDto.builder().dtl_kdc(subKdc).build();
-        LinkedList<PeriodTrendResponseDto> response = genreService.periodTrend(requestDto, 30);
+        LinkedList<PeriodTrendResponseDto> response = genreService.periodTrend(requestDto, 30, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -83,12 +85,13 @@ public class GenreController {
      * 무작위순 - 중주제 KDC 번호(2자리) 입력 시 랜덤한 도서 목록 리턴
      */
     @GetMapping("/random")
-    public ResponseEntity<?> random(@RequestParam(required = true) String subKdc) throws Exception {
+    public ResponseEntity<?> random(@RequestParam(required = true) String subKdc,
+                                    @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         genreRequestValidate.isValidSubKdc(subKdc);
 
         RandomRequestDto requestDto = RandomRequestDto.builder().dtl_kdc(subKdc).build();
-        LinkedList<RandomResponseDto> response = genreService.random(requestDto);
+        LinkedList<RandomResponseDto> response = genreService.random(requestDto, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -97,12 +100,13 @@ public class GenreController {
      * 신작 인기순 - 중주제 KDC 번호(2자리) 입력 시 3년 내 출판된 인기 도서 목록 리턴
      */
     @GetMapping("/newTrend")
-    public ResponseEntity<?> newTrend(@RequestParam(required = true) String subKdc) throws Exception {
+    public ResponseEntity<?> newTrend(@RequestParam(required = true) String subKdc,
+                                      @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         genreRequestValidate.isValidSubKdc(subKdc);
 
         NewTrendRequestDto requestDto = NewTrendRequestDto.builder().dtl_kdc(subKdc).build();
-        LinkedList<NewTrendResponseDto> response = genreService.newTrend(requestDto);
+        LinkedList<NewTrendResponseDto> response = genreService.newTrend(requestDto, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
