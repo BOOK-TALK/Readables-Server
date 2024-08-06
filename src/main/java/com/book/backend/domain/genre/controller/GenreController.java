@@ -29,28 +29,6 @@ public class GenreController {
     private final GenreRequestValidate genreRequestValidate;
     private final ResponseTemplate responseTemplate;
 
-//    /**
-//     * 대주제 KDC 번호(1자리) 입력 시 저장된 책 목록 리턴
-//     */
-//    @GetMapping("/main")
-//    public List<Book> findBooksByMainKdcNum(@RequestParam @Pattern(regexp = "\\d") Integer kdcNum) {
-//        RequestLogger.param(new String[]{"대주제 KDC 번호"}, kdcNum);
-//
-//        List<Book> books = genreService.findBooksByMainKdcNum(kdcNum);
-//        return ResponseEntity.ok(books).getBody();
-//    }
-//
-//    /**
-//     * 중주제 KDC 번호(2자리) 입력 시 저장된 책 목록 리턴
-//     */
-//    @GetMapping("/sub")
-//    public List<Book> findBooksBySubKdcNum(@RequestParam @Pattern(regexp = "\\d{2}") Integer kdcNum) {
-//        RequestLogger.param(new String[] {"중주제 KDC 번호"}, kdcNum);
-//
-//        List<Book> books = genreService.findBooksBySubKdcNum(kdcNum);
-//        return ResponseEntity.ok(books).getBody();
-//    }
-
     /**
      * 일주일 인기순 - 중주제 KDC 번호(2자리) 입력 시 1주일 인기순 도서 목록 리턴
      */
