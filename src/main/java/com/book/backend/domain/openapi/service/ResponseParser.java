@@ -145,29 +145,31 @@ public class ResponseParser {
             JSONObject docsElement = (JSONObject) o;
             JSONObject doc = (JSONObject) docsElement.get("doc");
 
-            String publication_year = doc.getAsString("publication_year");
-
-            if (Objects.equals(publication_year, "")
-                    || Integer.parseInt(publication_year) < currentYear - 2) {
+            int publication_year;
+            try {
+                publication_year = Integer.parseInt(doc.getAsString("publication_year"));
+            } catch (NumberFormatException e) {
                 continue;
             }
 
-            responseList.add(NewTrendResponseDto.builder()
-                    .no(doc.getAsString("no"))
-                    .ranking(doc.getAsString("ranking"))
-                    .bookname(doc.getAsString("bookname"))
-                    .authors(doc.getAsString("authors"))
-                    .publisher(doc.getAsString("publisher"))
-                    .publication_year(doc.getAsString("publication_year"))
-                    .isbn13(doc.getAsString("isbn13"))
-                    .addition_symbol(doc.getAsString("addition_symbol"))
-                    .class_no(doc.getAsString("class_no"))
-                    .class_nm(doc.getAsString("class_nm"))
-                    .loan_count(doc.getAsString("loan_count"))
-                    .bookImageURL(doc.getAsString("bookImageURL"))
-                    .bookDtlUrl(doc.getAsString("bookDtlUrl"))
-                    .build());
-            cnt++;
+            if (publication_year >= currentYear - 2) {
+                responseList.add(NewTrendResponseDto.builder()
+                        .no(doc.getAsString("no"))
+                        .ranking(doc.getAsString("ranking"))
+                        .bookname(doc.getAsString("bookname"))
+                        .authors(doc.getAsString("authors"))
+                        .publisher(doc.getAsString("publisher"))
+                        .publication_year(doc.getAsString("publication_year"))
+                        .isbn13(doc.getAsString("isbn13"))
+                        .addition_symbol(doc.getAsString("addition_symbol"))
+                        .class_no(doc.getAsString("class_no"))
+                        .class_nm(doc.getAsString("class_nm"))
+                        .loan_count(doc.getAsString("loan_count"))
+                        .bookImageURL(doc.getAsString("bookImageURL"))
+                        .bookDtlUrl(doc.getAsString("bookDtlUrl"))
+                        .build());
+                cnt++;
+            }
         }
         log.info(String.valueOf(cnt));
         return responseList;
