@@ -15,7 +15,6 @@ public class RecommendResponseDto implements OpenAPIResponseInterface {
     private String publisher;
     private String publication_year;
     private String isbn13;
-    private String additional_symbol;
     private String vol;
     private String class_no;
     private String class_nm;
