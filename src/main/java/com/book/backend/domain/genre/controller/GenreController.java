@@ -63,7 +63,7 @@ public class GenreController {
     /**
      * 중주제 KDC 번호(2자리) 입력 시 1개월 인기순 도서 목록 리턴
      */
-    @GetMapping("/weekTrend")
+    @GetMapping("/aMonthTrend")
     public ResponseEntity<?> aMonthTrend(@RequestParam(required = true) String subKdc) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         genreRequestValidate.isValidSubKdc(subKdc);
