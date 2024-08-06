@@ -17,6 +17,10 @@ public class RequestValidate {
         if(!searchDt.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
             throw new CustomException(ErrorCode.INVALID_SEARCH_DT_FORMAT);
         }
+        // searchDt 가 오늘 이후 날짜라면 에러 처리 (어제까지만 검색 가능)
+        if(LocalDate.parse(searchDt).isAfter(LocalDate.now().minusDays(1))) {
+            throw new CustomException(ErrorCode.INVALID_SEARCH_DT_DATE);
+        }
     }
 
     public void isValidIsbn(String isbn) {
