@@ -41,7 +41,8 @@ public class BookController {
     // 마니아(4), 다독자(5) 추천 API
     @Operation(summary="책 추천", description="특정 책 코드를 입력으로 받아 해당 책 기반 추천 책 list를 반환합니다.",
             parameters = {@Parameter(name = "isbn", description = "책 코드")},
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RecommendResponseDto.class)))})
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RecommendResponseDto.class)),
+                        description = RecommendResponseDto.description)})
     @GetMapping("/recommend")
     public ResponseEntity<?> recommend(@RequestParam String isbn) throws Exception {
         RequestLogger.param(new String[]{"isbn"}, isbn);
@@ -59,7 +60,8 @@ public class BookController {
 
     // 대출급상승(12) API
     @Operation(summary="대출 급상승", description="지난 3일간 대출 급상승 책 list 를 반환합니다.",
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = HotTrendResponseDto.class)))})
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = HotTrendResponseDto.class)),
+                        description = HotTrendResponseDto.description)})
     @GetMapping("/hotTrend")
     public ResponseEntity<?> hotTrend() throws Exception {
         LocalDate yesterday = LocalDate.now().minusDays(1);
@@ -71,7 +73,8 @@ public class BookController {
 
     // 지난달 키워드 (17)
     @Operation(summary="지난달 키워드", description="지난달 핵심 키워드 100개 중 랜덤으로 10개 키워드를 반환합니다.",
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = KeywordResponseDto.class)))})
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = KeywordResponseDto.class)),
+                        description = KeywordResponseDto.description)})
     @GetMapping("/keyword")
     public ResponseEntity<?> keywords() throws Exception {
         KeywordRequestDto requestDto = new KeywordRequestDto();
@@ -92,7 +95,8 @@ public class BookController {
             @Parameter(name = "genreCode", description = "세부 장르 코드 (figma 참고)"),
             @Parameter(name = "region", description = "시단위 지역코드 (figma 참고)"),
             @Parameter(name = "libCode", description = "도서관 코드 (조회 -> https://www.data4library.kr/libDataL)")},
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomHotTrendResponseDto.class)))})
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomHotTrendResponseDto.class)),
+                        description = CustomHotTrendResponseDto.description)})
     @GetMapping("/customHotTrend")
     public ResponseEntity<?> customHotTrend(@RequestParam(required = false) String weekMonth,
                                             @RequestParam(required = false) String peerAge,
