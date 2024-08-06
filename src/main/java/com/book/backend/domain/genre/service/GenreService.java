@@ -3,19 +3,30 @@ package com.book.backend.domain.genre.service;
 import com.book.backend.domain.book.entity.Book;
 import com.book.backend.domain.genre.entity.Genre;
 import com.book.backend.domain.genre.repository.GenreRepository;
+import com.book.backend.domain.openapi.dto.request.genre.PeriodTrendRequestDto;
+import com.book.backend.domain.openapi.dto.response.genre.PeriodTrendResponseDto;
+import com.book.backend.domain.openapi.service.OpenAPI;
+import com.book.backend.domain.openapi.service.ResponseParser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class GenreService {
     private final GenreRepository genreRepository;
+    private final OpenAPI openAPI;
 
     public Genre findById(Long id) {
         return genreRepository.findById(id)
@@ -67,6 +78,22 @@ public class GenreService {
 
         Genre findGenre = findByMainKdcNumAndSubKdcNum(mainKdcNum, subKdcNum);
         return findGenre.getBooks();
+    }
+
+    public LinkedList<PeriodTrendResponseDto> periodTrend(PeriodTrendRequestDto requestDto, Integer dayPeriod) throws Exception {
+        String subUrl = "loanItemSrch";
+
+        LocalDate today = LocalDate.now();
+        requestDto.setStartDt(today.minusDays(dayPeriod + 1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        requestDto.setEndDt(today.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+
+
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new PeriodTrendResponseDto());
+        ResponseParser responseParser = new ResponseParser();
+
+        return new LinkedList<>(responseParser.periodTrend(JsonResponse));
+
     }
 
 }
