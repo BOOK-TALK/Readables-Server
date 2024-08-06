@@ -82,6 +82,7 @@ public class BookService {
 
     public LinkedList<CustomHotTrendResponseDto> customHotTrend(CustomHotTrendRequestDto requestDto) throws Exception{
         String subUrl = "loanItemSrch";
+        requestDto.setPageSize("10"); // 10개만 출력하도록 제한
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new CustomHotTrendResponseDto());
         ResponseParser responseParser = new ResponseParser();
         return responseParser.customHotTrend(jsonResponse);

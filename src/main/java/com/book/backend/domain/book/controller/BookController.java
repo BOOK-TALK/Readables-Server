@@ -81,13 +81,9 @@ public class BookController {
                                             @RequestParam(required = false) String genreCode,
                                             @RequestParam(required = false) String region,
                                             @RequestParam(required = false) String libCode) throws Exception {
-        requestValidate.validCustomHotTrendRequest(weekMonth, peerAge, ageRange, gender, genreCode, region, libCode);
+        CustomHotTrendRequestDto requestDto = requestValidate.set_validCustomHotTrendRequest(weekMonth, peerAge, ageRange, gender, genreCode, region, libCode);
 
-        // TODO : 입력값에 맞게 dto 에 값 넣는 로직.
-//        CustomHotTrendRequestDto requestDto = CustomHotTrendRequestDto.builder().;
-
-//        LinkedList<CustomHotTrendResponseDto> response = bookService.customHotTrend(requestDto);
-
-        return responseTemplate.success(null, HttpStatus.OK);
+        LinkedList<CustomHotTrendResponseDto> response = bookService.customHotTrend(requestDto);
+        return responseTemplate.success(response, HttpStatus.OK);
     }
 }
