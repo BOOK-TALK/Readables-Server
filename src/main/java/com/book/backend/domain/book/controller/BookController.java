@@ -46,7 +46,7 @@ public class BookController {
         LinkedList<RecommendResponseDto> duplicateRemovedList = bookService.duplicateChecker(response, duplicateCheckSet);
         bookService.ensureRecommendationsCount(duplicateRemovedList, duplicateCheckSet);
 
-        return responseTemplate.success(response, HttpStatus.OK);
+        return responseTemplate.success(duplicateRemovedList, HttpStatus.OK);
     }
 
     // 대출급상승(12) API
