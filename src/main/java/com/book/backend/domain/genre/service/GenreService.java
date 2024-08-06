@@ -4,7 +4,9 @@ import com.book.backend.domain.book.entity.Book;
 import com.book.backend.domain.genre.entity.Genre;
 import com.book.backend.domain.genre.repository.GenreRepository;
 import com.book.backend.domain.openapi.dto.request.genre.PeriodTrendRequestDto;
+import com.book.backend.domain.openapi.dto.request.genre.RandomRequestDto;
 import com.book.backend.domain.openapi.dto.response.genre.PeriodTrendResponseDto;
+import com.book.backend.domain.openapi.dto.response.genre.RandomResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
 import lombok.RequiredArgsConstructor;
@@ -87,13 +89,23 @@ public class GenreService {
         requestDto.setStartDt(today.minusDays(dayPeriod + 1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         requestDto.setEndDt(today.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
-
-
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new PeriodTrendResponseDto());
         ResponseParser responseParser = new ResponseParser();
 
         return new LinkedList<>(responseParser.periodTrend(JsonResponse));
-
     }
+
+    public LinkedList<RandomResponseDto> random(RandomRequestDto requestDto) throws Exception {
+        String subUrl = "loanItemSrch";
+        int resultSize = 200;
+
+        requestDto.setPageSize(500);  // 셔플할 리스트의 페이지 사이즈를 500으로 설정
+
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new RandomResponseDto());
+        ResponseParser responseParser = new ResponseParser();
+
+        return new LinkedList<>(responseParser.random(JsonResponse, resultSize));
+    }
+
 
 }

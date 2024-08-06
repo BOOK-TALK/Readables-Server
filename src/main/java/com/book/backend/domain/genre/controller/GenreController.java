@@ -4,7 +4,9 @@ import com.book.backend.domain.book.service.BookRequestValidate;
 import com.book.backend.domain.genre.service.GenreRequestValidate;
 import com.book.backend.domain.genre.service.GenreService;
 import com.book.backend.domain.openapi.dto.request.genre.PeriodTrendRequestDto;
+import com.book.backend.domain.openapi.dto.request.genre.RandomRequestDto;
 import com.book.backend.domain.openapi.dto.response.genre.PeriodTrendResponseDto;
+import com.book.backend.domain.openapi.dto.response.genre.RandomResponseDto;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/api/genre")
@@ -74,4 +77,17 @@ public class GenreController {
         return responseTemplate.success(response, HttpStatus.OK);
     }
 
+    /**
+     * 중주제 KDC 번호(2자리) 입력 시 랜덤한 도서 목록 리턴
+     */
+    @GetMapping("/random")
+    public ResponseEntity<?> random(@RequestParam(required = true) String subKdc) throws Exception {
+        RequestLogger.param(new String[]{"kdcNum"}, subKdc);
+        genreRequestValidate.isValidSubKdc(subKdc);
+
+        RandomRequestDto requestDto = RandomRequestDto.builder().dtl_kdc(subKdc).build();
+        LinkedList<RandomResponseDto> response = genreService.random(requestDto);
+
+        return responseTemplate.success(response, HttpStatus.OK);
+    }
 }

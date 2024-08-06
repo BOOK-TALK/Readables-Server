@@ -2,8 +2,9 @@ package com.book.backend.domain.openapi.service;
 
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
-import java.util.HashSet;
-import java.util.LinkedList;
+
+import java.util.*;
+import java.util.stream.IntStream;
 
 import com.book.backend.domain.openapi.dto.response.genre.PeriodTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.genre.RandomResponseDto;
@@ -85,6 +86,37 @@ public class ResponseParser {
             responseList.add(PeriodTrendResponseDto.builder()
                     .no(doc.getAsString("no"))
                     .ranking(doc.getAsString("ranking"))
+                    .bookname(doc.getAsString("bookname"))
+                    .authors(doc.getAsString("authors"))
+                    .publisher(doc.getAsString("publisher"))
+                    .publication_year(doc.getAsString("publication_year"))
+                    .isbn13(doc.getAsString("isbn13"))
+                    .addition_symbol(doc.getAsString("addition_symbol"))
+                    .class_no(doc.getAsString("class_no"))
+                    .class_nm(doc.getAsString("class_nm"))
+                    .loan_count(doc.getAsString("loan_count"))
+                    .bookImageURL(doc.getAsString("bookImageURL"))
+                    .bookDtlUrl(doc.getAsString("bookDtlUrl"))
+                    .build());
+        }
+        return responseList;
+    }
+
+    public LinkedList<RandomResponseDto> random(JSONObject jsonResponse, int resultSize) {
+        JSONArray docs = (JSONArray) jsonResponse.get("docs");
+        LinkedList<RandomResponseDto> responseList = new LinkedList<>();
+
+        List<Integer> idxs = new ArrayList<>(IntStream.range(0, docs.size()).boxed().toList());
+        Collections.shuffle(idxs);
+        List<Integer> resultIdxs = idxs.subList(0, resultSize);
+
+        for (int i = 0; i < resultSize; i++) {
+            int idx = resultIdxs.get(i);
+            JSONObject docsElement = (JSONObject) docs.get(idx);
+            JSONObject doc = (JSONObject) docsElement.get("doc");
+
+            responseList.add(RandomResponseDto.builder()
+                    .no(doc.getAsString("no"))
                     .bookname(doc.getAsString("bookname"))
                     .authors(doc.getAsString("authors"))
                     .publisher(doc.getAsString("publisher"))
