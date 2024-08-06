@@ -86,6 +86,6 @@ public class ResponseParser {
                     .weight(step1.getAsString("weight"))
                     .build());
         }
-        return responseList;
+        return RandomPicker.randomPick(responseList, 10, true);
     }
 }
