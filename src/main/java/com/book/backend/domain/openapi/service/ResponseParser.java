@@ -45,7 +45,7 @@ public class ResponseParser {
         LinkedList<HotTrendResponseDto> responseList = new LinkedList<>();
 
         for (int i = 0; i < step0.size(); i++) {
-            JSONObject temp1 = (JSONObject) step0.get(0);
+            JSONObject temp1 = (JSONObject) step0.get(i);
             JSONObject step1 = (JSONObject) temp1.get("result");
             JSONArray step2 = (JSONArray) step1.get("docs");
             for (Object obj : step2) {
