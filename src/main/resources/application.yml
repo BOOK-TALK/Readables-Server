@@ -14,16 +14,16 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create # entity 기반 스키마 생성
+      ddl-auto: update # entity 기반 스키마 생성 // update 로 변경
 
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        globally_quoted_identifiers: true # sql 예약어와 일치하는 필드명 구분
         format_sql: true
     open-in-view: false
-    defer-datasource-initialization: true # ddl-auto 실행 후 data.sql 로 데이터 삽입
+    defer-datasource-initialization: true # ddl-auto 실행 후 import.sql 로 데이터 삽입
 
-  sql: #data.sql 의 DDL 실행
+  sql: #import.sql 의 DDL 실행
     init:
       mode: always
 
