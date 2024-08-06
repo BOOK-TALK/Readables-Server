@@ -2,8 +2,10 @@ package com.book.backend.domain.book.controller;
 
 import com.book.backend.domain.book.service.BookService;
 import com.book.backend.domain.book.service.RequestValidate;
+import com.book.backend.domain.openapi.dto.request.CustomHotTrendRequestDto;
 import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
 import com.book.backend.domain.openapi.dto.request.KeywordRequestDto;
+import com.book.backend.domain.openapi.dto.response.CustomHotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
@@ -68,5 +70,24 @@ public class BookController {
         LinkedList<KeywordResponseDto> response = bookService.keywords(requestDto);
 
         return responseTemplate.success(response, HttpStatus.OK);
+    }
+
+    // 조건형 인기 대출 도서 (3)
+    @GetMapping("/customHotTrend")
+    public ResponseEntity<?> customHotTrend(@RequestParam(required = false) String weekMonth,
+                                            @RequestParam(required = false) String peerAge,
+                                            @RequestParam(required = false) String ageRange,
+                                            @RequestParam(required = false) String gender,
+                                            @RequestParam(required = false) String genreCode,
+                                            @RequestParam(required = false) String region,
+                                            @RequestParam(required = false) String libCode) throws Exception {
+        requestValidate.validCustomHotTrendRequest(weekMonth, peerAge, ageRange, gender, genreCode, region, libCode);
+
+        // TODO : 입력값에 맞게 dto 에 값 넣는 로직.
+//        CustomHotTrendRequestDto requestDto = CustomHotTrendRequestDto.builder().;
+
+//        LinkedList<CustomHotTrendResponseDto> response = bookService.customHotTrend(requestDto);
+
+        return responseTemplate.success(null, HttpStatus.OK);
     }
 }

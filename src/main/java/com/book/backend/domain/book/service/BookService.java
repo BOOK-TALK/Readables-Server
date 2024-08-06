@@ -1,8 +1,10 @@
 package com.book.backend.domain.book.service;
 
+import com.book.backend.domain.openapi.dto.request.CustomHotTrendRequestDto;
 import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
 import com.book.backend.domain.openapi.dto.request.KeywordRequestDto;
 import com.book.backend.domain.openapi.dto.request.RecommendRequestDto;
+import com.book.backend.domain.openapi.dto.response.CustomHotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
@@ -13,7 +15,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,5 +78,12 @@ public class BookService {
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new KeywordResponseDto());
         ResponseParser responseParser = new ResponseParser();
         return responseParser.keywords(jsonResponse);
+    }
+
+    public LinkedList<CustomHotTrendResponseDto> customHotTrend(CustomHotTrendRequestDto requestDto) throws Exception{
+        String subUrl = "loanItemSrch";
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new CustomHotTrendResponseDto());
+        ResponseParser responseParser = new ResponseParser();
+        return responseParser.customHotTrend(jsonResponse);
     }
 }

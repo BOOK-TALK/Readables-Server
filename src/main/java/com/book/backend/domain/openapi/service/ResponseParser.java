@@ -1,5 +1,6 @@
 package com.book.backend.domain.openapi.service;
 
+import com.book.backend.domain.openapi.dto.response.CustomHotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
@@ -87,5 +88,34 @@ public class ResponseParser {
                     .build());
         }
         return RandomPicker.randomPick(responseList, 10, true);
+    }
+
+    public LinkedList<CustomHotTrendResponseDto> customHotTrend(JSONObject jsonResponse) {
+        JSONArray step0 = (JSONArray) jsonResponse.get("docs");
+
+        LinkedList<CustomHotTrendResponseDto> responseList = new LinkedList<>();
+        HashSet<String> duplicateCheckSet = new HashSet<>();
+        for (Object obj : step0) {
+            JSONObject temp = (JSONObject) obj;
+            JSONObject step1 = (JSONObject) temp.get("doc");
+
+            responseList.add(CustomHotTrendResponseDto.builder()
+                    .no(step1.getAsString("no"))
+                    .ranking(step1.getAsString("ranking"))
+                    .bookname(step1.getAsString("bookname"))
+                    .authors(step1.getAsString("authors"))
+                    .publisher(step1.getAsString("publisher"))
+                    .publication_year(step1.getAsString("publication_year"))
+                    .isbn13(step1.getAsString("isbn13"))
+                    .additional_symbol(step1.getAsString("additional_symbol"))
+                    .vol(step1.getAsString("vol"))
+                    .class_no(step1.getAsString("class_no"))
+                    .class_nm(step1.getAsString("class_nm"))
+                    .loan_count(step1.getAsString("loan_count"))
+                    .bookImageURL(step1.getAsString("bookImageURL"))
+                    .bookDtlUrl(step1.getAsString("bookDtlUrl"))
+                    .build());
+        }
+        return responseList;
     }
 }
