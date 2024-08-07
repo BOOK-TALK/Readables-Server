@@ -1,11 +1,11 @@
 package com.book.backend.domain.search.controller;
 
-import com.book.backend.domain.book.service.BookService;
 import com.book.backend.domain.openapi.dto.request.SearchRequestDto;
 import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
 import com.book.backend.domain.search.service.SearchService;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
+import java.net.URLEncoder;
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class SearchController {
     public ResponseEntity<?> search(@RequestParam String input) throws Exception {
         RequestLogger.param(new String[]{"input"}, input);
 
-        SearchRequestDto requestDto = SearchRequestDto.builder().title(input).build();
+        SearchRequestDto requestDto = SearchRequestDto.builder().title(URLEncoder.encode(input, "UTF-8")).build();
         LinkedList<SearchResponseDto> response = searchService.search(requestDto);
 
         return responseTemplate.success(response, HttpStatus.OK);
