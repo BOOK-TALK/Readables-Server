@@ -17,7 +17,7 @@ public enum ErrorCode {
     INVALID_GENRE_CODE(HttpStatus.BAD_REQUEST, "400", "두 자리 세부장르 코드를 입력해주세요."),
     INVALID_REGION_CODE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 지역 코드입니다."),
     INVALID_LIB_CODE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 도서관 코드입니다. (6자리 숫자로 입력해주세요)"),
-
+    INVALID_PAGE_NUM(HttpStatus.BAD_REQUEST, "400", "1 이상의 숫자로 입력해주세요."),
 
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "401", "인증 오류가 발생했습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 사용자를 찾을 수 없습니다."),

@@ -31,7 +31,9 @@ public class SearchController {
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestParam String title, String libCode, int pageNo, int pageSize) throws Exception {
         RequestLogger.param(new String[]{"title, libCode, pageNo, pageSize"}, title, libCode, pageNo, pageSize);
-
+        requestValidate.isValidLibCode(libCode);
+        requestValidate.isValidPageNum(pageNo);
+        requestValidate.isValidPageNum(pageSize);
         SearchRequestDto requestDto = SearchRequestDto.builder()
                 .keyword(UriUtils.encode("\"" + title + "\"", "UTF-8")) // 공백 및 한글 인코딩
                 .pageNo(pageNo).pageSize(pageSize).build();
