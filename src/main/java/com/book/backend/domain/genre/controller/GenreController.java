@@ -33,7 +33,7 @@ public class GenreController {
      * 일주일 인기순 - 중주제 KDC 번호(2자리) 입력 시 1주일 인기순 도서 목록 리턴
      */
     @GetMapping("/aWeekTrend")
-    public ResponseEntity<?> aWeekTrend(@RequestParam(required = true) String subKdc,
+    public ResponseEntity<?> aWeekTrend(@RequestParam String subKdc,
                                         @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         genreRequestValidate.isValidSubKdc(subKdc);
@@ -48,7 +48,7 @@ public class GenreController {
      * 한달 인기순 - 중주제 KDC 번호(2자리) 입력 시 1개월 인기순 도서 목록 리턴
      */
     @GetMapping("/aMonthTrend")
-    public ResponseEntity<?> aMonthTrend(@RequestParam(required = true) String subKdc,
+    public ResponseEntity<?> aMonthTrend(@RequestParam String subKdc,
                                          @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         genreRequestValidate.isValidSubKdc(subKdc);
@@ -63,7 +63,7 @@ public class GenreController {
      * 무작위순 - 중주제 KDC 번호(2자리) 입력 시 랜덤한 도서 목록 리턴
      */
     @GetMapping("/random")
-    public ResponseEntity<?> random(@RequestParam(required = true) String subKdc,
+    public ResponseEntity<?> random(@RequestParam String subKdc,
                                     @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         genreRequestValidate.isValidSubKdc(subKdc);
@@ -78,7 +78,7 @@ public class GenreController {
      * 신작 인기순 - 중주제 KDC 번호(2자리) 입력 시 3년 내 출판된 인기 도서 목록 리턴
      */
     @GetMapping("/newTrend")
-    public ResponseEntity<?> newTrend(@RequestParam(required = true) String subKdc,
+    public ResponseEntity<?> newTrend(@RequestParam String subKdc,
                                       @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         genreRequestValidate.isValidSubKdc(subKdc);

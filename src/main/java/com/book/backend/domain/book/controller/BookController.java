@@ -30,7 +30,7 @@ public class BookController {
 
     // 마니아(4), 다독자(5) 추천 API
     @GetMapping("/recommend")
-    public ResponseEntity<?> recommend(@RequestParam(required = true) String isbn) throws Exception {
+    public ResponseEntity<?> recommend(@RequestParam String isbn) throws Exception {
         RequestLogger.param(new String[]{"isbn"}, isbn);
         bookRequestValidate.isValidIsbn(isbn);
 
@@ -46,7 +46,7 @@ public class BookController {
 
     // 대출급상승(12) API
     @GetMapping("/hotTrend")
-    public ResponseEntity<?> hotTrend(@RequestParam(required = true) String searchDt) throws Exception {
+    public ResponseEntity<?> hotTrend(@RequestParam String searchDt) throws Exception {
         RequestLogger.param(new String[]{"searchDt"}, searchDt);
         bookRequestValidate.isValidSearchDt(searchDt);
 
