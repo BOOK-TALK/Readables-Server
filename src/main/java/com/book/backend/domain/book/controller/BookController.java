@@ -1,7 +1,7 @@
 package com.book.backend.domain.book.controller;
 
 import com.book.backend.domain.book.service.BookService;
-import com.book.backend.domain.book.service.RequestValidate;
+import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.openapi.dto.request.CustomHotTrendRequestDto;
 import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
 import com.book.backend.domain.openapi.dto.request.KeywordRequestDto;
@@ -55,7 +55,7 @@ public class BookController {
         LinkedList<RecommendResponseDto> duplicateRemovedList = bookService.duplicateChecker(response, duplicateCheckSet);
         bookService.ensureRecommendationsCount(duplicateRemovedList, duplicateCheckSet);
 
-        return responseTemplate.success(response, HttpStatus.OK);
+        return responseTemplate.success(duplicateRemovedList, HttpStatus.OK);
     }
 
     // 대출급상승(12) API
