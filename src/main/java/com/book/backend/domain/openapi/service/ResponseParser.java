@@ -25,7 +25,7 @@ public class ResponseParser {
         log.trace("ResponseParser > recommend()");
 
 
-        JSONArray step0 = (JSONArray) jsonResponse.get("docs");
+        JSONArray docs = (JSONArray) jsonResponse.get("docs");
         LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
 

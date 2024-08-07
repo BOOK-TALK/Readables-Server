@@ -5,7 +5,6 @@ import com.book.backend.domain.genre.repository.GenreRepository;
 import com.book.backend.domain.openapi.dto.request.LoanTrendRequestDto;
 import com.book.backend.domain.openapi.dto.response.LoanTrendResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
-import com.book.backend.domain.openapi.service.ResponseParser;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.LinkedList;
