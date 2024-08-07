@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -19,6 +20,7 @@ import java.lang.reflect.Field;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class OpenAPI {
     @Value("${openapi.url}")
     private String baseUrl;
@@ -30,12 +32,14 @@ public class OpenAPI {
 
 
     public JSONObject connect(String subUrl, OpenAPIRequestInterface dto, OpenAPIResponseInterface responseDto) throws Exception {
+        log.trace("OpenAPI > connect()");
         URL url = setRequest(subUrl, dto); // 요청 만들기
         InputStreamReader streamResponse = new InputStreamReader(url.openStream(), "UTF-8"); // 요청 보내기
         return readStreamToJson(streamResponse, responseDto); // 응답 stream 을 json 으로 변환
     }
 
     private URL setRequest(String subUrl, OpenAPIRequestInterface dto) throws Exception {
+        log.trace("OpenAPI > setRequest()");
         StringBuilder sb = new StringBuilder();
 
         // url 에 request Param 추가
@@ -54,6 +58,7 @@ public class OpenAPI {
 
     /* InputStream 을 json 파싱 */
     private JSONObject readStreamToJson(InputStreamReader streamResponse, OpenAPIResponseInterface responseDto) throws Exception {
+        log.trace("OpenAPI > readStreamToJson()");
         String fullResponse = new BufferedReader(streamResponse).readLine();
 
         // response JSON 파싱

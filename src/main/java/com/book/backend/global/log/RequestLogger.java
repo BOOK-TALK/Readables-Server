@@ -17,9 +17,12 @@ public class RequestLogger {
         sb.append("RequestParam : {");
         for(String key : keys){
             if(paramIter.hasNext()){
-                String valueType = paramIter.next().getClass().getSimpleName();
-                sb.append(key).append(": ").append(valueType);
-                if(paramIter.hasNext()) sb.append(", ");
+                Object val = paramIter.next();
+                if(val != null){
+                    String valueType = val.getClass().getSimpleName();
+                    sb.append(key).append(": ").append(valueType);
+                    if(paramIter.hasNext()) sb.append(", ");
+                }
             }
         }
         sb.append("}");
