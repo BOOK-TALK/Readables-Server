@@ -4,6 +4,7 @@ import com.book.backend.domain.openapi.dto.response.CustomHotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
+import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
 import java.util.HashSet;
 import java.util.LinkedList;
 import lombok.extern.slf4j.Slf4j;
@@ -123,6 +124,30 @@ public class ResponseParser {
                     .loan_count(step1.getAsString("loan_count"))
                     .bookImageURL(step1.getAsString("bookImageURL"))
                     .bookDtlUrl(step1.getAsString("bookDtlUrl"))
+                    .build());
+        }
+        return responseList;
+    }
+
+    public LinkedList<SearchResponseDto> search(JSONObject jsonResponse){
+        log.trace("ResponseParser > search()");
+
+        JSONArray step0 = (JSONArray) jsonResponse.get("docs");
+        LinkedList<SearchResponseDto> responseList = new LinkedList<>();
+        for (Object obj : step0) {
+            JSONObject temp = (JSONObject) obj;
+            JSONObject step1 = (JSONObject) temp.get("doc");
+
+            responseList.add(SearchResponseDto.builder()
+                    .bookname(step1.getAsString("bookname"))
+                    .authors(step1.getAsString("authors"))
+                    .publisher(step1.getAsString("publisher"))
+                    .publication_year(step1.getAsString("publication_year"))
+                    .isbn13(step1.getAsString("isbn13"))
+                    .vol(step1.getAsString("vol"))
+                    .bookImageURL(step1.getAsString("bookImageURL"))
+                    .bookDtlUrl(step1.getAsString("bookDtlUrl"))
+                    .loan_count(step1.getAsString("loan_count"))
                     .build());
         }
         return responseList;
