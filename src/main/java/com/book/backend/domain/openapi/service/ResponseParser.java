@@ -152,4 +152,11 @@ public class ResponseParser {
         }
         return responseList;
     }
+
+    public boolean loanAvailable(JSONObject jsonResponse) {
+        log.trace("ResponseParser > loanAvailable()");
+
+        JSONObject step0 = (JSONObject) jsonResponse.get("result");
+        return step0.getAsString("loanAvailable").equals("Y");
+    }
 }
