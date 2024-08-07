@@ -4,12 +4,13 @@ import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 import com.book.backend.domain.openapi.dto.response.LoanTrendResponseDto;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ResponseParser {
 
     public LinkedList<RecommendResponseDto> recommend(JSONObject jsonResponse) {
@@ -74,93 +75,19 @@ public class ResponseParser {
         return responseList;
     }
 
-    public LinkedList<LoanTrendResponseDto> periodTrend(JSONObject jsonResponse, Integer maxSize) {
+    public LinkedList<LoanTrendResponseDto> loanTrend(JSONObject jsonResponse) {
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
+
         LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
+        HashSet<String> duplicateCheckSet = new HashSet<>();
 
         for (Object o : docs) {
-            if (maxSize != null && responseList.size() >= maxSize) {
-                break;
-            }
 
             JSONObject docsElement = (JSONObject) o;
             JSONObject doc = (JSONObject) docsElement.get("doc");
 
-            responseList.add(LoanTrendResponseDto.builder()
-                    .no(doc.getAsString("no"))
-                    .ranking(doc.getAsString("ranking"))
-                    .bookname(doc.getAsString("bookname"))
-                    .authors(doc.getAsString("authors"))
-                    .publisher(doc.getAsString("publisher"))
-                    .publication_year(doc.getAsString("publication_year"))
-                    .isbn13(doc.getAsString("isbn13"))
-                    .addition_symbol(doc.getAsString("addition_symbol"))
-                    .class_no(doc.getAsString("class_no"))
-                    .class_nm(doc.getAsString("class_nm"))
-                    .loan_count(doc.getAsString("loan_count"))
-                    .bookImageURL(doc.getAsString("bookImageURL"))
-                    .bookDtlUrl(doc.getAsString("bookDtlUrl"))
-                    .build());
-        }
-        return responseList;
-    }
-
-    public LinkedList<LoanTrendResponseDto> random(JSONObject jsonResponse, int resultSize, Integer maxSize) {
-        JSONArray docs = (JSONArray) jsonResponse.get("docs");
-        LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
-
-        List<Integer> idxs = new ArrayList<>(IntStream.range(0, docs.size()).boxed().toList());
-        Collections.shuffle(idxs);
-        List<Integer> resultIdxs = idxs.subList(0, resultSize);
-
-        for (int i = 0; i < resultSize; i++) {
-            if (maxSize != null && responseList.size() >= maxSize) {
-                break;
-            }
-
-            int idx = resultIdxs.get(i);
-            JSONObject docsElement = (JSONObject) docs.get(idx);
-            JSONObject doc = (JSONObject) docsElement.get("doc");
-
-            responseList.add(LoanTrendResponseDto.builder()
-                    .no(doc.getAsString("no"))
-                    .ranking(doc.getAsString("ranking"))
-                    .bookname(doc.getAsString("bookname"))
-                    .authors(doc.getAsString("authors"))
-                    .publisher(doc.getAsString("publisher"))
-                    .publication_year(doc.getAsString("publication_year"))
-                    .isbn13(doc.getAsString("isbn13"))
-                    .addition_symbol(doc.getAsString("addition_symbol"))
-                    .class_no(doc.getAsString("class_no"))
-                    .class_nm(doc.getAsString("class_nm"))
-                    .loan_count(doc.getAsString("loan_count"))
-                    .bookImageURL(doc.getAsString("bookImageURL"))
-                    .bookDtlUrl(doc.getAsString("bookDtlUrl"))
-                    .build());
-        }
-        return responseList;
-    }
-
-    public LinkedList<LoanTrendResponseDto> newTrend(JSONObject jsonResponse, int currentYear, Integer maxSize) {
-        JSONArray docs = (JSONArray) jsonResponse.get("docs");
-        LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
-
-        for (Object o : docs) {
-            if (maxSize != null && responseList.size() >= maxSize) {
-                break;
-            }
-
-            JSONObject docsElement = (JSONObject) o;
-            JSONObject doc = (JSONObject) docsElement.get("doc");
-
-            int publication_year;
-            try {
-                publication_year = Integer.parseInt(doc.getAsString("publication_year"));
-            } catch (NumberFormatException e) {
-                continue;
-            }
-
-            if (publication_year >= currentYear - 2) {
+            String duplicateCheckKey = doc.getAsString("bookname") + doc.getAsString("authors");
+            if (duplicateCheckSet.add(duplicateCheckKey)) {
                 responseList.add(LoanTrendResponseDto.builder()
                         .no(doc.getAsString("no"))
                         .ranking(doc.getAsString("ranking"))

@@ -23,6 +23,7 @@ import java.util.Optional;
 public class GenreService {
     private final GenreRepository genreRepository;
     private final OpenAPI openAPI;
+    private final GenreResponseParser genreResponseParser;
 
     public Genre findById(Long id) {
         return genreRepository.findById(id)
@@ -47,9 +48,8 @@ public class GenreService {
         requestDto.setEndDt(today.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanTrendResponseDto());
-        ResponseParser responseParser = new ResponseParser();
 
-        return new LinkedList<>(responseParser.periodTrend(JsonResponse, maxSize));
+        return new LinkedList<>(genreResponseParser.periodTrend(JsonResponse, maxSize));
     }
 
     public LinkedList<LoanTrendResponseDto> random(LoanTrendRequestDto requestDto, Integer maxSize) throws Exception {
@@ -59,9 +59,8 @@ public class GenreService {
         requestDto.setPageSize(500);  // 셔플할 리스트의 페이지 크기 설정
 
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanTrendResponseDto());
-        ResponseParser responseParser = new ResponseParser();
 
-        return new LinkedList<>(responseParser.random(JsonResponse, resultSize, maxSize));
+        return new LinkedList<>(genreResponseParser.random(JsonResponse, resultSize, maxSize));
     }
 
     public LinkedList<LoanTrendResponseDto> newTrend(LoanTrendRequestDto requestDto, Integer maxSize) throws Exception {
@@ -72,9 +71,8 @@ public class GenreService {
         int currentYear = Integer.parseInt(today.format(DateTimeFormatter.ofPattern("yyyy")));
 
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanTrendResponseDto());
-        ResponseParser responseParser = new ResponseParser();
 
-        return new LinkedList<>(responseParser.newTrend(JsonResponse, currentYear, maxSize));
+        return new LinkedList<>(genreResponseParser.newTrend(JsonResponse, currentYear, maxSize));
     }
 
 }
