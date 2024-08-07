@@ -11,8 +11,11 @@ import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -40,15 +43,37 @@ public class GenreService {
                 .orElseThrow(() -> new IllegalArgumentException("KDC 번호가" + mainKdcNum + subKdcNum + "인 장르를 찾을 수 없습니다."));
     }
 
-    public LinkedList<LoanTrendResponseDto> periodTrend(LoanTrendRequestDto requestDto, Integer dayPeriod, Integer maxSize) throws Exception {
+    public LinkedList<LoanTrendResponseDto> periodToNowTrend(LoanTrendRequestDto requestDto, Integer dayPeriod, Integer maxSize) throws Exception {
+        LocalDate today = LocalDate.now();
+        LocalDate startDt = today.minusDays(dayPeriod + 1);
+        LocalDate endDt = today.minusDays(1);
+
+        return periodTrend(requestDto, startDt, endDt, maxSize);
+    }
+
+    public LinkedList<LoanTrendResponseDto> thisWeekTrend(LoanTrendRequestDto requestDto, Integer maxSize) throws Exception {
+        LocalDate today = LocalDate.now();
+        LocalDate startDt, endDt;
+        // 월요일 또는 화요일이면 저번주로, 아니면 이번주로 계산
+        if (today.getDayOfWeek() == DayOfWeek.MONDAY || today.getDayOfWeek() == DayOfWeek.TUESDAY) {
+            startDt = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).minusDays(7);
+            endDt = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).minusDays(7);
+        } else {
+            startDt = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            endDt = today.minusDays(1);
+        }
+
+        return periodTrend(requestDto, startDt, endDt, maxSize);
+    }
+
+    // periodToNowTrend, thisWeekTrend에 의해 호출됨
+    public LinkedList<LoanTrendResponseDto> periodTrend(LoanTrendRequestDto requestDto, LocalDate startDt, LocalDate endDt, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
 
-        LocalDate today = LocalDate.now();
-        requestDto.setStartDt(today.minusDays(dayPeriod + 1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        requestDto.setEndDt(today.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        requestDto.setStartDt(startDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        requestDto.setEndDt(endDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanTrendResponseDto());
-
         return new LinkedList<>(genreResponseParser.periodTrend(JsonResponse, maxSize));
     }
 

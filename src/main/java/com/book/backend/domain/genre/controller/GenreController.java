@@ -12,6 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.TemporalAdjusters;
 import java.util.LinkedList;
 
 @RestController
@@ -33,7 +37,7 @@ public class GenreController {
         genreRequestValidate.isValidSubKdc(subKdc);
 
         LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
-        LinkedList<LoanTrendResponseDto> response = genreService.periodTrend(requestDto, 7, maxSize);
+        LinkedList<LoanTrendResponseDto> response = genreService.periodToNowTrend(requestDto, 7, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -48,7 +52,23 @@ public class GenreController {
         genreRequestValidate.isValidSubKdc(subKdc);
 
         LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
-        LinkedList<LoanTrendResponseDto> response = genreService.periodTrend(requestDto, 30, maxSize);
+        LinkedList<LoanTrendResponseDto> response = genreService.periodToNowTrend(requestDto, 30, maxSize);
+
+        return responseTemplate.success(response, HttpStatus.OK);
+    }
+
+    /**
+     * N월 M주차 - 중주제 KDC 번호(2자리) 입력시 N월 M주차 인기 도서 목록 리턴
+     *           - (월요일 또는 화요일이면 저번 주로, 아니면 이번 주로 계산)
+     */
+    @GetMapping("/thisWeekTrend")
+    public ResponseEntity<?> thisWeekTrend(@RequestParam String subKdc,
+                                           @RequestParam(required = false) Integer maxSize) throws Exception {
+        RequestLogger.param(new String[]{"kdcNum"}, subKdc);
+        genreRequestValidate.isValidSubKdc(subKdc);
+
+        LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
+        LinkedList<LoanTrendResponseDto> response = genreService.thisWeekTrend(requestDto, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
