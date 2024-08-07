@@ -1,4 +1,4 @@
-package com.book.backend.domain.openapi.dto.response.genre;
+package com.book.backend.domain.openapi.dto.response;
 
 import com.book.backend.domain.openapi.dto.response.OpenAPIResponseInterface;
 import lombok.*;
@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PeriodTrendResponseDto implements OpenAPIResponseInterface {
+public class LoanTrendResponseDto implements OpenAPIResponseInterface {
     private String no;
     private String ranking;
     private String bookname;

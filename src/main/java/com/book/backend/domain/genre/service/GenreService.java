@@ -1,14 +1,9 @@
 package com.book.backend.domain.genre.service;
 
-import com.book.backend.domain.book.entity.Book;
 import com.book.backend.domain.genre.entity.Genre;
 import com.book.backend.domain.genre.repository.GenreRepository;
-import com.book.backend.domain.openapi.dto.request.genre.NewTrendRequestDto;
-import com.book.backend.domain.openapi.dto.request.genre.PeriodTrendRequestDto;
-import com.book.backend.domain.openapi.dto.request.genre.RandomRequestDto;
-import com.book.backend.domain.openapi.dto.response.genre.NewTrendResponseDto;
-import com.book.backend.domain.openapi.dto.response.genre.PeriodTrendResponseDto;
-import com.book.backend.domain.openapi.dto.response.genre.RandomResponseDto;
+import com.book.backend.domain.openapi.dto.request.LoanTrendRequestDto;
+import com.book.backend.domain.openapi.dto.response.LoanTrendResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -45,39 +39,39 @@ public class GenreService {
                 .orElseThrow(() -> new IllegalArgumentException("KDC 번호가" + mainKdcNum + subKdcNum + "인 장르를 찾을 수 없습니다."));
     }
 
-    public LinkedList<PeriodTrendResponseDto> periodTrend(PeriodTrendRequestDto requestDto, Integer dayPeriod, Integer maxSize) throws Exception {
+    public LinkedList<LoanTrendResponseDto> periodTrend(LoanTrendRequestDto requestDto, Integer dayPeriod, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
 
         LocalDate today = LocalDate.now();
         requestDto.setStartDt(today.minusDays(dayPeriod + 1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         requestDto.setEndDt(today.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
-        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new PeriodTrendResponseDto());
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanTrendResponseDto());
         ResponseParser responseParser = new ResponseParser();
 
         return new LinkedList<>(responseParser.periodTrend(JsonResponse, maxSize));
     }
 
-    public LinkedList<RandomResponseDto> random(RandomRequestDto requestDto, Integer maxSize) throws Exception {
+    public LinkedList<LoanTrendResponseDto> random(LoanTrendRequestDto requestDto, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
         int resultSize = 200;
 
         requestDto.setPageSize(500);  // 셔플할 리스트의 페이지 크기 설정
 
-        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new RandomResponseDto());
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanTrendResponseDto());
         ResponseParser responseParser = new ResponseParser();
 
         return new LinkedList<>(responseParser.random(JsonResponse, resultSize, maxSize));
     }
 
-    public LinkedList<NewTrendResponseDto> newTrend(NewTrendRequestDto requestDto, Integer maxSize) throws Exception {
+    public LinkedList<LoanTrendResponseDto> newTrend(LoanTrendRequestDto requestDto, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
 
         requestDto.setPageSize(1500);  // 연도로 필터링하기 전 페이지 크기 설정
         LocalDate today = LocalDate.now();
         int currentYear = Integer.parseInt(today.format(DateTimeFormatter.ofPattern("yyyy")));
 
-        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new NewTrendResponseDto());
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanTrendResponseDto());
         ResponseParser responseParser = new ResponseParser();
 
         return new LinkedList<>(responseParser.newTrend(JsonResponse, currentYear, maxSize));

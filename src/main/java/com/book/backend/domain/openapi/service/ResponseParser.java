@@ -6,9 +6,7 @@ import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import java.util.*;
 import java.util.stream.IntStream;
 
-import com.book.backend.domain.openapi.dto.response.genre.NewTrendResponseDto;
-import com.book.backend.domain.openapi.dto.response.genre.PeriodTrendResponseDto;
-import com.book.backend.domain.openapi.dto.response.genre.RandomResponseDto;
+import com.book.backend.domain.openapi.dto.response.LoanTrendResponseDto;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -76,9 +74,9 @@ public class ResponseParser {
         return responseList;
     }
 
-    public LinkedList<PeriodTrendResponseDto> periodTrend(JSONObject jsonResponse, Integer maxSize) {
+    public LinkedList<LoanTrendResponseDto> periodTrend(JSONObject jsonResponse, Integer maxSize) {
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
-        LinkedList<PeriodTrendResponseDto> responseList = new LinkedList<>();
+        LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
 
         for (Object o : docs) {
             if (maxSize != null && responseList.size() >= maxSize) {
@@ -88,7 +86,7 @@ public class ResponseParser {
             JSONObject docsElement = (JSONObject) o;
             JSONObject doc = (JSONObject) docsElement.get("doc");
 
-            responseList.add(PeriodTrendResponseDto.builder()
+            responseList.add(LoanTrendResponseDto.builder()
                     .no(doc.getAsString("no"))
                     .ranking(doc.getAsString("ranking"))
                     .bookname(doc.getAsString("bookname"))
@@ -107,9 +105,9 @@ public class ResponseParser {
         return responseList;
     }
 
-    public LinkedList<RandomResponseDto> random(JSONObject jsonResponse, int resultSize, Integer maxSize) {
+    public LinkedList<LoanTrendResponseDto> random(JSONObject jsonResponse, int resultSize, Integer maxSize) {
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
-        LinkedList<RandomResponseDto> responseList = new LinkedList<>();
+        LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
 
         List<Integer> idxs = new ArrayList<>(IntStream.range(0, docs.size()).boxed().toList());
         Collections.shuffle(idxs);
@@ -124,8 +122,9 @@ public class ResponseParser {
             JSONObject docsElement = (JSONObject) docs.get(idx);
             JSONObject doc = (JSONObject) docsElement.get("doc");
 
-            responseList.add(RandomResponseDto.builder()
+            responseList.add(LoanTrendResponseDto.builder()
                     .no(doc.getAsString("no"))
+                    .ranking(doc.getAsString("ranking"))
                     .bookname(doc.getAsString("bookname"))
                     .authors(doc.getAsString("authors"))
                     .publisher(doc.getAsString("publisher"))
@@ -142,9 +141,9 @@ public class ResponseParser {
         return responseList;
     }
 
-    public LinkedList<NewTrendResponseDto> newTrend(JSONObject jsonResponse, int currentYear, Integer maxSize) {
+    public LinkedList<LoanTrendResponseDto> newTrend(JSONObject jsonResponse, int currentYear, Integer maxSize) {
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
-        LinkedList<NewTrendResponseDto> responseList = new LinkedList<>();
+        LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
 
         for (Object o : docs) {
             if (maxSize != null && responseList.size() >= maxSize) {
@@ -162,7 +161,7 @@ public class ResponseParser {
             }
 
             if (publication_year >= currentYear - 2) {
-                responseList.add(NewTrendResponseDto.builder()
+                responseList.add(LoanTrendResponseDto.builder()
                         .no(doc.getAsString("no"))
                         .ranking(doc.getAsString("ranking"))
                         .bookname(doc.getAsString("bookname"))
