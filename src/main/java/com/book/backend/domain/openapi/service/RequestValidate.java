@@ -1,4 +1,4 @@
-package com.book.backend.domain.book.service;
+package com.book.backend.domain.openapi.service;
 
 import com.book.backend.domain.openapi.dto.request.CustomHotTrendRequestDto;
 import com.book.backend.domain.openapi.entity.AgeRangeCode;
