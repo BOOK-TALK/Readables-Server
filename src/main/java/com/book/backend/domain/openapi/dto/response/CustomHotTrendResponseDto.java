@@ -25,4 +25,7 @@ public class CustomHotTrendResponseDto implements OpenAPIResponseInterface {
     private String bookImageURL;
     private String bookDtlUrl;
 
+    public static final String description = "no: 순번 | ranking: 순위 | bookname: 책이름 | authors: 작가, 옮긴이 | publisher: 출판사 | "
+            + "publication_year: 출판년도 | isbn13: 책 바코드 | additional_symbol: 책 바코드 부가기호? | vol: 권? | class_no: 주제코드 | "
+            + "class_nm: 주제분류 | loan_count: 대출횟수 | bookImageURL: 책표지 URL | bookDtlUrl: 책 상세정보 URL";
 }

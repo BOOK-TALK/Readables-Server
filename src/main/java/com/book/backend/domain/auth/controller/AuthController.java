@@ -4,6 +4,7 @@ import com.book.backend.domain.auth.dto.LoginDto;
 import com.book.backend.domain.auth.dto.SignupDto;
 import com.book.backend.domain.auth.service.AuthService;
 import com.book.backend.domain.user.dto.UserDto;
+import com.book.backend.global.log.RequestLogger;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,21 +25,24 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<UserDto> signup(@Valid @RequestBody SignupDto signupDto) {
-        log.info("signup 호출");
+        RequestLogger.body(signupDto);
+
         UserDto userDto = authService.signup(signupDto);
         return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto> login(@Valid @RequestBody LoginDto loginDto) {
-        log.info("login 호출");
-        UserDto userDto = authService.login(loginDto);
+    public ResponseEntity<UserDto> login(HttpServletRequest request, @Valid @RequestBody LoginDto loginDto) {
+        RequestLogger.body(loginDto);
+
+        UserDto userDto = authService.login(request, loginDto);
         return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
-        log.info("logout 호출");
+        RequestLogger.param(new String[] {"Session ID"}, request.getSession().getId());
+
         request.getSession().invalidate();
         SecurityContextHolder.clearContext();
         return new ResponseEntity<>(HttpStatus.OK);
@@ -46,7 +50,8 @@ public class AuthController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteAccount(HttpServletRequest request) {
-        log.info("deleteAccount 호출");
+        RequestLogger.param(new String[] {"Session ID"}, request.getSession().getId());
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loginId = authentication.getName();
 
