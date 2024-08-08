@@ -1,6 +1,6 @@
 package com.book.backend.domain.genre.service;
 
-import com.book.backend.domain.openapi.dto.response.LoanTrendResponseDto;
+import com.book.backend.domain.openapi.dto.response.LoanItemSrchResponseDto;
 import com.book.backend.domain.openapi.service.RandomPicker;
 import com.book.backend.domain.openapi.service.ResponseParser;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +14,11 @@ import java.util.LinkedList;
 public class GenreResponseParser {
     private final ResponseParser responseParser;
 
-    public LinkedList<LoanTrendResponseDto> periodTrend(JSONObject jsonResponse, Integer maxSize) {
-        LinkedList<LoanTrendResponseDto> loanTrendResponseList = responseParser.loanTrend(jsonResponse);
-        LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
+    public LinkedList<LoanItemSrchResponseDto> periodTrend(JSONObject jsonResponse, Integer maxSize) {
+        LinkedList<LoanItemSrchResponseDto> loanTrendResponseList = responseParser.loanTrend(jsonResponse);
+        LinkedList<LoanItemSrchResponseDto> responseList = new LinkedList<>();
 
-        for (LoanTrendResponseDto response : loanTrendResponseList) {
+        for (LoanItemSrchResponseDto response : loanTrendResponseList) {
             if (maxSize != null && responseList.size() >= maxSize) {
                 break;
             }
@@ -27,11 +27,11 @@ public class GenreResponseParser {
         return responseList;
     }
 
-    public LinkedList<LoanTrendResponseDto> random(JSONObject jsonResponse, int resultSize, Integer maxSize) {
-        LinkedList<LoanTrendResponseDto> loanTrendResponseList = responseParser.loanTrend(jsonResponse);
-        LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
+    public LinkedList<LoanItemSrchResponseDto> random(JSONObject jsonResponse, int resultSize, Integer maxSize) {
+        LinkedList<LoanItemSrchResponseDto> loanTrendResponseList = responseParser.loanTrend(jsonResponse);
+        LinkedList<LoanItemSrchResponseDto> responseList = new LinkedList<>();
 
-        for (LoanTrendResponseDto response : loanTrendResponseList) {
+        for (LoanItemSrchResponseDto response : loanTrendResponseList) {
             if (maxSize != null && responseList.size() >= maxSize) {
                 break;
             }
@@ -40,11 +40,11 @@ public class GenreResponseParser {
         return RandomPicker.randomPick(responseList, resultSize);
     }
 
-    public LinkedList<LoanTrendResponseDto> newTrend(JSONObject jsonResponse, int currentYear, Integer maxSize) {
-        LinkedList<LoanTrendResponseDto> loanTrendResponseList = responseParser.loanTrend(jsonResponse);
-        LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
+    public LinkedList<LoanItemSrchResponseDto> newTrend(JSONObject jsonResponse, int currentYear, Integer maxSize) {
+        LinkedList<LoanItemSrchResponseDto> loanTrendResponseList = responseParser.loanTrend(jsonResponse);
+        LinkedList<LoanItemSrchResponseDto> responseList = new LinkedList<>();
 
-        for (LoanTrendResponseDto response : loanTrendResponseList) {
+        for (LoanItemSrchResponseDto response : loanTrendResponseList) {
             if (maxSize != null && responseList.size() >= maxSize) {
                 break;
             }

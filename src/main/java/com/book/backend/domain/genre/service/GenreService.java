@@ -2,8 +2,8 @@ package com.book.backend.domain.genre.service;
 
 import com.book.backend.domain.genre.entity.Genre;
 import com.book.backend.domain.genre.repository.GenreRepository;
-import com.book.backend.domain.openapi.dto.request.LoanTrendRequestDto;
-import com.book.backend.domain.openapi.dto.response.LoanTrendResponseDto;
+import com.book.backend.domain.openapi.dto.request.LoanItemSrchRequestDto;
+import com.book.backend.domain.openapi.dto.response.LoanItemSrchResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
@@ -41,7 +41,7 @@ public class GenreService {
                 .orElseThrow(() -> new IllegalArgumentException("KDC 번호가" + mainKdcNum + subKdcNum + "인 장르를 찾을 수 없습니다."));
     }
 
-    public LinkedList<LoanTrendResponseDto> periodToNowTrend(LoanTrendRequestDto requestDto, Integer dayPeriod, Integer maxSize) throws Exception {
+    public LinkedList<LoanItemSrchResponseDto> periodToNowTrend(LoanItemSrchRequestDto requestDto, Integer dayPeriod, Integer maxSize) throws Exception {
         LocalDate today = LocalDate.now();
         LocalDate startDt = today.minusDays(dayPeriod + 1);
         LocalDate endDt = today.minusDays(1);
@@ -49,7 +49,7 @@ public class GenreService {
         return periodTrend(requestDto, startDt, endDt, maxSize);
     }
 
-    public LinkedList<LoanTrendResponseDto> thisWeekTrend(LoanTrendRequestDto requestDto, Integer maxSize) throws Exception {
+    public LinkedList<LoanItemSrchResponseDto> thisWeekTrend(LoanItemSrchRequestDto requestDto, Integer maxSize) throws Exception {
         LocalDate today = LocalDate.now();
         LocalDate startDt, endDt;
         // 월요일 또는 화요일이면 저번주로, 아니면 이번주로 계산
@@ -65,35 +65,35 @@ public class GenreService {
     }
 
     // periodToNowTrend, thisWeekTrend에 의해 호출됨
-    public LinkedList<LoanTrendResponseDto> periodTrend(LoanTrendRequestDto requestDto, LocalDate startDt, LocalDate endDt, Integer maxSize) throws Exception {
+    public LinkedList<LoanItemSrchResponseDto> periodTrend(LoanItemSrchRequestDto requestDto, LocalDate startDt, LocalDate endDt, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
 
         requestDto.setStartDt(startDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         requestDto.setEndDt(endDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
-        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanTrendResponseDto());
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
         return new LinkedList<>(genreResponseParser.periodTrend(JsonResponse, maxSize));
     }
 
-    public LinkedList<LoanTrendResponseDto> random(LoanTrendRequestDto requestDto, Integer maxSize) throws Exception {
+    public LinkedList<LoanItemSrchResponseDto> random(LoanItemSrchRequestDto requestDto, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
         int resultSize = 200;
 
         requestDto.setPageSize(500);  // 셔플할 리스트의 페이지 크기 설정
 
-        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanTrendResponseDto());
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
 
         return new LinkedList<>(genreResponseParser.random(JsonResponse, resultSize, maxSize));
     }
 
-    public LinkedList<LoanTrendResponseDto> newTrend(LoanTrendRequestDto requestDto, Integer maxSize) throws Exception {
+    public LinkedList<LoanItemSrchResponseDto> newTrend(LoanItemSrchRequestDto requestDto, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
 
         requestDto.setPageSize(1500);  // 연도로 필터링하기 전 페이지 크기 설정
         LocalDate today = LocalDate.now();
         int currentYear = Integer.parseInt(today.format(DateTimeFormatter.ofPattern("yyyy")));
 
-        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanTrendResponseDto());
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
 
         return new LinkedList<>(genreResponseParser.newTrend(JsonResponse, currentYear, maxSize));
     }

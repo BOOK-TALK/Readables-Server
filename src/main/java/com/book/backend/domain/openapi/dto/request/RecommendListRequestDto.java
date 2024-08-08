@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class RecommendRequestDto implements OpenAPIRequestInterface {
+public class RecommendListRequestDto implements OpenAPIRequestInterface {
     @NotBlank(message = "isbn13은 필수 입력값입니다.")
     private String isbn13;
 

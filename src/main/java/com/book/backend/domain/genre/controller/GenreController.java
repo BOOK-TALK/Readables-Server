@@ -1,8 +1,8 @@
 package com.book.backend.domain.genre.controller;
 
 import com.book.backend.domain.genre.service.GenreService;
-import com.book.backend.domain.openapi.dto.request.LoanTrendRequestDto;
-import com.book.backend.domain.openapi.dto.response.LoanTrendResponseDto;
+import com.book.backend.domain.openapi.dto.request.LoanItemSrchRequestDto;
+import com.book.backend.domain.openapi.dto.response.LoanItemSrchResponseDto;
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
@@ -32,8 +32,8 @@ public class GenreController {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         requestValidate.isValidGenreCode(subKdc);
 
-        LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
-        LinkedList<LoanTrendResponseDto> response = genreService.periodToNowTrend(requestDto, 7, maxSize);
+        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder().dtl_kdc(subKdc).build();
+        LinkedList<LoanItemSrchResponseDto> response = genreService.periodToNowTrend(requestDto, 7, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -47,8 +47,8 @@ public class GenreController {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         requestValidate.isValidGenreCode(subKdc);
 
-        LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
-        LinkedList<LoanTrendResponseDto> response = genreService.periodToNowTrend(requestDto, 30, maxSize);
+        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder().dtl_kdc(subKdc).build();
+        LinkedList<LoanItemSrchResponseDto> response = genreService.periodToNowTrend(requestDto, 30, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -63,8 +63,8 @@ public class GenreController {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         requestValidate.isValidGenreCode(subKdc);
 
-        LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
-        LinkedList<LoanTrendResponseDto> response = genreService.thisWeekTrend(requestDto, maxSize);
+        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder().dtl_kdc(subKdc).build();
+        LinkedList<LoanItemSrchResponseDto> response = genreService.thisWeekTrend(requestDto, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -78,8 +78,8 @@ public class GenreController {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         requestValidate.isValidGenreCode(subKdc);
 
-        LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
-        LinkedList<LoanTrendResponseDto> response = genreService.random(requestDto, maxSize);
+        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder().dtl_kdc(subKdc).build();
+        LinkedList<LoanItemSrchResponseDto> response = genreService.random(requestDto, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -93,8 +93,8 @@ public class GenreController {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
         requestValidate.isValidGenreCode(subKdc);
 
-        LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
-        LinkedList<LoanTrendResponseDto> response = genreService.newTrend(requestDto, maxSize);
+        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder().dtl_kdc(subKdc).build();
+        LinkedList<LoanItemSrchResponseDto> response = genreService.newTrend(requestDto, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
