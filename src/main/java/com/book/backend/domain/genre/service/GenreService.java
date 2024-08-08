@@ -77,19 +77,18 @@ public class GenreService {
 
     public LinkedList<LoanItemSrchResponseDto> random(LoanItemSrchRequestDto requestDto, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
-        int resultSize = 200;
 
-        requestDto.setPageSize(500);  // 셔플할 리스트의 페이지 크기 설정
+        requestDto.setPageSize("500");  // 셔플할 리스트의 페이지 크기 설정
 
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
 
-        return new LinkedList<>(genreResponseParser.random(JsonResponse, resultSize, maxSize));
+        return new LinkedList<>(genreResponseParser.random(JsonResponse, maxSize));
     }
 
     public LinkedList<LoanItemSrchResponseDto> newTrend(LoanItemSrchRequestDto requestDto, Integer maxSize) throws Exception {
         String subUrl = "loanItemSrch";
 
-        requestDto.setPageSize(1500);  // 연도로 필터링하기 전 페이지 크기 설정
+        requestDto.setPageSize("1500");  // 연도로 필터링하기 전 페이지 크기 설정
         LocalDate today = LocalDate.now();
         int currentYear = Integer.parseInt(today.format(DateTimeFormatter.ofPattern("yyyy")));
 
