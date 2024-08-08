@@ -1,11 +1,17 @@
 package com.book.backend.domain.search.controller;
 
+import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.openapi.dto.request.SearchRequestDto;
 import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
 import com.book.backend.domain.search.service.SearchService;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +34,21 @@ public class SearchController {
     private final ResponseTemplate responseTemplate;
 
     // 도서검색(16) API
+    @Operation(summary="책 검색", description="검색어, 도서관 코드를 입력으로 받아 검색된 책 목록을 반환합니다.",
+            parameters = {@Parameter(name = "keyword", description = "검색어")
+                    , @Parameter(name = "libCode", description = "도서관 코드")
+                    , @Parameter(name = "pageNo", description = "페이지네이션 번호")
+                    , @Parameter(name = "pageSize", description = "페이지 당 개수")},
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SearchResponseDto.class)),
+                    description = SearchResponseDto.description)})
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam String title, String libCode, int pageNo, int pageSize) throws Exception {
-        RequestLogger.param(new String[]{"title, libCode, pageNo, pageSize"}, title, libCode, pageNo, pageSize);
+    public ResponseEntity<?> search(@RequestParam String keyword, String libCode, int pageNo, int pageSize) throws Exception {
+        RequestLogger.param(new String[]{"keyword, libCode, pageNo, pageSize"}, keyword, libCode, pageNo, pageSize);
         requestValidate.isValidLibCode(libCode);
         requestValidate.isValidPageNum(pageNo);
         requestValidate.isValidPageNum(pageSize);
         SearchRequestDto requestDto = SearchRequestDto.builder()
-                .keyword(UriUtils.encode("\"" + title + "\"", "UTF-8")) // 공백 및 한글 인코딩
+                .keyword(UriUtils.encode("\"" + keyword + "\"", "UTF-8")) // 공백 및 한글 인코딩
                 .pageNo(pageNo).pageSize(pageSize).build();
         LinkedList<SearchResponseDto> response = searchService.search(requestDto);
 
