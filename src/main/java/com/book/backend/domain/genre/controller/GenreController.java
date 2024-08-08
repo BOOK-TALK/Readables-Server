@@ -1,9 +1,9 @@
 package com.book.backend.domain.genre.controller;
 
-import com.book.backend.domain.genre.service.GenreRequestValidate;
 import com.book.backend.domain.genre.service.GenreService;
 import com.book.backend.domain.openapi.dto.request.LoanTrendRequestDto;
 import com.book.backend.domain.openapi.dto.response.LoanTrendResponseDto;
+import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.LinkedList;
 @Slf4j
 public class GenreController {
     private final GenreService genreService;
-    private final GenreRequestValidate genreRequestValidate;
+    private final RequestValidate requestValidate;
     private final ResponseTemplate responseTemplate;
 
     /**
@@ -30,7 +30,7 @@ public class GenreController {
     public ResponseEntity<?> aWeekTrend(@RequestParam String subKdc,
                                         @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
-        genreRequestValidate.isValidSubKdc(subKdc);
+        requestValidate.isValidGenreCode(subKdc);
 
         LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
         LinkedList<LoanTrendResponseDto> response = genreService.periodToNowTrend(requestDto, 7, maxSize);
@@ -45,7 +45,7 @@ public class GenreController {
     public ResponseEntity<?> aMonthTrend(@RequestParam String subKdc,
                                          @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
-        genreRequestValidate.isValidSubKdc(subKdc);
+        requestValidate.isValidGenreCode(subKdc);
 
         LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
         LinkedList<LoanTrendResponseDto> response = genreService.periodToNowTrend(requestDto, 30, maxSize);
@@ -61,7 +61,7 @@ public class GenreController {
     public ResponseEntity<?> thisWeekTrend(@RequestParam String subKdc,
                                            @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
-        genreRequestValidate.isValidSubKdc(subKdc);
+        requestValidate.isValidGenreCode(subKdc);
 
         LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
         LinkedList<LoanTrendResponseDto> response = genreService.thisWeekTrend(requestDto, maxSize);
@@ -76,7 +76,7 @@ public class GenreController {
     public ResponseEntity<?> random(@RequestParam String subKdc,
                                     @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
-        genreRequestValidate.isValidSubKdc(subKdc);
+        requestValidate.isValidGenreCode(subKdc);
 
         LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
         LinkedList<LoanTrendResponseDto> response = genreService.random(requestDto, maxSize);
@@ -91,7 +91,7 @@ public class GenreController {
     public ResponseEntity<?> newTrend(@RequestParam String subKdc,
                                       @RequestParam(required = false) Integer maxSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, subKdc);
-        genreRequestValidate.isValidSubKdc(subKdc);
+        requestValidate.isValidGenreCode(subKdc);
 
         LoanTrendRequestDto requestDto = LoanTrendRequestDto.builder().dtl_kdc(subKdc).build();
         LinkedList<LoanTrendResponseDto> response = genreService.newTrend(requestDto, maxSize);
