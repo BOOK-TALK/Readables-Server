@@ -40,6 +40,7 @@ public class BookController {
     private final BookService bookService;
     private final BookRequestValidate bookRequestValidate;
     private final ResponseTemplate responseTemplate;
+    private final RequestValidate requestValidate;
 
     // 마니아(4), 다독자(5) 추천 API
     @Operation(summary="책 추천", description="특정 책 코드를 입력으로 받아 해당 책 기반 추천 책 list를 반환합니다.",
