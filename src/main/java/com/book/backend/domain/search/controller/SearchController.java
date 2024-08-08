@@ -1,6 +1,6 @@
 package com.book.backend.domain.search.controller;
 
-import com.book.backend.domain.book.service.RequestValidate;
+import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.openapi.dto.request.SearchRequestDto;
 import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
 import com.book.backend.domain.search.service.SearchService;
