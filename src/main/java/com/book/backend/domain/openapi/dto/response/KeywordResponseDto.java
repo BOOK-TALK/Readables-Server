@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class KeywordResponseDto implements OpenAPIResponseInterface{
     private String keyword;
     private String weight; // 중요도
+
+    public static final String description = "keyword: 검색어 | weight: 중요도";
 }
