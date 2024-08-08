@@ -137,7 +137,7 @@ public class ResponseParser {
                     .weight(step1.getAsString("weight"))
                     .build());
         }
-        return RandomPicker.randomPick(responseList, 10, true);
+        return RandomPicker.randomPick(responseList, 10);
     }
 
     public LinkedList<CustomHotTrendResponseDto> customHotTrend(JSONObject jsonResponse) {

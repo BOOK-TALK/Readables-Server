@@ -1,6 +1,7 @@
 package com.book.backend.domain.genre.service;
 
 import com.book.backend.domain.openapi.dto.response.LoanTrendResponseDto;
+import com.book.backend.domain.openapi.service.RandomPicker;
 import com.book.backend.domain.openapi.service.ResponseParser;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
@@ -30,14 +31,13 @@ public class GenreResponseParser {
         LinkedList<LoanTrendResponseDto> loanTrendResponseList = responseParser.loanTrend(jsonResponse);
         LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
 
-        // TODO: #26 PR 병합되면 랜덤 로직 추가
         for (LoanTrendResponseDto response : loanTrendResponseList) {
             if (maxSize != null && responseList.size() >= maxSize) {
                 break;
             }
             responseList.add(response);
         }
-        return responseList;
+        return RandomPicker.randomPick(responseList, resultSize);
     }
 
     public LinkedList<LoanTrendResponseDto> newTrend(JSONObject jsonResponse, int currentYear, Integer maxSize) {
