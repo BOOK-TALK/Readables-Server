@@ -1,8 +1,11 @@
 package com.book.backend.domain.book.controller;
 
+import com.book.backend.domain.book.service.BookRequestValidate;
 import com.book.backend.domain.book.service.BookService;
+
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.openapi.dto.request.CustomHotTrendRequestDto;
+
 import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
 import com.book.backend.domain.openapi.dto.request.KeywordRequestDto;
 import com.book.backend.domain.openapi.dto.response.CustomHotTrendResponseDto;
@@ -35,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class BookController {
     private final BookService bookService;
-    private final RequestValidate requestValidate;
+    private final BookRequestValidate bookRequestValidate;
     private final ResponseTemplate responseTemplate;
 
     // 마니아(4), 다독자(5) 추천 API
@@ -46,7 +49,7 @@ public class BookController {
     @GetMapping("/recommend")
     public ResponseEntity<?> recommend(@RequestParam String isbn) throws Exception {
         RequestLogger.param(new String[]{"isbn"}, isbn);
-        requestValidate.isValidIsbn(isbn);
+        bookRequestValidate.isValidIsbn(isbn);
 
         RecommendRequestDto requestDto = RecommendRequestDto.builder().isbn13(isbn).build();
         LinkedList<RecommendResponseDto> response = bookService.recommend(requestDto);
@@ -63,9 +66,11 @@ public class BookController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = HotTrendResponseDto.class)),
                         description = HotTrendResponseDto.description)})
     @GetMapping("/hotTrend")
+
     public ResponseEntity<?> hotTrend() throws Exception {
         LocalDate yesterday = LocalDate.now().minusDays(1);
         HotTrendRequestDto requestDto = HotTrendRequestDto.builder().searchDt(yesterday.toString()).build();
+
         LinkedList<HotTrendResponseDto> response = bookService.hotTrend(requestDto);
 
         return responseTemplate.success(response, HttpStatus.OK);

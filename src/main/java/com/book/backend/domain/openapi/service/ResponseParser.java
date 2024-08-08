@@ -4,39 +4,49 @@ import com.book.backend.domain.openapi.dto.response.CustomHotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
 import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
+
+import java.util.*;
+
+import com.book.backend.domain.openapi.dto.response.LoanTrendResponseDto;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import lombok.extern.slf4j.Slf4j;
+
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import org.springframework.stereotype.Component;
 
+@Component
 @Slf4j
 public class ResponseParser {
 
     public LinkedList<RecommendResponseDto> recommend(JSONObject jsonResponse) {
         log.trace("ResponseParser > recommend()");
 
-        JSONArray step0 = (JSONArray) jsonResponse.get("docs");
+
+        JSONArray docs = (JSONArray) jsonResponse.get("docs");
         LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
-        for (Object obj : step0) {
-            JSONObject temp = (JSONObject) obj;
-            JSONObject step1 = (JSONObject) temp.get("book");
+
+        for (Object o : docs) {
+            JSONObject docsElement  = (JSONObject) o;
+            JSONObject book = (JSONObject) docsElement.get("book");
 
             // 중복 추천 체크 (open api 가 중복되는 책을 추천함;;)
-            String duplicateCheckKey = step1.getAsString("bookname") + step1.getAsString("authors");
+            String duplicateCheckKey = book.getAsString("bookname") + book.getAsString("authors");
+
             if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
                 responseList.add(RecommendResponseDto.builder()
-                        .bookname(step1.getAsString("bookname"))
-                        .authors(step1.getAsString("authors"))
-                        .publisher(step1.getAsString("publisher"))
-                        .publication_year(step1.getAsString("publication_year"))
-                        .isbn13(step1.getAsString("isbn13"))
-                        .additional_symbol(step1.getAsString("additional_symbol"))
-                        .vol(step1.getAsString("vol"))
-                        .class_no(step1.getAsString("class_no"))
-                        .class_nm(step1.getAsString("class_nm"))
-                        .bookImageURL(step1.getAsString("bookImageURL"))
+                        .bookname(book.getAsString("bookname"))
+                        .authors(book.getAsString("authors"))
+                        .publisher(book.getAsString("publisher"))
+                        .publication_year(book.getAsString("publication_year"))
+                        .isbn13(book.getAsString("isbn13"))
+                        .vol(book.getAsString("vol"))
+                        .class_no(book.getAsString("class_no"))
+                        .class_nm(book.getAsString("class_nm"))
+                        .bookImageURL(book.getAsString("bookImageURL"))
                         .build());
             }
         }
@@ -45,34 +55,67 @@ public class ResponseParser {
 
     public LinkedList<HotTrendResponseDto> hotTrend(JSONObject jsonResponse) {
         log.trace("ResponseParser > hotTrend()");
-
-        JSONArray step0 = (JSONArray) jsonResponse.get("results");
+        
+        JSONArray results = (JSONArray) jsonResponse.get("results");
         LinkedList<HotTrendResponseDto> responseList = new LinkedList<>();
 
-        for (int i = 0; i < step0.size(); i++) {
-            JSONObject temp1 = (JSONObject) step0.get(i);
-            JSONObject step1 = (JSONObject) temp1.get("result");
-            JSONArray step2 = (JSONArray) step1.get("docs");
-            for (Object obj : step2) {
-                JSONObject temp3 = (JSONObject) obj;
-                JSONObject step3 = (JSONObject) temp3.get("doc");
+        for (Object o : results) {
+            JSONObject resultsElement = (JSONObject) o;
+            JSONObject result = (JSONObject) resultsElement.get("result");
+            JSONArray docs = (JSONArray) result.get("docs");
+            for (Object value : docs) {
+                JSONObject docsElement = (JSONObject) value;
+                JSONObject doc = (JSONObject) docsElement.get("doc");
 
                 responseList.add(HotTrendResponseDto.builder()
-                        .no(step3.getAsString("no"))
-                        .difference(step3.getAsString("difference"))
-                        .baseWeekRank(step3.getAsString("baseWeekRank"))
-                        .pastWeekRank(step3.getAsString("pastWeekRank"))
-                        .bookname(step3.getAsString("bookname"))
-                        .authors(step3.getAsString("authors"))
-                        .publisher(step3.getAsString("publisher"))
-                        .publication_year(step3.getAsString("publication_year"))
-                        .isbn13(step3.getAsString("isbn13"))
-                        .additional_symbol(step3.getAsString("additional_symbol"))
-                        .vol(step3.getAsString("vol"))
-                        .class_no(step3.getAsString("class_no"))
-                        .class_nm(step3.getAsString("class_nm"))
-                        .bookImageURL(step3.getAsString("bookImageURL"))
-                        .bookDtlUrl(step3.getAsString("bookDtlUrl"))
+                        .no(doc.getAsString("no"))
+                        .difference(doc.getAsString("difference"))
+                        .baseWeekRank(doc.getAsString("baseWeekRank"))
+                        .pastWeekRank(doc.getAsString("pastWeekRank"))
+                        .bookname(doc.getAsString("bookname"))
+                        .authors(doc.getAsString("authors"))
+                        .publisher(doc.getAsString("publisher"))
+                        .publication_year(doc.getAsString("publication_year"))
+                        .isbn13(doc.getAsString("isbn13"))
+                        .addition_symbol(doc.getAsString("addition_symbol"))
+                        .vol(doc.getAsString("vol"))
+                        .class_no(doc.getAsString("class_no"))
+                        .class_nm(doc.getAsString("class_nm"))
+                        .bookImageURL(doc.getAsString("bookImageURL"))
+                        .bookDtlUrl(doc.getAsString("bookDtlUrl"))
+                        .build());
+            }
+        }
+        return responseList;
+    }
+
+    public LinkedList<LoanTrendResponseDto> loanTrend(JSONObject jsonResponse) {
+        JSONArray docs = (JSONArray) jsonResponse.get("docs");
+
+        LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
+        HashSet<String> duplicateCheckSet = new HashSet<>();
+
+        for (Object o : docs) {
+
+            JSONObject docsElement = (JSONObject) o;
+            JSONObject doc = (JSONObject) docsElement.get("doc");
+
+            String duplicateCheckKey = doc.getAsString("bookname") + doc.getAsString("authors");
+            if (duplicateCheckSet.add(duplicateCheckKey)) {
+                responseList.add(LoanTrendResponseDto.builder()
+                        .no(doc.getAsString("no"))
+                        .ranking(doc.getAsString("ranking"))
+                        .bookname(doc.getAsString("bookname"))
+                        .authors(doc.getAsString("authors"))
+                        .publisher(doc.getAsString("publisher"))
+                        .publication_year(doc.getAsString("publication_year"))
+                        .isbn13(doc.getAsString("isbn13"))
+                        .addition_symbol(doc.getAsString("addition_symbol"))
+                        .class_no(doc.getAsString("class_no"))
+                        .class_nm(doc.getAsString("class_nm"))
+                        .loan_count(doc.getAsString("loan_count"))
+                        .bookImageURL(doc.getAsString("bookImageURL"))
+                        .bookDtlUrl(doc.getAsString("bookDtlUrl"))
                         .build());
             }
         }
