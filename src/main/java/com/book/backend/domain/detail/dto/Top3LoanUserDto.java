@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class HighLoanUserGroupDto {
+public class Top3LoanUserDto {
     private String age;
     private String gender;
     private String loanCnt;

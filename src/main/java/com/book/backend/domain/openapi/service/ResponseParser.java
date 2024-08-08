@@ -2,7 +2,7 @@ package com.book.backend.domain.openapi.service;
 
 import com.book.backend.domain.detail.dto.BookInfoDto;
 import com.book.backend.domain.detail.dto.CoLoanBooksDto;
-import com.book.backend.domain.detail.dto.HighLoanUserGroupDto;
+import com.book.backend.domain.detail.dto.Top3LoanUserDto;
 import com.book.backend.domain.detail.dto.RecommendDto;
 import com.book.backend.domain.openapi.dto.response.CustomHotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
@@ -229,18 +229,18 @@ public class ResponseParser {
                 .class_nm(book.getAsString("class_nm"))
                 .loanCnt(book.getAsString("loanCnt")).build();
 
-        List<HighLoanUserGroupDto> highLoanUserGroupArray = new LinkedList<>();
+        List<Top3LoanUserDto> top3LoanUserDtoList = new LinkedList<>();
         for (Object loanGrp : loanGrps) {
             JSONObject o = (JSONObject) ((JSONObject) loanGrp).get("loanGrp");
-            highLoanUserGroupArray.add(HighLoanUserGroupDto.builder()
+            top3LoanUserDtoList.add(Top3LoanUserDto.builder()
                     .age(o.getAsString("age"))
                     .gender(o.getAsString("gender"))
                     .loanCnt(o.getAsString("loanCnt"))
                     .ranking(o.getAsString("ranking"))
                     .build());
         }
-        highLoanUserGroupArray.sort(Comparator.comparingInt(o -> Integer.parseInt(o.getRanking())));
-        highLoanUserGroupArray = highLoanUserGroupArray.subList(0, 3); // 상위 3개만 추출
+        top3LoanUserDtoList.sort(Comparator.comparingInt(o -> Integer.parseInt(o.getRanking())));
+        top3LoanUserDtoList = top3LoanUserDtoList.subList(0, 3); // 상위 3개만 추출
 
         LinkedList<String> keywordList = new LinkedList<>();
         for(int i=0; i<10; i++) { //10개만 추출
@@ -297,7 +297,7 @@ public class ResponseParser {
 
         responseList.add(DetailResponseDto.builder()
                 .bookInfoDto(bookInfoDto)
-                .highLoanUserGroupDtoArray(highLoanUserGroupArray)
+                .top3LoanUserDtoList(top3LoanUserDtoList)
                 .keywordDtoList(keywordList)
                 .coLoanBooksDtoList(coLoanBooksList)
                 .recommendResponseDtoList(recommendBooksList)
