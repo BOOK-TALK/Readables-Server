@@ -13,6 +13,5 @@ public class SearchRequestDto implements OpenAPIRequestInterface {
     private String title;
     private String author;
     private String keyword;
-    private int pageNo; // 페이지 번호
-    private int pageSize; // 한 페이지에 담을 요소 수
+    private String pageSize; // 한 페이지에 담을 요소 수
 }

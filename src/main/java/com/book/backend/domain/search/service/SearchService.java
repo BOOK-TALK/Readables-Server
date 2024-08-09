@@ -22,18 +22,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class SearchService {
     private final OpenAPI openAPI;
 
-    public LinkedList<SearchResponseDto> search(RequestDto requestDto) throws Exception {
+    public LinkedList<SearchResponseDto> search(RequestDto requestDto, Integer maxSize) throws Exception {
         log.trace("search()");
         String subUrl = "srchBooks";
-
-        SearchRequestDto searchRequestDto = SearchRequestDto.builder()
-                .pageNo(requestDto.getPageNo())
-                .pageSize(requestDto.getPageSize())
-                .build();
 
         ResponseParser responseParser = new ResponseParser();
         if(!requestDto.isKeyword()){
             LinkedList<SearchResponseDto> responseList = new LinkedList<>();
+            Integer halfPageSize = maxSize/2;
+            SearchRequestDto searchRequestDto = SearchRequestDto.builder()
+                    .pageSize(halfPageSize.toString()) // 셔플할 리스트의 페이지 크기 설정
+                    .build();
+
             // 제목으로 검색
             searchRequestDto.setTitle(requestDto.getInput());
             JSONObject jsonResponse = openAPI.connect(subUrl, searchRequestDto, new SearchResponseDto());
@@ -47,6 +47,10 @@ public class SearchService {
 
             return duplicateChecker(responseList);
         } else { // 키워드로 검색
+            SearchRequestDto searchRequestDto = SearchRequestDto.builder()
+                    .pageSize(maxSize.toString()) // 셔플할 리스트의 페이지 크기 설정
+                    .build();
+
             searchRequestDto.setKeyword(requestDto.getInput());
             JSONObject jsonResponse = openAPI.connect(subUrl, searchRequestDto, new SearchResponseDto());
             return responseParser.search(jsonResponse);

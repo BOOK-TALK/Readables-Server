@@ -34,24 +34,22 @@ public class SearchController {
 
     // 도서검색(16) API
     @Operation(summary="책 검색", description="검색어, 도서관 코드를 입력으로 받아 검색된 책 목록을 반환합니다.",
-            parameters = {@Parameter(name = "isKeyword", description = "키워드 여부")
-                    , @Parameter(name = "input", description = "검색어")
-                    , @Parameter(name = "libCode", description = "도서관 코드")
-                    , @Parameter(name = "pageNo", description = "페이지네이션 번호")
-                    , @Parameter(name = "pageSize", description = "페이지 당 개수")},
+            parameters = {@Parameter(name = "isKeyword", description = "키워드 여부"),
+                    @Parameter(name = "input", description = "검색어"),
+                    @Parameter(name = "libCode", description = "도서관 코드"),
+                    @Parameter(name = "maxSize", description = "리스트 길이 제한 (선택)")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SearchResponseDto.class)),
                     description = SearchResponseDto.description)})
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam boolean isKeyword, String input, String libCode, int pageNo, int pageSize) throws Exception {
-        RequestLogger.param(new String[]{"isKeyword, input, libCode, pageNo, pageSize"}, isKeyword, input, libCode, pageNo, pageSize);
+    public ResponseEntity<?> search(@RequestParam boolean isKeyword, String input, String libCode, int maxSize) throws Exception {
+        RequestLogger.param(new String[]{"isKeyword, input, libCode, maxSize"}, isKeyword, input, libCode, maxSize);
         requestValidate.isValidLibCode(libCode);
-        requestValidate.isValidPageNum(pageNo);
-        requestValidate.isValidPageNum(pageSize);
+
         RequestDto requestDto = RequestDto.builder()
                 .isKeyword(isKeyword)
                 .input(UriUtils.encode("\"" + input + "\"", "UTF-8")) // 공백 및 한글 인코딩
-                .pageNo(pageNo).pageSize(pageSize).build();
-        LinkedList<SearchResponseDto> response = searchService.search(requestDto);
+                .build();
+        LinkedList<SearchResponseDto> response = searchService.search(requestDto, maxSize);
 
         searchService.setLoanAvailable(response, libCode);
         response = searchService.duplicateChecker(response);
