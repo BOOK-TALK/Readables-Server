@@ -1,6 +1,5 @@
 package com.book.backend.domain.book.controller;
 
-import com.book.backend.domain.book.service.BookRequestValidate;
 import com.book.backend.domain.book.service.BookService;
 
 import com.book.backend.domain.openapi.dto.response.LoanItemSrchResponseDto;
@@ -38,7 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class BookController {
     private final BookService bookService;
-    private final BookRequestValidate bookRequestValidate;
     private final ResponseTemplate responseTemplate;
     private final RequestValidate requestValidate;
 
@@ -50,7 +48,7 @@ public class BookController {
     @GetMapping("/recommend")
     public ResponseEntity<?> recommend(@RequestParam String isbn) throws Exception {
         RequestLogger.param(new String[]{"isbn"}, isbn);
-        bookRequestValidate.isValidIsbn(isbn);
+        requestValidate.isValidIsbn(isbn);
 
         RecommendListRequestDto requestDto = RecommendListRequestDto.builder().isbn13(isbn).build();
         LinkedList<RecommendListResponseDto> response = bookService.recommend(requestDto);
