@@ -1,18 +1,17 @@
 package com.book.backend.domain.book.controller;
 
-import com.book.backend.domain.book.service.BookRequestValidate;
 import com.book.backend.domain.book.service.BookService;
 
+import com.book.backend.domain.openapi.dto.response.LoanItemSrchResponseDto;
 import com.book.backend.domain.openapi.service.RequestValidate;
-import com.book.backend.domain.openapi.dto.request.CustomHotTrendRequestDto;
+import com.book.backend.domain.openapi.dto.request.LoanItemSrchRequestDto;
 
 import com.book.backend.domain.openapi.dto.request.HotTrendRequestDto;
-import com.book.backend.domain.openapi.dto.request.KeywordRequestDto;
-import com.book.backend.domain.openapi.dto.response.CustomHotTrendResponseDto;
+import com.book.backend.domain.openapi.dto.request.MonthlyKeywordsRequestDto;
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
-import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
-import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
-import com.book.backend.domain.openapi.dto.request.RecommendRequestDto;
+import com.book.backend.domain.openapi.dto.response.MonthlyKeywordsResponseDto;
+import com.book.backend.domain.openapi.dto.response.RecommendListResponseDto;
+import com.book.backend.domain.openapi.dto.request.RecommendListRequestDto;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,24 +37,24 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class BookController {
     private final BookService bookService;
-    private final BookRequestValidate bookRequestValidate;
     private final ResponseTemplate responseTemplate;
+    private final RequestValidate requestValidate;
 
     // 마니아(4), 다독자(5) 추천 API
     @Operation(summary="책 추천", description="특정 책 코드를 입력으로 받아 해당 책 기반 추천 책 list를 반환합니다.",
             parameters = {@Parameter(name = "isbn", description = "책 코드")},
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RecommendResponseDto.class)),
-                        description = RecommendResponseDto.description)})
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RecommendListResponseDto.class)),
+                        description = RecommendListResponseDto.description)})
     @GetMapping("/recommend")
     public ResponseEntity<?> recommend(@RequestParam String isbn) throws Exception {
         RequestLogger.param(new String[]{"isbn"}, isbn);
-        bookRequestValidate.isValidIsbn(isbn);
+        requestValidate.isValidIsbn(isbn);
 
-        RecommendRequestDto requestDto = RecommendRequestDto.builder().isbn13(isbn).build();
-        LinkedList<RecommendResponseDto> response = bookService.recommend(requestDto);
+        RecommendListRequestDto requestDto = RecommendListRequestDto.builder().isbn13(isbn).build();
+        LinkedList<RecommendListResponseDto> response = bookService.recommend(requestDto);
 
         HashSet<String> duplicateCheckSet = new HashSet<>();
-        LinkedList<RecommendResponseDto> duplicateRemovedList = bookService.duplicateChecker(response, duplicateCheckSet);
+        LinkedList<RecommendListResponseDto> duplicateRemovedList = bookService.duplicateChecker(response, duplicateCheckSet);
         bookService.ensureRecommendationsCount(duplicateRemovedList, duplicateCheckSet);
 
         return responseTemplate.success(duplicateRemovedList, HttpStatus.OK);
@@ -78,14 +77,14 @@ public class BookController {
 
     // 지난달 키워드 (17)
     @Operation(summary="지난달 키워드", description="지난달 핵심 키워드 100개 중 랜덤으로 10개 키워드를 반환합니다.",
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = KeywordResponseDto.class)),
-                        description = KeywordResponseDto.description)})
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MonthlyKeywordsResponseDto.class)),
+                        description = MonthlyKeywordsResponseDto.description)})
     @GetMapping("/keyword")
     public ResponseEntity<?> keywords() throws Exception {
-        KeywordRequestDto requestDto = new KeywordRequestDto();
+        MonthlyKeywordsRequestDto requestDto = new MonthlyKeywordsRequestDto();
         requestDto.setSearchDt();
 
-        LinkedList<KeywordResponseDto> response = bookService.keywords(requestDto);
+        LinkedList<MonthlyKeywordsResponseDto> response = bookService.keywords(requestDto);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -100,8 +99,8 @@ public class BookController {
             @Parameter(name = "genreCode", description = "세부 장르 코드 (figma 참고)"),
             @Parameter(name = "region", description = "시단위 지역코드 (figma 참고)"),
             @Parameter(name = "libCode", description = "도서관 코드 (조회 -> https://www.data4library.kr/libDataL)")},
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomHotTrendResponseDto.class)),
-                        description = CustomHotTrendResponseDto.description)})
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoanItemSrchResponseDto.class)),
+                        description = LoanItemSrchResponseDto.description)})
     @GetMapping("/customHotTrend")
     public ResponseEntity<?> customHotTrend(@RequestParam(required = false) String weekMonth,
                                             @RequestParam(required = false) String peerAge,
@@ -112,9 +111,9 @@ public class BookController {
                                             @RequestParam(required = false) String libCode) throws Exception {
         RequestLogger.param(new String[]{"weekMonth", "peerAge", "ageRange", "gender", "genreCode", "region", "libCode"},
                 weekMonth, peerAge, ageRange, gender, genreCode, region, libCode);
-        CustomHotTrendRequestDto requestDto = requestValidate.set_validCustomHotTrendRequest(weekMonth, peerAge, ageRange, gender, genreCode, region, libCode);
+        LoanItemSrchRequestDto requestDto = requestValidate.set_validLoanItemSrchRequest(weekMonth, peerAge, ageRange, gender, genreCode, region, libCode);
 
-        LinkedList<CustomHotTrendResponseDto> response = bookService.customHotTrend(requestDto);
+        LinkedList<LoanItemSrchResponseDto> response = bookService.loanItemSrch(requestDto);
         return responseTemplate.success(response, HttpStatus.OK);
     }
 }
