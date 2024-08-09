@@ -1,6 +1,6 @@
 package com.book.backend.domain.openapi.service;
 
-import com.book.backend.domain.openapi.dto.request.CustomHotTrendRequestDto;
+import com.book.backend.domain.openapi.dto.request.LoanItemSrchRequestDto;
 import com.book.backend.domain.openapi.entity.AgeRangeCode;
 import com.book.backend.domain.openapi.entity.RegionCode;
 import com.book.backend.exception.CustomException;
@@ -22,9 +22,9 @@ public class RequestValidate {
         }
     }
 
-    public CustomHotTrendRequestDto set_validCustomHotTrendRequest (String weekMonth, String peerAge, String ageRange, String gender,
-                                                                    String genreCode, String regionCode, String libCode){
-        CustomHotTrendRequestDto request = new CustomHotTrendRequestDto();
+    public LoanItemSrchRequestDto set_validLoanItemSrchRequest (String weekMonth, String peerAge, String ageRange, String gender,
+                                                                  String genreCode, String regionCode, String libCode){
+        LoanItemSrchRequestDto request = new LoanItemSrchRequestDto();
 
         if(weekMonth != null) {
             isValidWeekMonth(weekMonth);

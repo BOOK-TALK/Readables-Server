@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class KeywordRequestDto implements OpenAPIRequestInterface {
+public class MonthlyKeywordsRequestDto implements OpenAPIRequestInterface {
     private String searchDt;
 
     public void setSearchDt(){

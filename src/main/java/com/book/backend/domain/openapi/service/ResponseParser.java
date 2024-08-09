@@ -4,12 +4,11 @@ import com.book.backend.domain.detail.dto.BookInfoDto;
 import com.book.backend.domain.detail.dto.CoLoanBooksDto;
 import com.book.backend.domain.detail.dto.Top3LoanUserDto;
 import com.book.backend.domain.detail.dto.RecommendDto;
-import com.book.backend.domain.openapi.dto.response.CustomHotTrendResponseDto;
 import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
 import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
-import com.book.backend.domain.openapi.dto.response.KeywordResponseDto;
-import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
-import com.book.backend.domain.openapi.dto.response.LoanTrendResponseDto;
+import com.book.backend.domain.openapi.dto.response.LoanItemSrchResponseDto;
+import com.book.backend.domain.openapi.dto.response.MonthlyKeywordsResponseDto;
+import com.book.backend.domain.openapi.dto.response.RecommendListResponseDto;
 import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -25,22 +24,23 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ResponseParser {
 
-    public LinkedList<RecommendResponseDto> recommend(JSONObject jsonResponse) {
+    public LinkedList<RecommendListResponseDto> recommend(JSONObject jsonResponse) {
         log.trace("ResponseParser > recommend()");
 
+
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
-        LinkedList<RecommendResponseDto> responseList = new LinkedList<>();
+        LinkedList<RecommendListResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
 
         for (Object o : docs) {
             JSONObject docsElement  = (JSONObject) o;
             JSONObject book = (JSONObject) docsElement.get("book");
 
-            // 중복 체크
+            // 중복 추천 체크 (open api 가 중복되는 책을 추천함;;)
             String duplicateCheckKey = book.getAsString("bookname") + book.getAsString("authors");
 
             if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
-                responseList.add(RecommendResponseDto.builder()
+                responseList.add(RecommendListResponseDto.builder()
                         .bookname(book.getAsString("bookname"))
                         .authors(book.getAsString("authors"))
                         .publisher(book.getAsString("publisher"))
@@ -58,7 +58,7 @@ public class ResponseParser {
 
     public LinkedList<HotTrendResponseDto> hotTrend(JSONObject jsonResponse) {
         log.trace("ResponseParser > hotTrend()");
-
+        
         JSONArray results = (JSONArray) jsonResponse.get("results");
         LinkedList<HotTrendResponseDto> responseList = new LinkedList<>();
 
@@ -92,10 +92,10 @@ public class ResponseParser {
         return responseList;
     }
 
-    public LinkedList<LoanTrendResponseDto> loanTrend(JSONObject jsonResponse) {
+    public LinkedList<LoanItemSrchResponseDto> loanTrend(JSONObject jsonResponse) {
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
 
-        LinkedList<LoanTrendResponseDto> responseList = new LinkedList<>();
+        LinkedList<LoanItemSrchResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
 
         for (Object o : docs) {
@@ -105,7 +105,7 @@ public class ResponseParser {
 
             String duplicateCheckKey = doc.getAsString("bookname") + doc.getAsString("authors");
             if (duplicateCheckSet.add(duplicateCheckKey)) {
-                responseList.add(LoanTrendResponseDto.builder()
+                responseList.add(LoanItemSrchResponseDto.builder()
                         .no(doc.getAsString("no"))
                         .ranking(doc.getAsString("ranking"))
                         .bookname(doc.getAsString("bookname"))
@@ -125,36 +125,36 @@ public class ResponseParser {
         return responseList;
     }
 
-    public LinkedList<KeywordResponseDto> keywords(JSONObject jsonResponse) {
+    public LinkedList<MonthlyKeywordsResponseDto> keywords(JSONObject jsonResponse) {
         log.trace("ResponseParser > keywords()");
 
-        JSONArray keywords = (JSONArray) jsonResponse.get("keywords");
-        LinkedList<KeywordResponseDto> responseList = new LinkedList<>();
+        JSONArray step0 = (JSONArray) jsonResponse.get("keywords");
+        LinkedList<MonthlyKeywordsResponseDto> responseList = new LinkedList<>();
 
-        for (Object o : keywords) {
-            JSONObject temp = (JSONObject) o;
+        for (Object obj : step0) {
+            JSONObject temp = (JSONObject) obj;
             JSONObject step1 = (JSONObject) temp.get("keyword");
 
-            responseList.add(KeywordResponseDto.builder()
+            responseList.add(MonthlyKeywordsResponseDto.builder()
                     .keyword(step1.getAsString("word"))
                     .weight(step1.getAsString("weight"))
                     .build());
         }
-        return RandomPicker.randomPick(responseList, 10, true);
+        return RandomPicker.randomPick(responseList, 10);
     }
 
-    public LinkedList<CustomHotTrendResponseDto> customHotTrend(JSONObject jsonResponse) {
-        log.trace("ResponseParser > customHotTrend()");
+    public LinkedList<LoanItemSrchResponseDto> loanItemSrch(JSONObject jsonResponse) {
+        log.trace("ResponseParser > loanItemSrch()");
 
-        JSONArray docs = (JSONArray) jsonResponse.get("docs");
+        JSONArray step0 = (JSONArray) jsonResponse.get("docs");
 
-        LinkedList<CustomHotTrendResponseDto> responseList = new LinkedList<>();
+        LinkedList<LoanItemSrchResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
-        for (Object o : docs) {
-            JSONObject temp = (JSONObject) o;
+        for (Object obj : step0) {
+            JSONObject temp = (JSONObject) obj;
             JSONObject step1 = (JSONObject) temp.get("doc");
 
-            responseList.add(CustomHotTrendResponseDto.builder()
+            responseList.add(LoanItemSrchResponseDto.builder()
                     .no(step1.getAsString("no"))
                     .ranking(step1.getAsString("ranking"))
                     .bookname(step1.getAsString("bookname"))
@@ -162,8 +162,7 @@ public class ResponseParser {
                     .publisher(step1.getAsString("publisher"))
                     .publication_year(step1.getAsString("publication_year"))
                     .isbn13(step1.getAsString("isbn13"))
-                    .additional_symbol(step1.getAsString("additional_symbol"))
-                    .vol(step1.getAsString("vol"))
+                    .addition_symbol(step1.getAsString("addition_symbol"))
                     .class_no(step1.getAsString("class_no"))
                     .class_nm(step1.getAsString("class_nm"))
                     .loan_count(step1.getAsString("loan_count"))

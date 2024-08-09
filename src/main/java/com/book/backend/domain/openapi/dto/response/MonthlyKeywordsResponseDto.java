@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class KeywordResponseDto implements OpenAPIResponseInterface{
+public class MonthlyKeywordsResponseDto implements OpenAPIResponseInterface{
     private String keyword;
     private String weight; // 중요도
 
