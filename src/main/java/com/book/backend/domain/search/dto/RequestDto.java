@@ -15,5 +15,6 @@ public class RequestDto implements OpenAPIRequestInterface {
 
     @NotBlank(message = "검색어를 입력해주세요.")
     private String input; // 검색어
-    private int maxSize;
+    private Integer pageNo;
+    private Integer pageSize;
 }

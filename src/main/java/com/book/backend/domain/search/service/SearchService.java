@@ -1,8 +1,6 @@
 package com.book.backend.domain.search.service;
 
-import com.book.backend.domain.openapi.dto.request.BookExistRequestDto;
 import com.book.backend.domain.openapi.dto.request.SearchRequestDto;
-import com.book.backend.domain.openapi.dto.response.BookExistResponseDto;
 import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
@@ -22,15 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class SearchService {
     private final OpenAPI openAPI;
 
-    public LinkedList<SearchResponseDto> search(RequestDto requestDto, Integer maxSize) throws Exception {
+    public LinkedList<SearchResponseDto> search(RequestDto requestDto) throws Exception {
         log.trace("search()");
         String subUrl = "srchBooks";
 
         ResponseParser responseParser = new ResponseParser();
         if(!requestDto.isKeyword()){
             LinkedList<SearchResponseDto> responseList = new LinkedList<>();
-            Integer halfPageSize = maxSize/2;
+            Integer halfPageSize = requestDto.getPageSize() / 2;
+
             SearchRequestDto searchRequestDto = SearchRequestDto.builder()
+                    .pageNo(requestDto.getPageNo().toString())
                     .pageSize(halfPageSize.toString()) // 셔플할 리스트의 페이지 크기 설정
                     .build();
 
@@ -48,7 +48,8 @@ public class SearchService {
             return duplicateChecker(responseList);
         } else { // 키워드로 검색
             SearchRequestDto searchRequestDto = SearchRequestDto.builder()
-                    .pageSize(maxSize.toString()) // 셔플할 리스트의 페이지 크기 설정
+                    .pageNo(requestDto.getPageNo().toString())
+                    .pageSize(String.valueOf(requestDto.getPageSize())) // 셔플할 리스트의 페이지 크기 설정
                     .build();
 
             searchRequestDto.setKeyword(requestDto.getInput());

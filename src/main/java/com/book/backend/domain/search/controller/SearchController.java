@@ -37,19 +37,22 @@ public class SearchController {
             parameters = {@Parameter(name = "isKeyword", description = "키워드 여부"),
                     @Parameter(name = "input", description = "검색어"),
                     @Parameter(name = "libCode", description = "도서관 코드"),
-                    @Parameter(name = "maxSize", description = "리스트 길이 제한 (선택)")},
+                    @Parameter(name = "pageNo", description = "페이지 번호"),
+                    @Parameter(name = "pageSize", description = "페이지 당 요소 수")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SearchResponseDto.class)),
                     description = SearchResponseDto.description)})
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam boolean isKeyword, String input, String libCode, int maxSize) throws Exception {
-        RequestLogger.param(new String[]{"isKeyword, input, libCode, maxSize"}, isKeyword, input, libCode, maxSize);
+    public ResponseEntity<?> search(@RequestParam boolean isKeyword, String input, String libCode, int pageNo, int pageSize) throws Exception {
+        RequestLogger.param(new String[]{"isKeyword, input, libCode, pageNo, pageSize"}, isKeyword, input, libCode, pageNo, pageSize);
         requestValidate.isValidLibCode(libCode);
 
         RequestDto requestDto = RequestDto.builder()
                 .isKeyword(isKeyword)
                 .input(UriUtils.encode("\"" + input + "\"", "UTF-8")) // 공백 및 한글 인코딩
+                .pageNo(pageNo)
+                .pageSize(pageSize)
                 .build();
-        LinkedList<SearchResponseDto> response = searchService.search(requestDto, maxSize);
+        LinkedList<SearchResponseDto> response = searchService.search(requestDto);
 
         response = searchService.duplicateChecker(response);
 
