@@ -2,6 +2,8 @@ package com.book.backend.domain.openapi.service;
 
 import com.book.backend.domain.openapi.dto.request.OpenAPIRequestInterface;
 import com.book.backend.domain.openapi.dto.response.OpenAPIResponseInterface;
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -58,7 +60,12 @@ public class OpenAPI {
 
         // response JSON 파싱
         JSONObject jsonObject = (JSONObject) (new JSONParser()).parse(fullResponse);
-        return (JSONObject) jsonObject.get("response");
+        JSONObject response = (JSONObject) jsonObject.get("response");
+        // API 일일 호출 횟수 초과 에러 (일 최대 500건)
+        if(response.get("error") != null){
+            throw new CustomException(ErrorCode.API_CALL_LIMIT_EXCEEDED);
+        }
+        return response;
     }
 }
 

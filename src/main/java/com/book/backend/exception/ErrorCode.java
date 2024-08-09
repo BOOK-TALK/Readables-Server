@@ -23,7 +23,11 @@ public enum ErrorCode {
 
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "401", "인증 오류가 발생했습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 사용자를 찾을 수 없습니다."),
-    LOGIN_ID_DUPLICATED(HttpStatus.CONFLICT,"409", "사용자의 아이디가 중복됩니다.");
+    LOGIN_ID_DUPLICATED(HttpStatus.CONFLICT,"409", "사용자의 아이디가 중복됩니다."),
+
+    API_CALL_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "429", "OPEN API 일일 호출 횟수를 초과했습니다. (일 최대 500건)"),
+    ;
+
 
 
     private final HttpStatus status;
