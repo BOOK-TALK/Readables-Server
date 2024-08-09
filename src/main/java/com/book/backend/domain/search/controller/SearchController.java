@@ -51,7 +51,6 @@ public class SearchController {
                 .build();
         LinkedList<SearchResponseDto> response = searchService.search(requestDto, maxSize);
 
-        searchService.setLoanAvailable(response, libCode);
         response = searchService.duplicateChecker(response);
 
         return responseTemplate.success(response, HttpStatus.OK);

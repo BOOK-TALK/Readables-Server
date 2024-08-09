@@ -57,22 +57,6 @@ public class SearchService {
         }
     }
 
-    public void setLoanAvailable(LinkedList<SearchResponseDto> responseList, String libCode) throws Exception {
-        log.trace("setLoanAvailable()");
-
-        // 모든 책에 대해 대출 가능 여부 설정
-        for (SearchResponseDto dto : responseList) {
-            BookExistRequestDto bookExistRequestDto = BookExistRequestDto.builder()
-                    .libCode(libCode)
-                    .isbn13(dto.getIsbn13()).build();
-            String subUrl = "bookExist";
-            JSONObject jsonResponse = openAPI.connect(subUrl, bookExistRequestDto, new BookExistResponseDto());
-            ResponseParser responseParser = new ResponseParser();
-
-            dto.setLoanAvailable(responseParser.loanAvailable(jsonResponse));
-        }
-    }
-
     public LinkedList<SearchResponseDto> duplicateChecker(LinkedList<SearchResponseDto> list){
         log.trace("duplicateChecker()");
         LinkedList<SearchResponseDto> duplicateRemovedList = new LinkedList<>();

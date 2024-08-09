@@ -1,6 +1,5 @@
 package com.book.backend.domain.detail.controller;
 
-import com.book.backend.domain.openapi.dto.response.RecommendResponseDto;
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.detail.service.DetailService;
 import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
@@ -38,12 +37,15 @@ public class DetailController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = DetailResponseDto.class)),
                     description = DetailResponseDto.description)})
     @GetMapping("/detail")
-    public ResponseEntity<?> search(@RequestParam String isbn) throws Exception {
-        RequestLogger.param(new String[]{"isbn"}, isbn);
+    public ResponseEntity<?> search(@RequestParam String isbn, String libCode) throws Exception {
+        RequestLogger.param(new String[]{"isbn, libCode"}, isbn, libCode);
         requestValidate.isValidIsbn(isbn);
+        requestValidate.isValidLibCode(libCode);
 
         DetailRequestDto requestDto = DetailRequestDto.builder().isbn13(isbn).build();
-        LinkedList<DetailResponseDto> response = detailService.detail(requestDto);
+        DetailResponseDto response = detailService.detail(requestDto);
+
+        detailService.setLoanAvailable(response, libCode);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }

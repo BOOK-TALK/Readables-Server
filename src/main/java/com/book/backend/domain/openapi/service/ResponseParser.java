@@ -204,7 +204,7 @@ public class ResponseParser {
         return result.getAsString("loanAvailable").equals("Y");
     }
 
-    public LinkedList<DetailResponseDto> detail(JSONObject jsonResponse){
+    public DetailResponseDto detail(JSONObject jsonResponse){
         log.trace("ResponseParser > detail()");
         JSONObject book = (JSONObject) jsonResponse.get("book");
         JSONArray loanHistory = (JSONArray) jsonResponse.get("loanHistory");
@@ -294,13 +294,12 @@ public class ResponseParser {
             }
         }
 
-        responseList.add(DetailResponseDto.builder()
+        return DetailResponseDto.builder()
                 .bookInfoDto(bookInfoDto)
                 .top3LoanUserDtoList(top3LoanUserDtoList)
                 .keywordDtoList(keywordList)
                 .coLoanBooksDtoList(coLoanBooksList)
                 .recommendResponseDtoList(recommendBooksList)
-                .build());
-        return responseList;
+                .build();
     }
 }
