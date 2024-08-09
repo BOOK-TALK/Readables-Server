@@ -6,6 +6,7 @@ import com.book.backend.domain.openapi.dto.response.BookExistResponseDto;
 import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
+import com.book.backend.domain.search.dto.RequestDto;
 import java.util.HashSet;
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,35 @@ import org.springframework.transaction.annotation.Transactional;
 public class SearchService {
     private final OpenAPI openAPI;
 
-    public LinkedList<SearchResponseDto> search(SearchRequestDto requestDto) throws Exception {
+    public LinkedList<SearchResponseDto> search(RequestDto requestDto) throws Exception {
         log.trace("search()");
         String subUrl = "srchBooks";
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new SearchResponseDto());
+
+        SearchRequestDto searchRequestDto = SearchRequestDto.builder()
+                .pageNo(requestDto.getPageNo())
+                .pageSize(requestDto.getPageSize())
+                .build();
+
         ResponseParser responseParser = new ResponseParser();
-        return responseParser.search(jsonResponse);
+        if(!requestDto.isKeyword()){
+            LinkedList<SearchResponseDto> responseList = new LinkedList<>();
+            // 제목으로 검색
+            searchRequestDto.setTitle(requestDto.getInput());
+            JSONObject jsonResponse = openAPI.connect(subUrl, searchRequestDto, new SearchResponseDto());
+            responseList.addAll(responseParser.search(jsonResponse));
+
+            // 작가로 검색
+            searchRequestDto.setTitle(null);
+            searchRequestDto.setAuthor(requestDto.getInput());
+            jsonResponse = openAPI.connect(subUrl, searchRequestDto, new SearchResponseDto());
+            responseList.addAll(responseParser.search(jsonResponse));
+
+            return duplicateChecker(responseList);
+        } else { // 키워드로 검색
+            searchRequestDto.setKeyword(requestDto.getInput());
+            JSONObject jsonResponse = openAPI.connect(subUrl, searchRequestDto, new SearchResponseDto());
+            return responseParser.search(jsonResponse);
+        }
     }
 
     public void setLoanAvailable(LinkedList<SearchResponseDto> responseList, String libCode) throws Exception {
