@@ -32,17 +32,23 @@ public class GenreController {
     @Operation(summary = "일주일 인기순", description = "장르 코드(2자리)를 입력받아 1주일 인기순 도서 리스트를 반환합니다.",
             parameters = {
                     @Parameter(name = "genreCode", description = "세부 장르 코드 (필수, figma 참고)"),
-                    @Parameter(name = "maxSize", description = "리스트 길이 제한 (선택)")},
+                    @Parameter(name = "pageNo", description = "페이지 번호 (필수)"),
+                    @Parameter(name = "pageSize", description = "페이지 당 요소 수 (필수)")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoanItemSrchResponseDto.class)),
                     description = LoanItemSrchResponseDto.description)})
     @GetMapping("/aWeekTrend")
     public ResponseEntity<?> aWeekTrend(@RequestParam String genreCode,
-                                        @RequestParam(required = false) Integer maxSize) throws Exception {
+                                        @RequestParam String pageNo,
+                                        @RequestParam String pageSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, genreCode);
         requestValidate.isValidGenreCode(genreCode);
 
-        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder().dtl_kdc(genreCode).build();
-        LinkedList<LoanItemSrchResponseDto> response = genreService.periodToNowTrend(requestDto, 7, maxSize);
+        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder()
+                .dtl_kdc(genreCode)
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .build();
+        LinkedList<LoanItemSrchResponseDto> response = genreService.periodToNowTrend(requestDto, 7);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -51,17 +57,23 @@ public class GenreController {
     @Operation(summary = "한 달 인기순", description = "장르 코드(2자리)를 입력받아 한 달 인기순 도서 리스트를 반환합니다.",
             parameters = {
                     @Parameter(name = "genreCode", description = "세부 장르 코드 (필수, figma 참고)"),
-                    @Parameter(name = "maxSize", description = "리스트 길이 제한 (선택)")},
+                    @Parameter(name = "pageNo", description = "페이지 번호 (필수)"),
+                    @Parameter(name = "pageSize", description = "페이지 당 요소 수 (필수)")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoanItemSrchResponseDto.class)),
                     description = LoanItemSrchResponseDto.description)})
     @GetMapping("/aMonthTrend")
     public ResponseEntity<?> aMonthTrend(@RequestParam String genreCode,
-                                         @RequestParam(required = false) Integer maxSize) throws Exception {
+                                         @RequestParam String pageNo,
+                                         @RequestParam String pageSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, genreCode);
         requestValidate.isValidGenreCode(genreCode);
 
-        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder().dtl_kdc(genreCode).build();
-        LinkedList<LoanItemSrchResponseDto> response = genreService.periodToNowTrend(requestDto, 30, maxSize);
+        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder()
+                .dtl_kdc(genreCode)
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .build();
+        LinkedList<LoanItemSrchResponseDto> response = genreService.periodToNowTrend(requestDto, 30);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -71,17 +83,23 @@ public class GenreController {
             "단, 월요일 또는 화요일이면 저번 주차로, 아니면 이번 주차로 계산됩니다.",
             parameters = {
                     @Parameter(name = "genreCode", description = "세부 장르 코드 (필수, figma 참고)"),
-                    @Parameter(name = "maxSize", description = "리스트 길이 제한 (선택)")},
+                    @Parameter(name = "pageNo", description = "페이지 번호 (필수)"),
+                    @Parameter(name = "pageSize", description = "페이지 당 요소 수 (필수)")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoanItemSrchResponseDto.class)),
                     description = LoanItemSrchResponseDto.description)})
     @GetMapping("/thisWeekTrend")
     public ResponseEntity<?> thisWeekTrend(@RequestParam String genreCode,
-                                           @RequestParam(required = false) Integer maxSize) throws Exception {
+                                           @RequestParam String pageNo,
+                                           @RequestParam String pageSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, genreCode);
         requestValidate.isValidGenreCode(genreCode);
 
-        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder().dtl_kdc(genreCode).build();
-        LinkedList<LoanItemSrchResponseDto> response = genreService.thisWeekTrend(requestDto, maxSize);
+        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder()
+                .dtl_kdc(genreCode)
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .build();
+        LinkedList<LoanItemSrchResponseDto> response = genreService.thisWeekTrend(requestDto);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -100,29 +118,35 @@ public class GenreController {
         RequestLogger.param(new String[]{"kdcNum"}, genreCode);
         requestValidate.isValidGenreCode(genreCode);
 
-        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder().dtl_kdc(genreCode).build();
+        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder()
+                .dtl_kdc(genreCode)
+                .build();
         LinkedList<LoanItemSrchResponseDto> response = genreService.random(requestDto, maxSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
 
-    /**
-     * 신작 인기순 - 중주제 KDC 번호(2자리) 입력 시 2년 내 출판된 인기 도서 목록 리턴
-     */
+    // 신작 인기순
     @Operation(summary = "신작 인기순", description = "장르 코드(2자리)를 입력받아 최근 2년 내 출판된 인기 도서 리스트를 반환합니다.",
             parameters = {
                     @Parameter(name = "genreCode", description = "세부 장르 코드 (필수, figma 참고)"),
-                    @Parameter(name = "maxSize", description = "리스트 길이 제한 (선택)")},
+                    @Parameter(name = "pageNo", description = "페이지 번호 (필수)"),
+                    @Parameter(name = "pageSize", description = "페이지 당 요소 수 (필수)")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoanItemSrchResponseDto.class)),
                     description = LoanItemSrchResponseDto.description)})
     @GetMapping("/newTrend")
     public ResponseEntity<?> newTrend(@RequestParam String genreCode,
-                                      @RequestParam(required = false) Integer maxSize) throws Exception {
+                                      @RequestParam String pageNo,
+                                      @RequestParam String pageSize) throws Exception {
         RequestLogger.param(new String[]{"kdcNum"}, genreCode);
         requestValidate.isValidGenreCode(genreCode);
 
-        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder().dtl_kdc(genreCode).build();
-        LinkedList<LoanItemSrchResponseDto> response = genreService.newTrend(requestDto, maxSize);
+        LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder()
+                .dtl_kdc(genreCode)
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .build();
+        LinkedList<LoanItemSrchResponseDto> response = genreService.newTrend(requestDto);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
