@@ -12,11 +12,12 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+/* 중간 테이블 */
 @Entity
 @Table(name = "user_opentalk")
 @Getter
 @Setter
-public class userOpentalk {
+public class UserOpentalk {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userOpentalkId;
