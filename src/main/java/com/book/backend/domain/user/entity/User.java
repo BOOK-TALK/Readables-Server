@@ -1,6 +1,8 @@
 package com.book.backend.domain.user.entity;
 
+import com.book.backend.domain.opentalk.entity.Opentalk;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,4 +36,6 @@ public class User {
 
     private String phone;
 
+    @OneToMany(mappedBy = "opentalkId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Opentalk> openTalkIds; //즐찾 오픈톡
 }
