@@ -14,6 +14,7 @@ public class Opentalk {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long opentalkId;
 
+
     @OneToOne
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;

@@ -14,7 +14,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update # entity 기반 스키마 생성 // update 로 변경
+      ddl-auto: create # entity 기반 스키마 생성 // update 로 변경
 
     properties:
       hibernate:
