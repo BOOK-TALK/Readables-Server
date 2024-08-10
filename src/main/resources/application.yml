@@ -30,3 +30,8 @@ spring:
 openapi:
   url: ${OPENAPI_URL}
   authKey: ${OPENAPI_AUTH_KEY}
+
+kakao:
+  restapiKey: ${RESTAPI_KEY}
+  redirectUri: http://localhost:8080/login/oauth2/kakao
+  tokenRequestUri: https://kauth.kakao.com/oauth/token
