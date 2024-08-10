@@ -31,7 +31,7 @@ public class OpentalkController {
 
         OpentalkResponseDto response = OpentalkResponseDto.builder()
                 .hotOpentalkList(opentalkService.hotOpentalk()) // 현재 핫한 오픈톡 5개
-                .favoriteOpentalkList(new LinkedList<>(opentalkService.main(loginId))) // 내가 즐찾한 오픈톡
+                .favoriteOpentalkList(new LinkedList<>(opentalkService.favoriteOpentalk(loginId))) // 내가 즐찾한 오픈톡
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
