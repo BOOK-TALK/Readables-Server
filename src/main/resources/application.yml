@@ -26,6 +26,7 @@ spring:
   sql: #data.sql 의 DDL 실행
     init:
       mode: always
+      data-locations: classpath:data.sql, classpath:dummy.sql
 
 openapi:
   url: ${OPENAPI_URL}
