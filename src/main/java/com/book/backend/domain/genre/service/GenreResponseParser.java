@@ -13,22 +13,22 @@ import java.util.LinkedList;
 @RequiredArgsConstructor
 public class GenreResponseParser {
     private final ResponseParser responseParser;
-    private static final int NEW_TREND_YEAR_OFFSET = 2; // 최근 트렌드로 간주되는 연도 범위
+    private static final int NEW_TREND_YEAR_OFFSET = 2;  // 최근 트렌드 연도 범위
 
-    public LinkedList<LoanItemSrchResponseDto> periodTrend(JSONObject jsonResponse, Integer maxSize) {
-        return filterResponses(jsonResponse, maxSize, null);
+    public LinkedList<LoanItemSrchResponseDto> periodTrend(JSONObject jsonResponse) {
+        return filterResponses(jsonResponse, null, null);
     }
 
     public LinkedList<LoanItemSrchResponseDto> random(JSONObject jsonResponse, Integer maxSize) {
-        LinkedList<LoanItemSrchResponseDto> filteredResponses = filterResponses(jsonResponse, maxSize, null);
+        LinkedList<LoanItemSrchResponseDto> filteredResponses = filterResponses(jsonResponse, null, maxSize);
         return RandomPicker.randomPick(filteredResponses, maxSize);
     }
 
-    public LinkedList<LoanItemSrchResponseDto> newTrend(JSONObject jsonResponse, int currentYear, Integer maxSize) {
-        return filterResponses(jsonResponse, maxSize, currentYear);
+    public LinkedList<LoanItemSrchResponseDto> newTrend(JSONObject jsonResponse, int currentYear) {
+        return filterResponses(jsonResponse, currentYear, null);
     }
 
-    private LinkedList<LoanItemSrchResponseDto> filterResponses(JSONObject jsonResponse, Integer maxSize, Integer yearThreshold) {
+    private LinkedList<LoanItemSrchResponseDto> filterResponses(JSONObject jsonResponse, Integer yearThreshold, Integer maxSize) {
         LinkedList<LoanItemSrchResponseDto> loanTrendResponseList = responseParser.loanTrend(jsonResponse);
         LinkedList<LoanItemSrchResponseDto> responseList = new LinkedList<>();
 
