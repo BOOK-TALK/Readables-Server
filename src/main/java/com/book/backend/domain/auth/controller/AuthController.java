@@ -1,5 +1,6 @@
 package com.book.backend.domain.auth.controller;
 
+import com.book.backend.domain.auth.dto.KakaoUserInfoDto;
 import com.book.backend.domain.auth.dto.LoginDto;
 import com.book.backend.domain.auth.dto.SignupDto;
 import com.book.backend.domain.auth.service.AuthService;
@@ -61,4 +62,5 @@ public class AuthController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }
