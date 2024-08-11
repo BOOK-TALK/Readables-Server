@@ -3,6 +3,7 @@ package com.book.backend.domain.auth.service;
 import com.book.backend.domain.auth.dto.KakaoTokenResponseDto;
 import com.book.backend.domain.auth.dto.KakaoUserInfoDto;
 import com.book.backend.domain.user.dto.UserDto;
+import com.book.backend.domain.user.entity.Gender;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.repository.UserRepository;
@@ -27,8 +28,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.GRANT_TYPE;
-
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +58,7 @@ public class KakaoService {
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-            body.add("grant_type", GRANT_TYPE);
+            body.add("grant_type", "authorization_code");
             body.add("client_id", restApiKey);
             body.add("redirect_uri", redirectUri);
             body.add("code", authorizationCode);
@@ -67,6 +67,7 @@ public class KakaoService {
 
             return restTemplate.postForEntity(tokenRequestUri, request, KakaoTokenResponseDto.class).getBody();
         } catch (HttpClientErrorException e) {
+            log.trace("HttpClientErrorException: Status code: {}, Response body: {}", e.getStatusCode(), e.getResponseBodyAsString());
             throw new CustomException(ErrorCode.BAD_REQUEST);
         } catch (HttpServerErrorException e) {
             throw new CustomException(ErrorCode.KAKAO_SERVER_ERROR);
@@ -84,7 +85,7 @@ public class KakaoService {
 
             HttpEntity<String> request = new HttpEntity<>(headers);
 
-            // TODO: 일단 id만 받아오도록 구현, 향후 필요 시 유저 프로필 정보 가져오도록 구현 가능
+            // 일단 id만 받아오도록 구현, 향후 필요 시 유저 프로필 정보 가져오도록 구현 가능
             ResponseEntity<KakaoUserInfoDto> response = restTemplate.exchange(
                     userInfoUri, HttpMethod.GET, request, KakaoUserInfoDto.class);
             return response.getBody();
@@ -97,6 +98,7 @@ public class KakaoService {
     }
 
     // 카카오 로그인
+    @Transactional
     public UserDto kakaoLogin(HttpServletRequest request, String authorizationCode) {
         log.trace("kakaoLogin()");
 
@@ -111,8 +113,11 @@ public class KakaoService {
                 .orElseGet(() -> {
                     User newUser = new User();
                     newUser.setKakaoId(kakaoId);
+                    newUser.setRegDate(LocalDateTime.now());
+                    newUser.setPassword("unused");
                     newUser.setLoginId(null); // 카카오 로그인 사용자는 loginId가 null
                     newUser.setNickname("kakaoUser@" + kakaoId);
+                    newUser.setGender(Gender.G0);
                     return newUser;
                 });
 
@@ -122,7 +127,7 @@ public class KakaoService {
         UserDetails userDetails = userDetailsService.loadUserByKakaoId(kakaoId);
 
         // 사용자 인증 정보 생성 및 SecurityContext에 저장
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, userDetails.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // 세션에 SecurityContext 저장

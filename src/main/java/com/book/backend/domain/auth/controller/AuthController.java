@@ -4,7 +4,9 @@ import com.book.backend.domain.auth.dto.KakaoUserInfoDto;
 import com.book.backend.domain.auth.dto.LoginDto;
 import com.book.backend.domain.auth.dto.SignupDto;
 import com.book.backend.domain.auth.service.AuthService;
+import com.book.backend.domain.auth.service.KakaoService;
 import com.book.backend.domain.user.dto.UserDto;
+import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final KakaoService kakaoService;
+    private final ResponseTemplate responseTemplate;
 
     @PostMapping("/signup")
     public ResponseEntity<UserDto> signup(@Valid @RequestBody SignupDto signupDto) {
@@ -63,4 +67,12 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PostMapping("/kakaoLogin")
+    public ResponseEntity<?> kakaoLogin(HttpServletRequest request, String authorizationCode) {
+        RequestLogger.param(new String[] {"Session Id"}, request.getSession().getId());
+
+        UserDto userDto = kakaoService.kakaoLogin(request, authorizationCode);
+
+        return responseTemplate.success(userDto, HttpStatus.OK);
+    }
 }
