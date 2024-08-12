@@ -16,11 +16,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @Column(unique = true)
+    private String loginId;
+
+    @Column(unique = true)
     private String kakaoId;
 
     private LocalDateTime regDate;
-
-    private String loginId;
 
     private String nickname;
 
