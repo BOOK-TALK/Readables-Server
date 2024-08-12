@@ -1,9 +1,12 @@
 package com.book.backend.domain.opentalk.controller;
 
+import com.book.backend.domain.message.dto.MessageResopnseDto;
+import com.book.backend.domain.message.entity.Message;
 import com.book.backend.domain.opentalk.OpentalkResponseDto;
 import com.book.backend.domain.opentalk.service.OpentalkService;
 import com.book.backend.global.log.RequestLogger;
 import java.util.LinkedList;
+import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +15,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +46,19 @@ public class OpentalkController {
                 .hotOpentalkList(opentalkService.hotOpentalk())
                 .favoriteOpentalkList(new LinkedList<>(opentalkService.favoriteOpentalk(loginId)))
                 .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 채팅 불러오기
+    // opentalkId 를 입력받으면, message 테이블에서 해당 opentalkId 의 메시지를 createdAt 최신순으로 25개 조회해서 반환한다.
+    @GetMapping("/chat")
+    public ResponseEntity<?> chat(@RequestParam String opentalkId, int pageNo) {
+        RequestLogger.param(new String[]{"opentalkId, pageNo"}, opentalkId, pageNo);
+
+        Pageable pageRequest = PageRequest.of(pageNo, 5, Sort.by("createdAt").descending());
+        Page<Message> MessagePage = opentalkService.getOpentalkMessage(opentalkId, pageRequest);
+        List<MessageResopnseDto> response = opentalkService.pageToDto(MessagePage);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
