@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.Date;
 
 @Entity
-@Table(name = "message")
+@Table(name = "message", indexes = @Index(name = "idx_message_createdAt", columnList = "createdAt"))
 @Getter
 @Setter
 public class Message {
