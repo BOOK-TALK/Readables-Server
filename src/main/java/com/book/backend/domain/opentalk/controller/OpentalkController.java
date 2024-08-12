@@ -1,14 +1,15 @@
 package com.book.backend.domain.opentalk.controller;
 
-import com.book.backend.domain.openapi.dto.request.RecommendListRequestDto;
-import com.book.backend.domain.openapi.dto.response.RecommendListResponseDto;
 import com.book.backend.domain.opentalk.OpentalkResponseDto;
 import com.book.backend.domain.opentalk.service.OpentalkService;
 import com.book.backend.global.log.RequestLogger;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,13 +26,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class OpentalkController {
     private final OpentalkService opentalkService;
 
+    // 오픈톡 메인 화면 (현재 핫한 오픈톡, 내가 즐찾한 오픈톡)
+    @Operation(summary="오픈톡 메인 화면", description="현재 핫한 오픈톡 top 5의 ID List 와 사용자가 즐겨찾기한 오픈톡 ID List 를 반환합니다.",
+            parameters = {@Parameter(name = "loginId", description = "아이디")},
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkResponseDto.class)),
+                    description = OpentalkResponseDto.description)})
     @GetMapping("/main")
-    public ResponseEntity<?> main(@RequestParam String loginId) throws Exception {
+    public ResponseEntity<?> main(@RequestParam String loginId) {
         RequestLogger.param(new String[]{"loginId"}, loginId);
 
         OpentalkResponseDto response = OpentalkResponseDto.builder()
-                .hotOpentalkList(opentalkService.hotOpentalk()) // 현재 핫한 오픈톡 5개
-                .favoriteOpentalkList(new LinkedList<>(opentalkService.favoriteOpentalk(loginId))) // 내가 즐찾한 오픈톡
+                .hotOpentalkList(opentalkService.hotOpentalk())
+                .favoriteOpentalkList(new LinkedList<>(opentalkService.favoriteOpentalk(loginId)))
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
