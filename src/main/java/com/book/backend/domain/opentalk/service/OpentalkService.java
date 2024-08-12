@@ -41,7 +41,7 @@ public class OpentalkService {
     /* 해당 user의 즐찾 opentalk list 반환*/
     public List<Long> favoriteOpentalk(String loginId) {
         User user =  userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        List<UserOpentalk> opentalkList = userOpentalkRepository.findAllByUserId(user);
+        List<UserOpentalk> opentalkList = userOpentalkRepository.findAllByUser(user);
 
         List<Long> opentalkIds = new LinkedList<>();
         for(UserOpentalk userOpentalk : opentalkList) {

@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface UserOpentalkRepository extends JpaRepository<UserOpentalk, Long> {
-    List<UserOpentalk> findAllByUserId(User user);
+    List<UserOpentalk> findAllByUser(User user);
 }
