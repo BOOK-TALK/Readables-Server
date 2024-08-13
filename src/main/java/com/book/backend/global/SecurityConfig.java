@@ -23,7 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -33,9 +32,10 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())  // CORS 활성화
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()  // Swagger 관련 경로
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()  // Swagger 관련 경로
                         .requestMatchers("/login/oauth2/**").permitAll()  // OAuth2 Callback 경로
                         .requestMatchers("/token/**").permitAll()  // 토큰 발급 경로
+                        .requestMatchers("/api/**").permitAll()  // API 경로, 추후 제거 예정
                         .anyRequest().authenticated()
                 )
                 .sessionManagement((session) -> session
