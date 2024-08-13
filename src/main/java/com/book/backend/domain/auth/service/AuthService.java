@@ -12,8 +12,8 @@ import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +29,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class AuthService {
     private final UserRepository userRepository;
     private final AuthMapper authMapper;
@@ -39,6 +40,8 @@ public class AuthService {
 
     @Transactional
     public UserDto signup(SignupDto signupDto) {
+        log.trace("signup()");
+
         validateNotDuplicatedLoginId(signupDto.getLoginId());
 
         User user = authMapper.convertToUser(signupDto);
@@ -50,6 +53,8 @@ public class AuthService {
     }
 
     public LoginSuccessResponseDto login(LoginDto loginDto) {
+        log.trace("login()");
+
         try {
             // 사용자 인증 시도
             Authentication authentication = authenticationManager.authenticate(
@@ -77,12 +82,16 @@ public class AuthService {
 
     @Transactional
     public void deleteAccountByLoginId(String loginId) {
+        log.trace("deleteAccountByLoginId()");
+
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         userRepository.delete(user);
     }
 
     private void validateNotDuplicatedLoginId(String loginId) {
+        log.trace("validateNotDuplicatedByLoginId");
+
         Optional<User> userOptional = userRepository.findByLoginId(loginId);
 
         if (userOptional.isPresent()) {
