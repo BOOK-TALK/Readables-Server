@@ -37,3 +37,6 @@ kakao:
   redirectUri: http://localhost:8080/login/oauth2/kakao
   tokenRequestUri: https://kauth.kakao.com/oauth/token
   userInfoUri: https://kapi.kakao.com/v2/user/me
+
+jwt:
+  secretKey: ${JWT_SECRET}
