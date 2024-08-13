@@ -4,7 +4,9 @@ import com.book.backend.domain.auth.dto.JwtTokenDto;
 import com.book.backend.domain.auth.dto.LoginDto;
 import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
 import com.book.backend.domain.auth.dto.SignupDto;
+import com.book.backend.domain.auth.entity.RefreshToken;
 import com.book.backend.domain.auth.mapper.AuthMapper;
+import com.book.backend.domain.auth.repository.RefreshTokenRepository;
 import com.book.backend.domain.user.dto.UserDto;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
@@ -32,6 +34,7 @@ import java.util.Optional;
 @Slf4j
 public class AuthService {
     private final UserRepository userRepository;
+    private final JwtService jwtService;
     private final AuthMapper authMapper;
     private final UserMapper userMapper;
     private final AuthenticationManager authenticationManager;
@@ -73,6 +76,8 @@ public class AuthService {
         User user = userRepository.findByLoginId(loginDto.getLoginId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        jwtService.updateRefreshToken(jwtTokenDto, user);
+
         return LoginSuccessResponseDto.builder()
                 .userId(user.getUserId())
                 .accessToken(jwtTokenDto.getAccessToken())
@@ -90,7 +95,7 @@ public class AuthService {
     }
 
     private void validateNotDuplicatedLoginId(String loginId) {
-        log.trace("validateNotDuplicatedByLoginId");
+        log.trace("validateNotDuplicatedByLoginId()");
 
         Optional<User> userOptional = userRepository.findByLoginId(loginId);
 

@@ -1,6 +1,7 @@
 package com.book.backend.domain.auth.service;
 
 import com.book.backend.util.JwtUtil;
+import com.book.backend.util.RequestWrapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,44 +27,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String requestURI = request.getRequestURI();
+        RequestWrapper wrappedRequest = new RequestWrapper(request);
+
+        String requestURI = wrappedRequest.getRequestURI();
 
         // Swagger 경로에 대한 요청인 경우 필터링 과정 건너뛰기
         if (requestURI.startsWith("/swagger-ui/") || requestURI.startsWith("/v3/api-docs")) {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(wrappedRequest, response);
             return;
         }
 
         // 요청 헤더에서 Authorization 요소 추출
-        String authorization = request.getHeader("Authorization");
+        String authorization = wrappedRequest.getHeader("Authorization");
         String username = "", token = "";
 
         if (authorization != null && authorization.startsWith("Bearer ")) {  // Bearer 토큰 파싱
             token = authorization.substring(7);  // jwt token 파싱
             username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
-        } else {
-            filterChain.doFilter(request, response);
-        }
 
-        // 현재 SecurityContextHolder에 인증객체가 있는지 확인
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            // 현재 SecurityContextHolder에 인증객체가 있는지 확인
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            // 토큰 유효성 검증
-            log.info("JWT Filter token = {}", token);
-            log.info("JWT Filter userDetails = {}", userDetails.getUsername());
+                // 토큰 유효성 검증
+                log.info("JWT Filter token = {}", token);
+                log.info("JWT Filter userDetails = {}", userDetails.getUsername());
 
-            if (jwtUtil.isValidToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                if (jwtUtil.isValidToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authenticationToken
+                            = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                // 인증 토큰에 요청 세부 정보 설정
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    // 인증 토큰에 요청 세부 정보 설정
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(wrappedRequest));
 
-                // Security Context에 인증 설정
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    // Security Context에 인증 설정
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }
             }
         }
-        filterChain.doFilter(request,response);
+
+        filterChain.doFilter(wrappedRequest, response);
     }
 }
