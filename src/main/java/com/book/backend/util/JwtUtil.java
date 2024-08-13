@@ -1,5 +1,6 @@
 package com.book.backend.util;
 
+import com.book.backend.domain.auth.dto.JwtTokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -17,19 +18,36 @@ import java.util.Date;
 public class JwtUtil {
     @Value("${jwt.secretKey}")
     private String secret;
+    @Value("${jwt.accessTokenExpireTime}")
+    private Long accessTokenExpireTime;
+    @Value("${jwt.refreshTokenExpireTime}")
+    private Long refreshTokenExpireTime;
 
     // 토큰 생성
-    public String generateToken(UserDetails userDetails) {
+    public JwtTokenDto generateToken(UserDetails userDetails) {
         Claims claims = Jwts.claims();
         claims.put("username", userDetails.getUsername());
-        return createToken(claims); // username을 subject로 해서 token 생성
+
+        return JwtTokenDto.builder()
+                .accessToken(createAccessToken(claims))
+                .refreshToken(createRefreshToken(claims))
+                .build();
     }
 
-    private String createToken(Claims claims) {
+    private String createAccessToken(Claims claims) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 1시간
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpireTime))
+                .signWith(SignatureAlgorithm.HS256, secret)
+                .compact();
+    }
+
+    private String createRefreshToken(Claims claims) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpireTime))
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }

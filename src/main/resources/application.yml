@@ -40,3 +40,5 @@ kakao:
 
 jwt:
   secretKey: ${JWT_SECRET}
+  accessTokenExpireTime: ${ACCESS_TOKEN_EXPIRE_TIME}
+  refreshTokenExpireTime: ${REFRESH_TOKEN_EXPIRE_TIME}
