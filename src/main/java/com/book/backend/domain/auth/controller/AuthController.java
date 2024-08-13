@@ -82,8 +82,8 @@ public class AuthController {
     public ResponseEntity<?> kakaoLogin(HttpServletRequest request, String authorizationCode) {
         RequestLogger.param(new String[] {"Session Id"}, request.getSession().getId());
 
-        UserDto userDto = kakaoService.kakaoLogin(request, authorizationCode);
+        LoginSuccessResponseDto loginSuccessResponseDto = kakaoService.kakaoLogin(request, authorizationCode);
 
-        return responseTemplate.success(userDto, HttpStatus.OK);
+        return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
     }
 }
