@@ -29,8 +29,16 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .httpBasic(AbstractHttpConfigurer::disable)  // httpBasic 비활성화
                 .cors(Customizer.withDefaults())  // CORS 활성화
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)  // CSRF 비활성화
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
+
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // 세션 관리 비활성화
+                )
+
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()  // Swagger 관련 경로
                         .requestMatchers("/login/oauth2/**").permitAll()  // OAuth2 Callback 경로
@@ -38,11 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").permitAll()  // API 경로, 추후 제거 예정
                         .anyRequest().authenticated()
                 )
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // 세션 관리 비활성화
-                )
-                .formLogin(AbstractHttpConfigurer::disable)
-                .logout(AbstractHttpConfigurer::disable)
+
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
