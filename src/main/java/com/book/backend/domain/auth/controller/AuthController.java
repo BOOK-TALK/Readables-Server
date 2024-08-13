@@ -1,7 +1,7 @@
 package com.book.backend.domain.auth.controller;
 
-import com.book.backend.domain.auth.dto.KakaoUserInfoDto;
 import com.book.backend.domain.auth.dto.LoginDto;
+import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
 import com.book.backend.domain.auth.dto.SignupDto;
 import com.book.backend.domain.auth.service.AuthService;
 import com.book.backend.domain.auth.service.KakaoService;
@@ -42,18 +42,18 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto> login(HttpServletRequest request, @Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
         RequestLogger.body(loginDto);
 
-        UserDto userDto = authService.login(request, loginDto);
-        return ResponseEntity.ok(userDto);
+        LoginSuccessResponseDto loginSuccessResponseDto = authService.login(loginDto);
+        return ResponseEntity.ok(loginSuccessResponseDto);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
         RequestLogger.param(new String[] {"Session ID"}, request.getSession().getId());
 
-        request.getSession().invalidate();
+//        request.getSession().invalidate();
         SecurityContextHolder.clearContext();
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -66,7 +66,7 @@ public class AuthController {
         String loginId = authentication.getName();
 
         authService.deleteAccountByLoginId(loginId);
-        request.getSession().invalidate();
+//        request.getSession().invalidate();
         SecurityContextHolder.clearContext();
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

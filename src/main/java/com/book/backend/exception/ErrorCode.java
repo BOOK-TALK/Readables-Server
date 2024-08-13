@@ -21,7 +21,7 @@ public enum ErrorCode {
     INVALID_LIB_CODE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 도서관 코드입니다. (6자리 숫자로 입력해주세요)"),
     INVALID_PAGE_NUM(HttpStatus.BAD_REQUEST, "400", "페이지 번호는 1 이상의 숫자로 입력해주세요."),
 
-    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "401", "인증 오류가 발생했습니다."),
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "401", "사용자 인증에 실패했습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 사용자를 찾을 수 없습니다."),
     LOGIN_ID_DUPLICATED(HttpStatus.CONFLICT,"409", "사용자의 아이디가 중복됩니다."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "400", "요청이 잘못되었습니다."),
