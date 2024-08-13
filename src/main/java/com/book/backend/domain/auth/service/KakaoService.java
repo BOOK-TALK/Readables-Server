@@ -1,7 +1,9 @@
 package com.book.backend.domain.auth.service;
 
+import com.book.backend.domain.auth.dto.JwtTokenDto;
 import com.book.backend.domain.auth.dto.KakaoTokenResponseDto;
 import com.book.backend.domain.auth.dto.KakaoUserInfoDto;
+import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
 import com.book.backend.domain.user.dto.UserDto;
 import com.book.backend.domain.user.entity.Gender;
 import com.book.backend.domain.user.entity.User;
@@ -9,6 +11,7 @@ import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
+import com.book.backend.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +51,7 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final CustomUserDetailsService userDetailsService;
+    private final JwtUtil jwtUtil;
 
     // Redirect URI에 전달된 코드값으로 Access Token 요청
     public KakaoTokenResponseDto getAccessToken(String authorizationCode) {
@@ -99,7 +103,7 @@ public class KakaoService {
 
     // 카카오 로그인
     @Transactional
-    public UserDto kakaoLogin(HttpServletRequest request, String authorizationCode) {
+    public LoginSuccessResponseDto kakaoLogin(HttpServletRequest request, String authorizationCode) {
         log.trace("kakaoLogin()");
 
         KakaoTokenResponseDto tokenResponseDto = getAccessToken(authorizationCode);
@@ -125,16 +129,17 @@ public class KakaoService {
 
         // UserDetailsService를 사용하여 UserDetails 객체 생성
         UserDetails userDetails = userDetailsService.loadUserByKakaoId(kakaoId);
+        JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
 
         // 사용자 인증 정보 생성 및 SecurityContext에 저장
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 세션에 SecurityContext 저장
-        HttpSession session = request.getSession(true);
-        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-
-        return userMapper.convertToUserDto(user);
+        return LoginSuccessResponseDto.builder()
+                .userId(user.getUserId())
+                .accessToken(jwtTokenDto.getAccessToken())
+                .refreshToken(jwtTokenDto.getRefreshToken())
+                .build();
     }
 
 }
