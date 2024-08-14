@@ -49,18 +49,16 @@ public class AuthController {
         return ResponseEntity.ok(loginSuccessResponseDto);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request) {
-        RequestLogger.param(new String[] {"Session ID"}, request.getSession().getId());
-
-        SecurityContextHolder.clearContext();
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @PostMapping("/logout")
+//    public ResponseEntity<?> logout(HttpServletRequest request) {
+//        RequestLogger.param(new String[] {"Session ID"}, request.getSession().getId());
+//
+//        SecurityContextHolder.clearContext();
+//        return ResponseEntity.ok("success");
+//    }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteAccount(HttpServletRequest request) {
-        RequestLogger.param(new String[] {"Session ID"}, request.getSession().getId());
-
+    public ResponseEntity<?> deleteAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loginId = authentication.getName();
 
