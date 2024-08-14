@@ -53,7 +53,6 @@ public class AuthController {
     public ResponseEntity<Void> logout(HttpServletRequest request) {
         RequestLogger.param(new String[] {"Session ID"}, request.getSession().getId());
 
-//        request.getSession().invalidate();
         SecurityContextHolder.clearContext();
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -66,7 +65,6 @@ public class AuthController {
         String loginId = authentication.getName();
 
         authService.deleteAccountByLoginId(loginId);
-//        request.getSession().invalidate();
         SecurityContextHolder.clearContext();
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

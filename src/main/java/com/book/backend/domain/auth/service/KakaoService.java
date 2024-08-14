@@ -47,7 +47,7 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
-    private final JwtService jwtService;
+    private final JwtRefreshTokenService jwtRefreshTokenService;
 
     // Redirect URI에 전달된 코드값으로 Access Token 요청
     public KakaoTokenResponseDto getAccessToken(String authorizationCode) {
@@ -128,7 +128,7 @@ public class KakaoService {
         JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
 
         // Refresh Token 갱신
-        jwtService.updateRefreshToken(jwtTokenDto, user);
+        jwtRefreshTokenService.updateRefreshToken(jwtTokenDto, user);
 
         // 사용자 인증 정보 생성 및 SecurityContext에 저장
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());

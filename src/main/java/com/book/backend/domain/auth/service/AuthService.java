@@ -32,7 +32,7 @@ import java.util.Optional;
 @Slf4j
 public class AuthService {
     private final UserRepository userRepository;
-    private final JwtService jwtService;
+    private final JwtRefreshTokenService jwtRefreshTokenService;
     private final AuthMapper authMapper;
     private final UserMapper userMapper;
     private final AuthenticationManager authenticationManager;
@@ -53,6 +53,7 @@ public class AuthService {
         return userMapper.convertToUserDto(savedUser);
     }
 
+    @Transactional
     public LoginSuccessResponseDto login(LoginDto loginDto) {
         log.trace("login()");
 
@@ -75,7 +76,7 @@ public class AuthService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // RefreshToken 갱신
-        jwtService.updateRefreshToken(jwtTokenDto, user);
+        jwtRefreshTokenService.updateRefreshToken(jwtTokenDto, user);
 
         return LoginSuccessResponseDto.builder()
                 .userId(user.getUserId())
