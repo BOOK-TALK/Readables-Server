@@ -33,6 +33,9 @@ public class AuthController {
     private final KakaoService kakaoService;
     private final ResponseTemplate responseTemplate;
 
+    @Operation(summary = "회원가입", description = "기본 회원가입을 진행합니다.",
+            responses = {@ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserDto.class)),
+                    description = UserDto.description)})
     @PostMapping("/signup")
     public ResponseEntity<UserDto> signup(@Valid @RequestBody SignupDto signupDto) {
         RequestLogger.body(signupDto);
@@ -41,6 +44,9 @@ public class AuthController {
         return ResponseEntity.ok(userDto);
     }
 
+    @Operation(summary = "로그인", description = "기본 로그인을 진행합니다.",
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoginSuccessResponseDto.class)),
+                    description = LoginSuccessResponseDto.description)})
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
         RequestLogger.body(loginDto);
