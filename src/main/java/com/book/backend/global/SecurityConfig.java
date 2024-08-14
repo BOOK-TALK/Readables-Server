@@ -42,11 +42,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()  // Swagger 관련 경로
                         .requestMatchers("/login/oauth2/**").permitAll()  // OAuth2 Callback 경로
-                        .requestMatchers("/token/**").permitAll()  // 토큰 발급 경로
-                        .requestMatchers("/api/**").permitAll()  // API 경로, 추후 제거 예정
+                        .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/kakaoLogin").permitAll()  // 회원가입, 로그인 경로
+//                        .requestMatchers("/api/**")  // 모든 API에 대한 인증 비활성화 (개발용)
                         .anyRequest().authenticated()
                 )
-
+                .exceptionHandling((exception) -> exception
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

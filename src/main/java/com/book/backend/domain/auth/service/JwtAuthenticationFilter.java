@@ -2,6 +2,7 @@ package com.book.backend.domain.auth.service;
 
 import com.book.backend.util.JwtUtil;
 import com.book.backend.util.RequestWrapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,19 +50,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                // 토큰 유효성 검증
                 log.info("JWT Filter token = {}", token);
                 log.info("JWT Filter userDetails = {}", userDetails.getUsername());
 
+                // 토큰 유효성 검증
                 if (jwtUtil.isValidToken(token, userDetails)) {
-                    UsernamePasswordAuthenticationToken authenticationToken
+                    UsernamePasswordAuthenticationToken authenticated
                             = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                    // 인증 토큰에 요청 세부 정보 설정
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(wrappedRequest));
-
-                    // Security Context에 인증 설정
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    authenticated.setDetails(new WebAuthenticationDetailsSource().buildDetails(wrappedRequest));
+                    SecurityContextHolder.getContext().setAuthentication(authenticated);
                 }
             }
         }
