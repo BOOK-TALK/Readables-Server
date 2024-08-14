@@ -1,5 +1,7 @@
 package com.book.backend.domain.auth.service;
 
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
 import com.book.backend.util.RequestWrapper;
 import jakarta.servlet.FilterChain;
@@ -47,10 +49,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // 현재 SecurityContextHolder에 인증객체가 있는지 확인
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-                log.info("JWT Filter token = {}", token);
-                log.info("JWT Filter userDetails = {}", userDetails.getUsername());
+                UserDetails userDetails;
+                try {
+                    userDetails = userDetailsService.loadUserByUsername(username);
+                } catch (CustomException e) {
+                    userDetails = userDetailsService.loadUserByKakaoId(username);
+                }
 
                 // 토큰 유효성 검증
                 if (jwtUtil.isValidToken(token, userDetails)) {
