@@ -2,7 +2,6 @@ package com.book.backend.domain.auth.service;
 
 import com.book.backend.util.JwtUtil;
 import com.book.backend.util.RequestWrapper;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,6 +59,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     authenticated.setDetails(new WebAuthenticationDetailsSource().buildDetails(wrappedRequest));
                     SecurityContextHolder.getContext().setAuthentication(authenticated);
+
+                    // 토큰 갱신
+                    String newAccessToken = jwtUtil.generateToken(userDetails).getAccessToken();
+                    response.setHeader("Authorization", "Bearer " + newAccessToken);
                 }
             }
         }
