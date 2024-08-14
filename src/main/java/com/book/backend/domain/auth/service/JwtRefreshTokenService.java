@@ -13,7 +13,7 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class JwtService {
+public class JwtRefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional

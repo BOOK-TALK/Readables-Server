@@ -63,7 +63,7 @@ public class JwtUtil {
     private Claims getAllClaims(String token) {
         log.info("getAllClaims token = {}", token);
         return Jwts.parser()
-                .setSigningKey(secret)
+                .setSigningKey(secret)  // secret 키로 검증
                 .parseClaimsJws(token)
                 .getBody();
     }
