@@ -4,9 +4,7 @@ import com.book.backend.domain.auth.dto.JwtTokenDto;
 import com.book.backend.domain.auth.dto.LoginDto;
 import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
 import com.book.backend.domain.auth.dto.SignupDto;
-import com.book.backend.domain.auth.entity.RefreshToken;
 import com.book.backend.domain.auth.mapper.AuthMapper;
-import com.book.backend.domain.auth.repository.RefreshTokenRepository;
 import com.book.backend.domain.user.dto.UserDto;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
@@ -76,6 +74,7 @@ public class AuthService {
         User user = userRepository.findByLoginId(loginDto.getLoginId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        // RefreshToken 갱신
         jwtService.updateRefreshToken(jwtTokenDto, user);
 
         return LoginSuccessResponseDto.builder()

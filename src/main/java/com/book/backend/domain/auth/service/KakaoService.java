@@ -4,16 +4,13 @@ import com.book.backend.domain.auth.dto.JwtTokenDto;
 import com.book.backend.domain.auth.dto.KakaoTokenResponseDto;
 import com.book.backend.domain.auth.dto.KakaoUserInfoDto;
 import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
-import com.book.backend.domain.user.dto.UserDto;
 import com.book.backend.domain.user.entity.Gender;
 import com.book.backend.domain.user.entity.User;
-import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -49,9 +45,9 @@ public class KakaoService {
 
     private final RestTemplate restTemplate;
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
 
     // Redirect URI에 전달된 코드값으로 Access Token 요청
     public KakaoTokenResponseDto getAccessToken(String authorizationCode) {
@@ -130,6 +126,9 @@ public class KakaoService {
         // UserDetailsService를 사용하여 UserDetails 객체 생성
         UserDetails userDetails = userDetailsService.loadUserByKakaoId(kakaoId);
         JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
+
+        // Refresh Token 갱신
+        jwtService.updateRefreshToken(jwtTokenDto, user);
 
         // 사용자 인증 정보 생성 및 SecurityContext에 저장
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
