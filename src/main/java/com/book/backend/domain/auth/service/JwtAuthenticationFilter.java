@@ -4,6 +4,7 @@ import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
 import com.book.backend.util.RequestWrapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,7 +46,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authorization != null && authorization.startsWith("Bearer ")) {  // Bearer 토큰 파싱
             token = authorization.substring(7);  // jwt token 파싱
-            username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
+            try {
+                username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
+            } catch (ExpiredJwtException e) {
+                filterChain.doFilter(wrappedRequest, response);
+                return;
+            }
 
             // 현재 SecurityContextHolder에 인증객체가 있는지 확인
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
