@@ -23,6 +23,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -37,11 +39,11 @@ public class AuthController {
             responses = {@ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserDto.class)),
                     description = UserDto.description)})
     @PostMapping("/signup")
-    public ResponseEntity<UserDto> signup(@Valid @RequestBody SignupDto signupDto) {
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupDto signupDto) {
         RequestLogger.body(signupDto);
 
         UserDto userDto = authService.signup(signupDto);
-        return ResponseEntity.ok(userDto);
+        return responseTemplate.success(userDto, HttpStatus.CREATED);
     }
 
     @Operation(summary = "로그인", description = "기본 로그인을 진행합니다.",
@@ -52,7 +54,7 @@ public class AuthController {
         RequestLogger.body(loginDto);
 
         LoginSuccessResponseDto loginSuccessResponseDto = authService.login(loginDto);
-        return ResponseEntity.ok(loginSuccessResponseDto);
+        return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
     }
 
 //    @PostMapping("/logout")
@@ -71,7 +73,7 @@ public class AuthController {
         authService.deleteAccountByLoginId(loginId);
         SecurityContextHolder.clearContext();
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return responseTemplate.success("회원 탈퇴가 완료되었습니다.", HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "카카오 로그인", description = "사용자가 카카오 인증 서버에서 받은 인가 코드를 parameter로 받아 카카오계정으로 로그인을 진행하고, 완료된 유저 정보를 반환합니다.",
