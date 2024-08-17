@@ -44,37 +44,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authorization = wrappedRequest.getHeader("Authorization");
         String username = "", token = "";
 
-        if (authorization != null && authorization.startsWith("Bearer ")) {  // Bearer 토큰 파싱
-            token = authorization.substring(7);  // jwt token 파싱
-            try {
+        try {
+            if (authorization != null && authorization.startsWith("Bearer ")) {  // Bearer 토큰 파싱
+                token = authorization.substring(7);  // jwt token 파싱
                 username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
-            } catch (ExpiredJwtException e) {
-                filterChain.doFilter(wrappedRequest, response);
-                return;
-            }
 
-            // 현재 SecurityContextHolder에 인증객체가 있는지 확인
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails;
-                try {
-                    userDetails = userDetailsService.loadUserByUsername(username);
-                } catch (CustomException e) {
-                    userDetails = userDetailsService.loadUserByKakaoId(username);
+                // 현재 SecurityContextHolder에 인증객체가 있는지 확인
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails userDetails;
+                    try {
+                        userDetails = userDetailsService.loadUserByUsername(username);
+                    } catch (CustomException e) {
+                        userDetails = userDetailsService.loadUserByKakaoId(username);
+                    }
+
+                    // 토큰 유효성 검증
+                    if (jwtUtil.isValidToken(token, userDetails)) {
+                        UsernamePasswordAuthenticationToken authenticated
+                                = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                        authenticated.setDetails(new WebAuthenticationDetailsSource().buildDetails(wrappedRequest));
+                        SecurityContextHolder.getContext().setAuthentication(authenticated);
+
+                        // 토큰 갱신
+                        String newAccessToken = jwtUtil.generateToken(userDetails).getAccessToken();
+                        response.setHeader("Authorization", "Bearer " + newAccessToken);
+                    }
                 }
-
-                // 토큰 유효성 검증
-                if (jwtUtil.isValidToken(token, userDetails)) {
-                    UsernamePasswordAuthenticationToken authenticated
-                            = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                    authenticated.setDetails(new WebAuthenticationDetailsSource().buildDetails(wrappedRequest));
-                    SecurityContextHolder.getContext().setAuthentication(authenticated);
-
-                    // 토큰 갱신
-                    String newAccessToken = jwtUtil.generateToken(userDetails).getAccessToken();
-                    response.setHeader("Authorization", "Bearer " + newAccessToken);
-                }
+            } else {
+                request.setAttribute("JWTException", new CustomException(ErrorCode.JWT_NOT_FOUND));
             }
+        } catch (ExpiredJwtException e) {
+            request.setAttribute("JWTException", new CustomException(ErrorCode.JWT_EXPIRED));
+        } catch (Exception e) {
+            request.setAttribute("JWTException", new CustomException(ErrorCode.INVALID_CREDENTIALS));
         }
 
         filterChain.doFilter(wrappedRequest, response);
