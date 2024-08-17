@@ -7,8 +7,8 @@ import java.util.Date;
 
 @Getter
 @Builder
-public class MessageResopnseDto {
-    private User user; //작성자
+public class MessageResponseDto {
+    private String nickname; //작성자
     private String content;
     private Date createdAt;
 }
