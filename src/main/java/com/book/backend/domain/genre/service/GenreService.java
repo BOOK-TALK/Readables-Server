@@ -85,7 +85,8 @@ public class GenreService {
         return new LinkedList<>(genreResponseParser.random(JsonResponse, maxSize));
     }
 
-    public LinkedList<LoanItemSrchResponseDto> newTrend(LoanItemSrchRequestDto requestDto) throws Exception {
+    public LinkedList<LoanItemSrchResponseDto> newTrend(LoanItemSrchRequestDto requestDto,
+                                                        String filteredPageNo, String filteredPageSize) throws Exception {
         String subUrl = "loanItemSrch";
 
         requestDto.setPageSize("1500");  // 연도로 필터링하기 전 페이지 크기 설정
@@ -94,7 +95,7 @@ public class GenreService {
 
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
 
-        return new LinkedList<>(genreResponseParser.newTrend(JsonResponse, currentYear));
+        return new LinkedList<>(genreResponseParser.newTrend(JsonResponse, currentYear, filteredPageNo, filteredPageSize));
     }
 
 }

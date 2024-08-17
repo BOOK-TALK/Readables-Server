@@ -143,10 +143,8 @@ public class GenreController {
 
         LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder()
                 .dtl_kdc(genreCode)
-                .pageNo(pageNo)
-                .pageSize(pageSize)
                 .build();
-        LinkedList<LoanItemSrchResponseDto> response = genreService.newTrend(requestDto);
+        LinkedList<LoanItemSrchResponseDto> response = genreService.newTrend(requestDto, pageNo, pageSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
