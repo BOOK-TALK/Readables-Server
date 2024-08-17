@@ -1,5 +1,5 @@
 -- 장르 초기화 (한국십진분류법(KDC) 6판 기준)
-INSERT IGNORE INTO GENRE (parent_genre_id, kdc_num, name)
+INSERT IGNORE INTO genre (parent_genre_id, kdc_num, name)
 values
        -- Level 1
        (NULL, 0, '총류'),

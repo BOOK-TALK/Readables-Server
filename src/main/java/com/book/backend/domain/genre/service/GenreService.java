@@ -41,15 +41,15 @@ public class GenreService {
                 .orElseThrow(() -> new IllegalArgumentException("KDC 번호가" + mainKdcNum + subKdcNum + "인 장르를 찾을 수 없습니다."));
     }
 
-    public LinkedList<LoanItemSrchResponseDto> periodToNowTrend(LoanItemSrchRequestDto requestDto, Integer dayPeriod, Integer maxSize) throws Exception {
+    public LinkedList<LoanItemSrchResponseDto> periodToNowTrend(LoanItemSrchRequestDto requestDto, Integer dayPeriod) throws Exception {
         LocalDate today = LocalDate.now();
         LocalDate startDt = today.minusDays(dayPeriod + 1);
         LocalDate endDt = today.minusDays(1);
 
-        return periodTrend(requestDto, startDt, endDt, maxSize);
+        return periodTrend(requestDto, startDt, endDt);
     }
 
-    public LinkedList<LoanItemSrchResponseDto> thisWeekTrend(LoanItemSrchRequestDto requestDto, Integer maxSize) throws Exception {
+    public LinkedList<LoanItemSrchResponseDto> thisWeekTrend(LoanItemSrchRequestDto requestDto) throws Exception {
         LocalDate today = LocalDate.now();
         LocalDate startDt, endDt;
         // 월요일 또는 화요일이면 저번주로, 아니면 이번주로 계산
@@ -61,18 +61,18 @@ public class GenreService {
             endDt = today.minusDays(1);
         }
 
-        return periodTrend(requestDto, startDt, endDt, maxSize);
+        return periodTrend(requestDto, startDt, endDt);
     }
 
     // periodToNowTrend, thisWeekTrend에 의해 호출됨
-    public LinkedList<LoanItemSrchResponseDto> periodTrend(LoanItemSrchRequestDto requestDto, LocalDate startDt, LocalDate endDt, Integer maxSize) throws Exception {
+    public LinkedList<LoanItemSrchResponseDto> periodTrend(LoanItemSrchRequestDto requestDto, LocalDate startDt, LocalDate endDt) throws Exception {
         String subUrl = "loanItemSrch";
 
         requestDto.setStartDt(startDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         requestDto.setEndDt(endDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
-        return new LinkedList<>(genreResponseParser.periodTrend(JsonResponse, maxSize));
+        return new LinkedList<>(genreResponseParser.periodTrend(JsonResponse));
     }
 
     public LinkedList<LoanItemSrchResponseDto> random(LoanItemSrchRequestDto requestDto, Integer maxSize) throws Exception {
@@ -85,7 +85,7 @@ public class GenreService {
         return new LinkedList<>(genreResponseParser.random(JsonResponse, maxSize));
     }
 
-    public LinkedList<LoanItemSrchResponseDto> newTrend(LoanItemSrchRequestDto requestDto, Integer maxSize) throws Exception {
+    public LinkedList<LoanItemSrchResponseDto> newTrend(LoanItemSrchRequestDto requestDto) throws Exception {
         String subUrl = "loanItemSrch";
 
         requestDto.setPageSize("1500");  // 연도로 필터링하기 전 페이지 크기 설정
@@ -94,7 +94,7 @@ public class GenreService {
 
         JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
 
-        return new LinkedList<>(genreResponseParser.newTrend(JsonResponse, currentYear, maxSize));
+        return new LinkedList<>(genreResponseParser.newTrend(JsonResponse, currentYear));
     }
 
 }

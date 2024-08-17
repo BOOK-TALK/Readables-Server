@@ -23,7 +23,17 @@ public class CustomUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getLoginId())
                 .password(user.getPassword())
-                .authorities("ROLE_USER")  // 사용자 권한 설정
+                .authorities("ROLE_USER")
+                .build();
+    }
+
+    public UserDetails loadUserByKakaoId(String kakaoId) throws UsernameNotFoundException {
+        User user = userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getKakaoId())
+                .password(user.getPassword())
+                .authorities("ROLE_USER")
                 .build();
     }
 }
