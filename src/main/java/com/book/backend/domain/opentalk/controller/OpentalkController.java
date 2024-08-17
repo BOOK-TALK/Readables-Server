@@ -37,7 +37,7 @@ public class OpentalkController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkResponseDto.class)),
                     description = OpentalkResponseDto.description)})
     @GetMapping("/main")
-    public ResponseEntity<?> main(@RequestParam String loginId) {
+    public ResponseEntity<?> opentalkMain(@RequestParam String loginId) {
         RequestLogger.param(new String[]{"loginId"}, loginId);
 
         OpentalkResponseDto response = OpentalkResponseDto.builder()
@@ -52,7 +52,7 @@ public class OpentalkController {
             parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "pageNo", description = "페이지 번호"), @Parameter(name = "pageSize", description = "페이지 당 개수")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
                     description = MessageResponseDto.description)})
-    @GetMapping("/chat")
+    @GetMapping("/chat/get")
     public ResponseEntity<?> getChat(@RequestParam String opentalkId, int pageNo, int pageSize) {
         RequestLogger.param(new String[]{"opentalkId, pageNo, pageSize"}, opentalkId, pageNo, pageSize);
 
@@ -68,7 +68,7 @@ public class OpentalkController {
             parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "loginId", description = "로그인 아이디"), @Parameter(name = "content", description = "내용")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
                     description = MessageResponseDto.description)})
-    @PostMapping("/chat")
+    @PostMapping("/chat/save")
     public ResponseEntity<?> saveChat(@RequestBody MessageRequestDto messageRequestDto) {
         RequestLogger.param(new String[]{"messageRequestDto"}, messageRequestDto);
         MessageResponseDto response = opentalkService.saveMessage(messageRequestDto);
