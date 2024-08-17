@@ -30,10 +30,12 @@ public class GenreResponseParser {
         return RandomPicker.randomPick(filteredResponses, maxSize);
     }
 
-    public LinkedList<LoanItemSrchResponseDto> newTrend(JSONObject jsonResponse, int currentYear) {
+    public LinkedList<LoanItemSrchResponseDto> newTrend(JSONObject jsonResponse, int currentYear,
+                                                        String filteredPageNo, String filteredPageSize) {
         log.trace("GenreResponseParser > newTrend()");
 
-        return filterResponses(jsonResponse, currentYear, null);
+        LinkedList<LoanItemSrchResponseDto> filteredResponse = filterResponses(jsonResponse, currentYear, null);
+        return responseParser.customPageFilter(filteredResponse, filteredPageNo, filteredPageSize);
     }
 
     private LinkedList<LoanItemSrchResponseDto> filterResponses(JSONObject jsonResponse, Integer yearThreshold, Integer maxSize) {
@@ -64,4 +66,5 @@ public class GenreResponseParser {
         }
         return responseList;
     }
+
 }
