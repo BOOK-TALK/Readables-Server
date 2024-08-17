@@ -4,12 +4,8 @@ import com.book.backend.domain.detail.dto.BookInfoDto;
 import com.book.backend.domain.detail.dto.CoLoanBooksDto;
 import com.book.backend.domain.detail.dto.Top3LoanUserDto;
 import com.book.backend.domain.detail.dto.RecommendDto;
-import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
-import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
-import com.book.backend.domain.openapi.dto.response.LoanItemSrchResponseDto;
-import com.book.backend.domain.openapi.dto.response.MonthlyKeywordsResponseDto;
-import com.book.backend.domain.openapi.dto.response.RecommendListResponseDto;
-import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
+import com.book.backend.domain.openapi.dto.response.*;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -326,5 +322,22 @@ public class ResponseParser {
                 .coLoanBooksDtoList(coLoanBooksList)
                 .recommendResponseDtoList(recommendBooksList)
                 .build();
+    }
+
+    public <T extends OpenAPIResponseInterface> LinkedList<T> customPageFilter(LinkedList<T> responseList, String filteredPageNo, String filteredPageSize) {
+        log.trace("ResponseParser > customPageFilter()");
+
+        int pageNo = Integer.parseInt(filteredPageNo);
+        int pageSize = Integer.parseInt(filteredPageSize);
+
+        int startIdx = (pageNo - 1) * pageSize;
+        int endIdx = Math.min(startIdx + pageSize, responseList.size());
+
+        try {
+            return new LinkedList<>(responseList.subList(startIdx, endIdx));
+        } catch (IllegalArgumentException e) {
+            return new LinkedList<>();
+        }
+
     }
 }
