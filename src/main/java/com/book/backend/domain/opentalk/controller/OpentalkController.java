@@ -1,6 +1,7 @@
 package com.book.backend.domain.opentalk.controller;
 
-import com.book.backend.domain.message.dto.MessageResopnseDto;
+import com.book.backend.domain.message.dto.MessageRequestDto;
+import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.message.entity.Message;
 import com.book.backend.domain.opentalk.OpentalkResponseDto;
 import com.book.backend.domain.opentalk.service.OpentalkService;
@@ -21,10 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/opentalk")
@@ -52,13 +50,21 @@ public class OpentalkController {
     // 채팅 불러오기
     // opentalkId 를 입력받으면, message 테이블에서 해당 opentalkId 의 메시지를 createdAt 최신순으로 25개 조회해서 반환한다.
     @GetMapping("/chat")
-    public ResponseEntity<?> chat(@RequestParam String opentalkId, int pageNo) {
+    public ResponseEntity<?> getChat(@RequestParam String opentalkId, int pageNo) {
         RequestLogger.param(new String[]{"opentalkId, pageNo"}, opentalkId, pageNo);
 
         Pageable pageRequest = PageRequest.of(pageNo, 5, Sort.by("createdAt").descending());
         Page<Message> MessagePage = opentalkService.getOpentalkMessage(opentalkId, pageRequest);
-        List<MessageResopnseDto> response = opentalkService.pageToDto(MessagePage);
+        List<MessageResponseDto> response = opentalkService.pageToDto(MessagePage);
 
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 채팅 저장하기
+    @PostMapping("/chat")
+    public ResponseEntity<?> saveChat(@RequestBody MessageRequestDto messageRequestDto) {
+        RequestLogger.param(new String[]{"messageRequestDto"}, messageRequestDto);
+        MessageResponseDto response = opentalkService.saveMessage(messageRequestDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

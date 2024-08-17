@@ -1,7 +1,9 @@
 package com.book.backend.domain.opentalk.service;
 
-import com.book.backend.domain.message.dto.MessageResopnseDto;
+import com.book.backend.domain.message.dto.MessageRequestDto;
+import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.message.entity.Message;
+import com.book.backend.domain.message.mapper.MessageMapper;
 import com.book.backend.domain.message.repository.MessageRepository;
 import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
@@ -27,6 +29,7 @@ public class OpentalkService {
     private final UserOpentalkRepository userOpentalkRepository;
     private final MessageRepository messageRepository;
     private final OpentalkRepository opentalkRepository;
+    private final MessageMapper messageMapper;
 
     /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
     public List<Long> hotOpentalk() {
@@ -62,17 +65,24 @@ public class OpentalkService {
         return messageRepository.findAllByOpentalk(opentalk, pageRequest);
     }
 
-    public List<MessageResopnseDto> pageToDto(Page<Message> page){
+    public List<MessageResponseDto> pageToDto(Page<Message> page){
         List<Message> messages = page.getContent();
-        List<MessageResopnseDto> messageList = new LinkedList<>();
+        List<MessageResponseDto> messageList = new LinkedList<>();
 
         for(Message message : messages){
-            messageList.add(MessageResopnseDto.builder()
-                    .user(message.getUser())
-                    .content(message.getContent())
-                    .createdAt(message.getCreatedAt())
-                    .build());
+            messageList.add(messageMapper.convertToMessageResponseDto(message));
         }
         return messageList;
+    }
+
+    // message 저장
+    public MessageResponseDto saveMessage(MessageRequestDto messageRequestDto){
+        Message message = messageMapper.convertToMessage(messageRequestDto);
+        try{
+            messageRepository.save(message);
+        } catch (Exception e){
+            throw new CustomException(ErrorCode.MESSAGE_SAVE_FAILED);
+        }
+        return messageMapper.convertToMessageResponseDto(message);
     }
 }
