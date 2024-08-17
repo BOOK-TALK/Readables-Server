@@ -48,12 +48,15 @@ public class OpentalkController {
     }
 
     // 채팅 불러오기
-    // opentalkId 를 입력받으면, message 테이블에서 해당 opentalkId 의 메시지를 createdAt 최신순으로 25개 조회해서 반환한다.
+    @Operation(summary="특정 오픈톡 채팅 불러오기", description="오픈톡 ID 를 입력으로 받아 pageSize개 데이터를 반환합니다. (pageNo로 페이지네이션)",
+            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "pageNo", description = "페이지 번호"), @Parameter(name = "pageSize", description = "페이지 당 개수")},
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
+                    description = MessageResponseDto.description)})
     @GetMapping("/chat")
-    public ResponseEntity<?> getChat(@RequestParam String opentalkId, int pageNo) {
-        RequestLogger.param(new String[]{"opentalkId, pageNo"}, opentalkId, pageNo);
+    public ResponseEntity<?> getChat(@RequestParam String opentalkId, int pageNo, int pageSize) {
+        RequestLogger.param(new String[]{"opentalkId, pageNo, pageSize"}, opentalkId, pageNo, pageSize);
 
-        Pageable pageRequest = PageRequest.of(pageNo, 5, Sort.by("createdAt").descending());
+        Pageable pageRequest = PageRequest.of(pageNo, pageSize, Sort.by("createdAt").descending());
         Page<Message> MessagePage = opentalkService.getOpentalkMessage(opentalkId, pageRequest);
         List<MessageResponseDto> response = opentalkService.pageToDto(MessagePage);
 
@@ -61,6 +64,10 @@ public class OpentalkController {
     }
 
     // 채팅 저장하기
+    @Operation(summary="채팅 저장", description="오픈톡 id, loginId, content 를 입력으로 받아 DB에 채팅을 저장합니다.",
+            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "loginId", description = "로그인 아이디"), @Parameter(name = "content", description = "내용")},
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
+                    description = MessageResponseDto.description)})
     @PostMapping("/chat")
     public ResponseEntity<?> saveChat(@RequestBody MessageRequestDto messageRequestDto) {
         RequestLogger.param(new String[]{"messageRequestDto"}, messageRequestDto);
