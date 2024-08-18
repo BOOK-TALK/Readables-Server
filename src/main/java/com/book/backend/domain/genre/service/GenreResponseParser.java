@@ -17,10 +17,12 @@ public class GenreResponseParser {
     private final ResponseParser responseParser;
     private static final int NEW_TREND_YEAR_OFFSET = 2;  // 최근 트렌드 연도 범위
 
-    public LinkedList<LoanItemSrchResponseDto> periodTrend(JSONObject jsonResponse) {
+    public LinkedList<LoanItemSrchResponseDto> periodTrend(JSONObject jsonResponse,
+                                                           String filteredPageNo, String filteredPageSize) {
         log.trace("GenreResponseParser > periodTrend()");
 
-        return filterResponses(jsonResponse, null, null);
+        LinkedList<LoanItemSrchResponseDto> filteredResponse = filterResponses(jsonResponse, null, null);
+        return responseParser.customPageFilter(filteredResponse, filteredPageNo, filteredPageSize);
     }
 
     public LinkedList<LoanItemSrchResponseDto> random(JSONObject jsonResponse, Integer maxSize) {
