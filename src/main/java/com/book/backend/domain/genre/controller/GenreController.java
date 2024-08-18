@@ -45,10 +45,8 @@ public class GenreController {
 
         LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder()
                 .dtl_kdc(genreCode)
-                .pageNo(pageNo)
-                .pageSize(pageSize)
                 .build();
-        LinkedList<LoanItemSrchResponseDto> response = genreService.periodToNowTrend(requestDto, 7);
+        LinkedList<LoanItemSrchResponseDto> response = genreService.periodToNowTrend(requestDto, 7, pageNo, pageSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -70,10 +68,8 @@ public class GenreController {
 
         LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder()
                 .dtl_kdc(genreCode)
-                .pageNo(pageNo)
-                .pageSize(pageSize)
                 .build();
-        LinkedList<LoanItemSrchResponseDto> response = genreService.periodToNowTrend(requestDto, 30);
+        LinkedList<LoanItemSrchResponseDto> response = genreService.periodToNowTrend(requestDto, 30, pageNo, pageSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
@@ -96,10 +92,8 @@ public class GenreController {
 
         LoanItemSrchRequestDto requestDto = LoanItemSrchRequestDto.builder()
                 .dtl_kdc(genreCode)
-                .pageNo(pageNo)
-                .pageSize(pageSize)
                 .build();
-        LinkedList<LoanItemSrchResponseDto> response = genreService.thisWeekTrend(requestDto);
+        LinkedList<LoanItemSrchResponseDto> response = genreService.thisWeekTrend(requestDto, pageNo, pageSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
