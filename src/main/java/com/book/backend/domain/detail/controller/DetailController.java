@@ -33,19 +33,20 @@ public class DetailController {
 
     // 도서 상세 (8) API
     @Operation(summary="책 상세", description="특정 책 코드를 입력으로 받아 해당 책 상세 정보, 대출 주 연령대, 키워드, 같이 대출한 도서, 추천 도서를 반환합니다.",
-            parameters = {@Parameter(name = "isbn", description = "책 코드")},
+            parameters = {@Parameter(name = "isbn", description = "책 코드"), @Parameter(name = "libCode", description = "도서관 코드(선택)")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = DetailResponseDto.class)),
                     description = DetailResponseDto.description)})
     @GetMapping("/detail")
-    public ResponseEntity<?> search(@RequestParam String isbn, String libCode) throws Exception {
+    public ResponseEntity<?> search(@RequestParam String isbn, @RequestParam(required = false)String libCode) throws Exception {
         RequestLogger.param(new String[]{"isbn, libCode"}, isbn, libCode);
         requestValidate.isValidIsbn(isbn);
-        requestValidate.isValidLibCode(libCode);
+        if (libCode != null) requestValidate.isValidLibCode(libCode);
 
         DetailRequestDto requestDto = DetailRequestDto.builder().isbn13(isbn).build();
         DetailResponseDto response = detailService.detail(requestDto);
 
-        detailService.setLoanAvailable(response, libCode);
+        // TODO : libcode 입력으로 안 들어오면 아예 loanAvailable null 로 보내도 될지 여쭤보기
+        if(libCode != null) detailService.setLoanAvailable(response, libCode);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }

@@ -249,18 +249,21 @@ public class ResponseParser {
                 .class_nm(book.getAsString("class_nm"))
                 .loanCnt(book.getAsString("loanCnt")).build();
 
+        // TODO : null 이면 빈 list 로 보내도 되는지 여쭤보기
         List<Top3LoanUserDto> top3LoanUserDtoList = new LinkedList<>();
-        for (Object loanGrp : loanGrps) {
-            JSONObject o = (JSONObject) ((JSONObject) loanGrp).get("loanGrp");
-            top3LoanUserDtoList.add(Top3LoanUserDto.builder()
-                    .age(o.getAsString("age"))
-                    .gender(o.getAsString("gender"))
-                    .loanCnt(o.getAsString("loanCnt"))
-                    .ranking(o.getAsString("ranking"))
-                    .build());
+        if(!loanGrps.isEmpty()){
+            for (Object loanGrp : loanGrps) {
+                JSONObject o = (JSONObject) ((JSONObject) loanGrp).get("loanGrp");
+                top3LoanUserDtoList.add(Top3LoanUserDto.builder()
+                        .age(o.getAsString("age"))
+                        .gender(o.getAsString("gender"))
+                        .loanCnt(o.getAsString("loanCnt"))
+                        .ranking(o.getAsString("ranking"))
+                        .build());
+            }
+            top3LoanUserDtoList.sort(Comparator.comparingInt(o -> Integer.parseInt(o.getRanking())));
+            top3LoanUserDtoList = top3LoanUserDtoList.subList(0, 3); // 상위 3개만 추출
         }
-        top3LoanUserDtoList.sort(Comparator.comparingInt(o -> Integer.parseInt(o.getRanking())));
-        top3LoanUserDtoList = top3LoanUserDtoList.subList(0, 3); // 상위 3개만 추출
 
         LinkedList<String> keywordList = new LinkedList<>();
         for(int i=0; i<10; i++) { //10개만 추출
