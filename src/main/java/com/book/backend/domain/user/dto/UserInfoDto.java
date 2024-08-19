@@ -22,4 +22,9 @@ public class UserInfoDto {
 
     @Past(message = "현재 날짜보다 이전 날짜여야 합니다.")
     private LocalDate birthDate;
+
+    public static final String description =
+            "nickname : 닉네임 | " +
+            "gender : 성별 | " +
+            "birthDate : 생일";
 }
