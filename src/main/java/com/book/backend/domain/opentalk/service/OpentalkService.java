@@ -74,7 +74,9 @@ public class OpentalkService {
 
         for(Long id : opentalkId) {
             OpentalkDto opentalkDto = OpentalkDto.builder().build();
-            String isbn = bookRepository.findIsbnByBookId(opentalkRepository.findByOpentalkId(id));
+            Optional<Opentalk> opentalk = opentalkRepository.findByOpentalkId(id);
+            String isbn = opentalk.get().getBook().getIsbn();
+//            String isbn = bookRepository.findIsbnByBookId(opentalkRepository.findByOpentalkId(id));
             DetailResponseDto detailResponseDto = detailService.detail(DetailRequestDto.builder().isbn13(isbn).build()); // 정보 가져오기
             opentalkResponseParser.setSimpleBookInfo(opentalkDto, detailResponseDto); // detailResponseDto 에서 title 이랑 imageUrl 만 추출하기
             opentalkDtoList.add(opentalkDto);
