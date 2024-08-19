@@ -29,19 +29,16 @@ public class OpentalkController {
     private final OpentalkService opentalkService;
 
     @Operation(summary="오픈톡 메인 화면", description="현재 핫한 오픈톡 top 5의 ID List 와 사용자가 즐겨찾기한 오픈톡 ID List 를 반환합니다.",
-            parameters = {@Parameter(name = "loginId", description = "아이디")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkResponseDto.class)),
                     description = OpentalkResponseDto.description)})
     @GetMapping("/main")
-    public ResponseEntity<?> main(@RequestParam String loginId) throws Exception {
-        RequestLogger.param(new String[]{"loginId"}, loginId);
-
+    public ResponseEntity<?> opentalkMain() throws Exception {
         // 현재 핫한 오픈톡
         List<Long> hotOpentalkIdList = opentalkService.hotOpentalk();
         List<OpentalkDto> hotOpentalkList = opentalkService.getBookInfo(hotOpentalkIdList);
 
         // 내가 즐찾한 오픈톡
-        List<Long> favoriteOpentalkIdList = opentalkService.favoriteOpentalk(loginId);
+        List<Long> favoriteOpentalkIdList = opentalkService.favoriteOpentalk();
         List<OpentalkDto> favoriteOpentalkList = opentalkService.getBookInfo(favoriteOpentalkIdList);
 
         OpentalkResponseDto response = OpentalkResponseDto.builder()

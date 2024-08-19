@@ -1,5 +1,7 @@
 package com.book.backend.domain.opentalk.service;
 
+import com.book.backend.domain.auth.service.AuthService;
+import com.book.backend.domain.book.entity.Book;
 import com.book.backend.domain.book.repository.BookRepository;
 import com.book.backend.domain.detail.service.DetailService;
 import com.book.backend.domain.message.entity.Message;
@@ -8,9 +10,11 @@ import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
 import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
 import com.book.backend.domain.openapi.service.ResponseParser;
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
+import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.repository.UserRepository;
+import com.book.backend.domain.user.service.UserService;
 import com.book.backend.domain.userOpentalk.entity.UserOpentalk;
 import com.book.backend.domain.userOpentalk.repository.UserOpentalkRepository;
 import com.book.backend.exception.CustomException;
@@ -21,6 +25,7 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.service.OpenAPIService;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,6 +37,7 @@ public class OpentalkService {
     private final OpentalkRepository opentalkRepository;
     private final BookRepository bookRepository;
     private final DetailService detailService;
+    private final UserService userService;
     private final OpentalkResponseParser opentalkResponseParser;
 
     /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
@@ -51,8 +57,8 @@ public class OpentalkService {
     }
 
     /* 해당 user의 즐찾 opentalk list 반환*/
-    public List<Long> favoriteOpentalk(String loginId) {
-        User user =  userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    public List<Long> favoriteOpentalk() {
+        User user = userService.loadLoggedinUser();
         List<UserOpentalk> opentalkList = userOpentalkRepository.findAllByUserId(user);
 
         List<Long> opentalkIds = new LinkedList<>();
