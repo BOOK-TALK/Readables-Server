@@ -7,7 +7,8 @@ import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
 import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
-import java.util.LinkedList;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
@@ -40,6 +41,6 @@ public class DetailService {
         JSONObject jsonResponse = openAPI.connect(subUrl, bookExistRequestDto, new BookExistResponseDto());
         ResponseParser responseParser = new ResponseParser();
 
-        response.setLoanAvailable(responseParser.loanAvailable(jsonResponse));
+        response.setLoanAvailable(Optional.of(responseParser.loanAvailable(jsonResponse)));
     }
 }
