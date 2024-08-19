@@ -1,20 +1,17 @@
 package com.book.backend.domain.user.controller;
 
 import com.book.backend.domain.user.dto.UserDto;
+import com.book.backend.domain.user.dto.UserInfoDto;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.service.UserService;
 import com.book.backend.global.ResponseTemplate;
-import com.book.backend.global.log.RequestLogger;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -29,12 +26,22 @@ public class UserController {
     public ResponseEntity<?> getUserInfo() {
         log.trace("UserController > getUserInfo()");
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        User user = userService.findByUsername(username);
+        User user = userService.loadLoggedinUser();
         UserDto userDto = userMapper.convertToUserDto(user);
 
         return responseTemplate.success(userDto, HttpStatus.OK);
     }
+
+    @PutMapping("/info/edit")
+    public ResponseEntity<?> editUserInfo(@Valid @RequestBody UserInfoDto requestDto) {
+        log.trace("UserController > editUserInfo()");
+
+        User user = userService.loadLoggedinUser();
+        User updatedUser = userService.updateUserInfo(user, requestDto);
+
+        UserInfoDto userInfoDto = userMapper.convertToUserInfoDto(updatedUser);
+
+        return responseTemplate.success(userInfoDto, HttpStatus.OK);
+    }
+
 }

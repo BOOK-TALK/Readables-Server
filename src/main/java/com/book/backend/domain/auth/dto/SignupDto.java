@@ -31,6 +31,7 @@ public class SignupDto {
     @Past(message = "현재 날짜보다 이전 날짜여야 합니다.")
     private LocalDate birthDate;
 
+    // FIXME: 아래 필드는 삭제 예정
     @Email(message = "유효한 이메일 주소여야 합니다.")
     private String email;
 
