@@ -1,9 +1,11 @@
 package com.book.backend.domain.opentalk.controller;
 
-import com.book.backend.domain.opentalk.OpentalkResponseDto;
+import com.book.backend.domain.opentalk.dto.OpentalkDto;
+import com.book.backend.domain.opentalk.dto.OpentalkResponseDto;
 import com.book.backend.domain.opentalk.service.OpentalkService;
 import com.book.backend.global.log.RequestLogger;
 import java.util.LinkedList;
+import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,19 +28,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class OpentalkController {
     private final OpentalkService opentalkService;
 
-    // 오픈톡 메인 화면 (현재 핫한 오픈톡, 내가 즐찾한 오픈톡)
     @Operation(summary="오픈톡 메인 화면", description="현재 핫한 오픈톡 top 5의 ID List 와 사용자가 즐겨찾기한 오픈톡 ID List 를 반환합니다.",
             parameters = {@Parameter(name = "loginId", description = "아이디")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkResponseDto.class)),
                     description = OpentalkResponseDto.description)})
     @GetMapping("/main")
-    public ResponseEntity<?> main(@RequestParam String loginId) {
+    public ResponseEntity<?> main(@RequestParam String loginId) throws Exception {
         RequestLogger.param(new String[]{"loginId"}, loginId);
 
+        // 현재 핫한 오픈톡
+        List<Long> hotOpentalkIdList = opentalkService.hotOpentalk();
+        List<OpentalkDto> hotOpentalkList = opentalkService.getBookInfo(hotOpentalkIdList);
+
+        // 내가 즐찾한 오픈톡
+        List<Long> favoriteOpentalkIdList = opentalkService.favoriteOpentalk(loginId);
+        List<OpentalkDto> favoriteOpentalkList = opentalkService.getBookInfo(favoriteOpentalkIdList);
+
         OpentalkResponseDto response = OpentalkResponseDto.builder()
-                .hotOpentalkList(opentalkService.hotOpentalk())
-                .favoriteOpentalkList(new LinkedList<>(opentalkService.favoriteOpentalk(loginId)))
+                .hotOpentalkList(hotOpentalkList)
+                .favoriteOpentalkList(favoriteOpentalkList)
                 .build();
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
