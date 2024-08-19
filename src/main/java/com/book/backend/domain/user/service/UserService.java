@@ -1,5 +1,6 @@
 package com.book.backend.domain.user.service;
 
+import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,5 +12,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
 
-    // TODO: 기능에 따른 회원 서비스 메서드 추가 예정
+    public User findByUsername(String username) {
+        try {
+            return findByLoginId(username);
+        } catch (IllegalArgumentException e) {
+            return findByKakaoId(username);
+        }
+    }
+
+    public User findByLoginId(String loginId) {
+        return userRepository.findByLoginId(loginId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    public User findByKakaoId(String kakaoId) {
+        return userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
 }
