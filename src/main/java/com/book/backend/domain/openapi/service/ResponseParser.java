@@ -262,7 +262,7 @@ public class ResponseParser {
                         .build());
             }
             top3LoanUserDtoList.sort(Comparator.comparingInt(o -> Integer.parseInt(o.getRanking())));
-            top3LoanUserDtoList = top3LoanUserDtoList.subList(0, 3); // 상위 3개만 추출
+            if(top3LoanUserDtoList.size() > 3) top3LoanUserDtoList = top3LoanUserDtoList.subList(0, 3); // 상위 3개만 추출
         }
 
         LinkedList<String> keywordList = new LinkedList<>();
