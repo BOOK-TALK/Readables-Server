@@ -4,12 +4,8 @@ import com.book.backend.domain.detail.dto.BookInfoDto;
 import com.book.backend.domain.detail.dto.CoLoanBooksDto;
 import com.book.backend.domain.detail.dto.Top3LoanUserDto;
 import com.book.backend.domain.detail.dto.RecommendDto;
-import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
-import com.book.backend.domain.openapi.dto.response.HotTrendResponseDto;
-import com.book.backend.domain.openapi.dto.response.LoanItemSrchResponseDto;
-import com.book.backend.domain.openapi.dto.response.MonthlyKeywordsResponseDto;
-import com.book.backend.domain.openapi.dto.response.RecommendListResponseDto;
-import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
+import com.book.backend.domain.openapi.dto.response.*;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -27,10 +23,13 @@ public class ResponseParser {
     public LinkedList<RecommendListResponseDto> recommend(JSONObject jsonResponse) {
         log.trace("ResponseParser > recommend()");
 
-
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
         LinkedList<RecommendListResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
+
+        if (docs == null) {
+            return responseList;
+        }
 
         for (Object o : docs) {
             JSONObject docsElement  = (JSONObject) o;
@@ -61,6 +60,10 @@ public class ResponseParser {
         
         JSONArray results = (JSONArray) jsonResponse.get("results");
         LinkedList<HotTrendResponseDto> responseList = new LinkedList<>();
+
+        if (results == null) {
+            return responseList;
+        }
 
         for (Object o : results) {
             JSONObject resultsElement = (JSONObject) o;
@@ -98,6 +101,10 @@ public class ResponseParser {
         LinkedList<LoanItemSrchResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
 
+        if (docs == null) {
+            return responseList;
+        }
+
         for (Object o : docs) {
 
             JSONObject docsElement = (JSONObject) o;
@@ -128,16 +135,20 @@ public class ResponseParser {
     public LinkedList<MonthlyKeywordsResponseDto> keywords(JSONObject jsonResponse) {
         log.trace("ResponseParser > keywords()");
 
-        JSONArray step0 = (JSONArray) jsonResponse.get("keywords");
+        JSONArray keywords = (JSONArray) jsonResponse.get("keywords");
         LinkedList<MonthlyKeywordsResponseDto> responseList = new LinkedList<>();
 
-        for (Object obj : step0) {
-            JSONObject temp = (JSONObject) obj;
-            JSONObject step1 = (JSONObject) temp.get("keyword");
+        if (keywords == null) {
+            return responseList;
+        }
+
+        for (Object o : keywords) {
+            JSONObject keywordsElement = (JSONObject) o;
+            JSONObject keyword = (JSONObject) keywordsElement.get("keyword");
 
             responseList.add(MonthlyKeywordsResponseDto.builder()
-                    .keyword(step1.getAsString("word"))
-                    .weight(step1.getAsString("weight"))
+                    .keyword(keyword.getAsString("word"))
+                    .weight(keyword.getAsString("weight"))
                     .build());
         }
         return RandomPicker.randomPick(responseList, 10);
@@ -146,28 +157,33 @@ public class ResponseParser {
     public LinkedList<LoanItemSrchResponseDto> loanItemSrch(JSONObject jsonResponse) {
         log.trace("ResponseParser > loanItemSrch()");
 
-        JSONArray step0 = (JSONArray) jsonResponse.get("docs");
+        JSONArray docs = (JSONArray) jsonResponse.get("docs");
 
         LinkedList<LoanItemSrchResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
-        for (Object obj : step0) {
-            JSONObject temp = (JSONObject) obj;
-            JSONObject step1 = (JSONObject) temp.get("doc");
+
+        if (docs == null) {
+            return responseList;
+        }
+
+        for (Object o : docs) {
+            JSONObject docsElement = (JSONObject) o;
+            JSONObject doc = (JSONObject) docsElement.get("doc");
 
             responseList.add(LoanItemSrchResponseDto.builder()
-                    .no(step1.getAsString("no"))
-                    .ranking(step1.getAsString("ranking"))
-                    .bookname(step1.getAsString("bookname"))
-                    .authors(step1.getAsString("authors"))
-                    .publisher(step1.getAsString("publisher"))
-                    .publication_year(step1.getAsString("publication_year"))
-                    .isbn13(step1.getAsString("isbn13"))
-                    .addition_symbol(step1.getAsString("addition_symbol"))
-                    .class_no(step1.getAsString("class_no"))
-                    .class_nm(step1.getAsString("class_nm"))
-                    .loan_count(step1.getAsString("loan_count"))
-                    .bookImageURL(step1.getAsString("bookImageURL"))
-                    .bookDtlUrl(step1.getAsString("bookDtlUrl"))
+                    .no(doc.getAsString("no"))
+                    .ranking(doc.getAsString("ranking"))
+                    .bookname(doc.getAsString("bookname"))
+                    .authors(doc.getAsString("authors"))
+                    .publisher(doc.getAsString("publisher"))
+                    .publication_year(doc.getAsString("publication_year"))
+                    .isbn13(doc.getAsString("isbn13"))
+                    .addition_symbol(doc.getAsString("addition_symbol"))
+                    .class_no(doc.getAsString("class_no"))
+                    .class_nm(doc.getAsString("class_nm"))
+                    .loan_count(doc.getAsString("loan_count"))
+                    .bookImageURL(doc.getAsString("bookImageURL"))
+                    .bookDtlUrl(doc.getAsString("bookDtlUrl"))
                     .build());
         }
         return responseList;
@@ -178,20 +194,25 @@ public class ResponseParser {
 
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
         LinkedList<SearchResponseDto> responseList = new LinkedList<>();
+
+        if (docs == null) {
+            return responseList;
+        }
+
         for (Object o : docs) {
-            JSONObject temp = (JSONObject) o;
-            JSONObject step1 = (JSONObject) temp.get("doc");
+            JSONObject docsElement = (JSONObject) o;
+            JSONObject doc = (JSONObject) docsElement.get("doc");
 
             responseList.add(SearchResponseDto.builder()
-                    .bookname(step1.getAsString("bookname"))
-                    .authors(step1.getAsString("authors"))
-                    .publisher(step1.getAsString("publisher"))
-                    .publication_year(step1.getAsString("publication_year"))
-                    .isbn13(step1.getAsString("isbn13"))
-                    .vol(step1.getAsString("vol"))
-                    .bookImageURL(step1.getAsString("bookImageURL"))
-                    .bookDtlUrl(step1.getAsString("bookDtlUrl"))
-                    .loan_count(step1.getAsString("loan_count"))
+                    .bookname(doc.getAsString("bookname"))
+                    .authors(doc.getAsString("authors"))
+                    .publisher(doc.getAsString("publisher"))
+                    .publication_year(doc.getAsString("publication_year"))
+                    .isbn13(doc.getAsString("isbn13"))
+                    .vol(doc.getAsString("vol"))
+                    .bookImageURL(doc.getAsString("bookImageURL"))
+                    .bookDtlUrl(doc.getAsString("bookDtlUrl"))
+                    .loan_count(doc.getAsString("loan_count"))
                     .build());
         }
         return responseList;
@@ -228,18 +249,21 @@ public class ResponseParser {
                 .class_nm(book.getAsString("class_nm"))
                 .loanCnt(book.getAsString("loanCnt")).build();
 
+        // TODO : null 이면 빈 list 로 보내도 되는지 여쭤보기
         List<Top3LoanUserDto> top3LoanUserDtoList = new LinkedList<>();
-        for (Object loanGrp : loanGrps) {
-            JSONObject o = (JSONObject) ((JSONObject) loanGrp).get("loanGrp");
-            top3LoanUserDtoList.add(Top3LoanUserDto.builder()
-                    .age(o.getAsString("age"))
-                    .gender(o.getAsString("gender"))
-                    .loanCnt(o.getAsString("loanCnt"))
-                    .ranking(o.getAsString("ranking"))
-                    .build());
+        if(!loanGrps.isEmpty()){
+            for (Object loanGrp : loanGrps) {
+                JSONObject o = (JSONObject) ((JSONObject) loanGrp).get("loanGrp");
+                top3LoanUserDtoList.add(Top3LoanUserDto.builder()
+                        .age(o.getAsString("age"))
+                        .gender(o.getAsString("gender"))
+                        .loanCnt(o.getAsString("loanCnt"))
+                        .ranking(o.getAsString("ranking"))
+                        .build());
+            }
+            top3LoanUserDtoList.sort(Comparator.comparingInt(o -> Integer.parseInt(o.getRanking())));
+            if(top3LoanUserDtoList.size() > 3) top3LoanUserDtoList = top3LoanUserDtoList.subList(0, 3); // 상위 3개만 추출
         }
-        top3LoanUserDtoList.sort(Comparator.comparingInt(o -> Integer.parseInt(o.getRanking())));
-        top3LoanUserDtoList = top3LoanUserDtoList.subList(0, 3); // 상위 3개만 추출
 
         LinkedList<String> keywordList = new LinkedList<>();
         for(int i=0; i<10; i++) { //10개만 추출
@@ -301,5 +325,22 @@ public class ResponseParser {
                 .coLoanBooksDtoList(coLoanBooksList)
                 .recommendResponseDtoList(recommendBooksList)
                 .build();
+    }
+
+    public <T extends OpenAPIResponseInterface> LinkedList<T> customPageFilter(LinkedList<T> responseList, String filteredPageNo, String filteredPageSize) {
+        log.trace("ResponseParser > customPageFilter()");
+
+        int pageNo = Integer.parseInt(filteredPageNo);
+        int pageSize = Integer.parseInt(filteredPageSize);
+
+        int startIdx = (pageNo - 1) * pageSize;
+        int endIdx = Math.min(startIdx + pageSize, responseList.size());
+
+        try {
+            return new LinkedList<>(responseList.subList(startIdx, endIdx));
+        } catch (IllegalArgumentException e) {
+            return new LinkedList<>();
+        }
+
     }
 }

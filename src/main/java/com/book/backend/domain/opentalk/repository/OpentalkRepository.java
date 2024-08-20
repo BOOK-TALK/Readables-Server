@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface OpentalkRepository extends JpaRepository<Opentalk, Long> {
-    Optional<Opentalk> findByOpentalkId(long opentalkId);
+    Optional<Opentalk> findByOpentalkId(Long opentalkId);
 }

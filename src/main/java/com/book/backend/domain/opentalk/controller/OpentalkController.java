@@ -1,12 +1,12 @@
 package com.book.backend.domain.opentalk.controller;
 
+import com.book.backend.domain.opentalk.dto.OpentalkDto;
+import com.book.backend.domain.opentalk.dto.OpentalkResponseDto;
 import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.message.entity.Message;
-import com.book.backend.domain.opentalk.OpentalkResponseDto;
 import com.book.backend.domain.opentalk.service.OpentalkService;
 import com.book.backend.global.log.RequestLogger;
-import java.util.LinkedList;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,12 +37,18 @@ public class OpentalkController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkResponseDto.class)),
                     description = OpentalkResponseDto.description)})
     @GetMapping("/main")
-    public ResponseEntity<?> opentalkMain(@RequestParam String loginId) {
-        RequestLogger.param(new String[]{"loginId"}, loginId);
+    public ResponseEntity<?> opentalkMain() throws Exception {
+        // 현재 핫한 오픈톡
+        List<Long> hotOpentalkIdList = opentalkService.hotOpentalk();
+        List<OpentalkDto> hotOpentalkList = opentalkService.getBookInfo(hotOpentalkIdList);
+
+        // 내가 즐찾한 오픈톡
+        List<Long> favoriteOpentalkIdList = opentalkService.favoriteOpentalk();
+        List<OpentalkDto> favoriteOpentalkList = opentalkService.getBookInfo(favoriteOpentalkIdList);
 
         OpentalkResponseDto response = OpentalkResponseDto.builder()
-                .hotOpentalkList(opentalkService.hotOpentalk())
-                .favoriteOpentalkList(new LinkedList<>(opentalkService.favoriteOpentalk(loginId)))
+                .hotOpentalkList(hotOpentalkList)
+                .favoriteOpentalkList(favoriteOpentalkList)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

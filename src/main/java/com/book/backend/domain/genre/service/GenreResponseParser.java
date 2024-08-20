@@ -4,6 +4,7 @@ import com.book.backend.domain.openapi.dto.response.LoanItemSrchResponseDto;
 import com.book.backend.domain.openapi.service.RandomPicker;
 import com.book.backend.domain.openapi.service.ResponseParser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Component;
 
@@ -11,24 +12,37 @@ import java.util.LinkedList;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class GenreResponseParser {
     private final ResponseParser responseParser;
     private static final int NEW_TREND_YEAR_OFFSET = 2;  // 최근 트렌드 연도 범위
 
-    public LinkedList<LoanItemSrchResponseDto> periodTrend(JSONObject jsonResponse) {
-        return filterResponses(jsonResponse, null, null);
+    public LinkedList<LoanItemSrchResponseDto> periodTrend(JSONObject jsonResponse,
+                                                           String filteredPageNo, String filteredPageSize) {
+        log.trace("GenreResponseParser > periodTrend()");
+
+        LinkedList<LoanItemSrchResponseDto> filteredResponse = filterResponses(jsonResponse, null, null);
+        return responseParser.customPageFilter(filteredResponse, filteredPageNo, filteredPageSize);
     }
 
     public LinkedList<LoanItemSrchResponseDto> random(JSONObject jsonResponse, Integer maxSize) {
+        log.trace("GenreResponseParser > random()");
+
         LinkedList<LoanItemSrchResponseDto> filteredResponses = filterResponses(jsonResponse, null, maxSize);
         return RandomPicker.randomPick(filteredResponses, maxSize);
     }
 
-    public LinkedList<LoanItemSrchResponseDto> newTrend(JSONObject jsonResponse, int currentYear) {
-        return filterResponses(jsonResponse, currentYear, null);
+    public LinkedList<LoanItemSrchResponseDto> newTrend(JSONObject jsonResponse, int currentYear,
+                                                        String filteredPageNo, String filteredPageSize) {
+        log.trace("GenreResponseParser > newTrend()");
+
+        LinkedList<LoanItemSrchResponseDto> filteredResponse = filterResponses(jsonResponse, currentYear, null);
+        return responseParser.customPageFilter(filteredResponse, filteredPageNo, filteredPageSize);
     }
 
     private LinkedList<LoanItemSrchResponseDto> filterResponses(JSONObject jsonResponse, Integer yearThreshold, Integer maxSize) {
+        log.trace("GenreResponseParser > filterResponses()");
+
         LinkedList<LoanItemSrchResponseDto> loanTrendResponseList = responseParser.loanTrend(jsonResponse);
         LinkedList<LoanItemSrchResponseDto> responseList = new LinkedList<>();
 
@@ -54,4 +68,5 @@ public class GenreResponseParser {
         }
         return responseList;
     }
+
 }
