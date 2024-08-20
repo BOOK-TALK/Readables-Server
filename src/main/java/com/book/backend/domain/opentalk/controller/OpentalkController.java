@@ -35,6 +35,7 @@ public class OpentalkController {
 
     // 오픈톡 메인 화면 (현재 핫한 오픈톡, 내가 즐찾한 오픈톡)
     @Operation(summary="오픈톡 메인 화면", description="현재 핫한 오픈톡 top 5의 ID List 와 사용자가 즐겨찾기한 오픈톡 ID List 를 반환합니다.",
+            parameters = {@Parameter(name = "loginId", description = "아이디")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkResponseDto.class)),
                     description = OpentalkResponseDto.description)})
     @GetMapping("/main")

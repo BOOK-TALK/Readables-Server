@@ -43,6 +43,8 @@ public class SearchController {
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestParam boolean isKeyword, String input, int pageNo, int pageSize) throws Exception {
         RequestLogger.param(new String[]{"isKeyword, input, pageNo, pageSize"}, isKeyword, input, pageNo, pageSize);
+        requestValidate.isValidPageNum(pageNo);
+        requestValidate.isValidPageNum(pageSize);
 
         RequestDto requestDto = RequestDto.builder()
                 .isKeyword(isKeyword)
@@ -51,6 +53,7 @@ public class SearchController {
                 .pageSize(pageSize)
                 .build();
         LinkedList<SearchResponseDto> response = searchService.search(requestDto);
+        //TODO : 10개 조회해도 중복값 때문에 줄어드네..
 
         response = searchService.duplicateChecker(response);
 

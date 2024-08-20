@@ -27,11 +27,9 @@ public class SearchService {
         ResponseParser responseParser = new ResponseParser();
         if(!requestDto.isKeyword()){
             LinkedList<SearchResponseDto> responseList = new LinkedList<>();
-            Integer halfPageSize = requestDto.getPageSize() / 2;
-
             SearchRequestDto searchRequestDto = SearchRequestDto.builder()
                     .pageNo(requestDto.getPageNo().toString())
-                    .pageSize(halfPageSize.toString()) // 셔플할 리스트의 페이지 크기 설정
+                    .pageSize(requestDto.getPageSize().toString())
                     .build();
 
             // 제목으로 검색
@@ -49,7 +47,7 @@ public class SearchService {
         } else { // 키워드로 검색
             SearchRequestDto searchRequestDto = SearchRequestDto.builder()
                     .pageNo(requestDto.getPageNo().toString())
-                    .pageSize(String.valueOf(requestDto.getPageSize())) // 셔플할 리스트의 페이지 크기 설정
+                    .pageSize(String.valueOf(requestDto.getPageSize() + 10)) // 중복 때문에 넉넉하게 +10개
                     .build();
 
             searchRequestDto.setKeyword(requestDto.getInput());
@@ -66,6 +64,7 @@ public class SearchService {
             String key = dto.getBookname() + dto.getAuthors();
             if(set.add(key)) duplicateRemovedList.add(dto);
         }
+        if(duplicateRemovedList.size() > 10) return new LinkedList<>(duplicateRemovedList.subList(0, 10));
         return duplicateRemovedList;
     }
 }
