@@ -19,8 +19,6 @@ public class UserDto {
     private String password;
     private String gender;
     private LocalDate birthDate;
-    private String email;
-    private String phone;
 
     public static final String description =
             "userId : 유저 아이디 | " +
@@ -30,7 +28,5 @@ public class UserDto {
             "nickname : 닉네임 | " +
             "password : 암호화된 비밀번호 (일반 로그인 시 생성) | " +
             "gender : 성별 | " +
-            "birthDate : 생일 | " +
-            "email : 이메일 주소 | " +
-            "phone : 휴대전화 번호";
+            "birthDate : 생일";
 }

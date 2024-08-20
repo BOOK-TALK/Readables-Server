@@ -36,10 +36,6 @@ public class User {
 
     private LocalDate birthDate;
 
-    private String email;
-
-    private String phone;
-
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private RefreshToken refreshToken;
 
