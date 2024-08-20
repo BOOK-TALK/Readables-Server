@@ -6,6 +6,7 @@ import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.message.entity.Message;
 import com.book.backend.domain.opentalk.service.OpentalkService;
+import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
 import java.util.List;
 
@@ -30,10 +31,10 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class OpentalkController {
     private final OpentalkService opentalkService;
+    private final ResponseTemplate responseTemplate;
 
     // 오픈톡 메인 화면 (현재 핫한 오픈톡, 내가 즐찾한 오픈톡)
     @Operation(summary="오픈톡 메인 화면", description="현재 핫한 오픈톡 top 5의 ID List 와 사용자가 즐겨찾기한 오픈톡 ID List 를 반환합니다.",
-            parameters = {@Parameter(name = "loginId", description = "아이디")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkResponseDto.class)),
                     description = OpentalkResponseDto.description)})
     @GetMapping("/main")
@@ -50,7 +51,7 @@ public class OpentalkController {
                 .hotOpentalkList(hotOpentalkList)
                 .favoriteOpentalkList(favoriteOpentalkList)
                 .build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return responseTemplate.success(response, HttpStatus.OK);
     }
 
     // 채팅 불러오기
@@ -66,7 +67,7 @@ public class OpentalkController {
         Page<Message> MessagePage = opentalkService.getOpentalkMessage(opentalkId, pageRequest);
         List<MessageResponseDto> response = opentalkService.pageToDto(MessagePage);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return responseTemplate.success(response, HttpStatus.OK);
     }
 
     // 채팅 저장하기
@@ -77,6 +78,6 @@ public class OpentalkController {
     public ResponseEntity<?> saveChat(@RequestBody MessageRequestDto messageRequestDto) {
         RequestLogger.param(new String[]{"messageRequestDto"}, messageRequestDto);
         MessageResponseDto response = opentalkService.saveMessage(messageRequestDto);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return responseTemplate.success(response, HttpStatus.OK);
     }
 }
