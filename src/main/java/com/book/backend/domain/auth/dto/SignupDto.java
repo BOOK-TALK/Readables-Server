@@ -1,6 +1,5 @@
 package com.book.backend.domain.auth.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
@@ -30,12 +29,5 @@ public class SignupDto {
 
     @Past(message = "현재 날짜보다 이전 날짜여야 합니다.")
     private LocalDate birthDate;
-
-    // FIXME: 아래 필드는 삭제 예정
-    @Email(message = "유효한 이메일 주소여야 합니다.")
-    private String email;
-
-    @Pattern(regexp = "010-\\d{4}-\\d{4}", message = "전화번호는 010-XXXX-XXXX 형태여야 합니다.")
-    private String phone;
 
 }

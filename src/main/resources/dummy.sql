@@ -22,12 +22,12 @@ VALUES (1, 1),
        (9, 9),
        (10, 10);
 
-INSERT IGNORE INTO user (user_id, login_id, password, gender, birth_date, email, phone, reg_date)
-values (1, 'user1', 'useruser1!', '1', '1990-01-01', 'user1@gmail.com', '010-1111-1111', '2024-06-10'),
-       (2, 'user2', 'useruser2!', '2', '2000-03-16', 'user2@gmail.com', '010-2222-2222', '2024-07-22'),
-       (3, 'user3', 'useruser3!', '1', '1995-05-20', 'user3@gmail.com', '010-3333-3333', '2024-08-15'),
-       (4, 'user4', 'useruser4!', '2', '1992-07-25', 'user4@gmail.com', '010-4444-4444', '2024-09-30'),
-       (5, 'user5', 'useruser5!', '1', '2003-09-30', 'user5@gmail.com', '010-5555-5555', '2024-10-10');
+INSERT IGNORE INTO user (user_id, login_id, password, gender, birth_date, reg_date)
+values (1, 'user1', 'useruser1!', '1', '1990-01-01', '2024-06-10'),
+       (2, 'user2', 'useruser2!', '2', '2000-03-16', '2024-07-22'),
+       (3, 'user3', 'useruser3!', '1', '1995-05-20', '2024-08-15'),
+       (4, 'user4', 'useruser4!', '2', '1992-07-25', '2024-09-30'),
+       (5, 'user5', 'useruser5!', '1', '2003-09-30', '2024-10-10');
 
 # 즐찾 오픈톡
 INSERT IGNORE INTO user_opentalk(user_opentalk_id, user_id, opentalk_id)
