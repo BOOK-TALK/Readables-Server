@@ -1,9 +1,12 @@
 package com.book.backend.domain.opentalk.entity;
 
 import com.book.backend.domain.book.entity.Book;
+import com.book.backend.domain.userOpentalk.entity.UserOpentalk;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Table(name = "opentalk")
@@ -13,7 +16,6 @@ public class Opentalk {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long opentalkId;
-
 
     @OneToOne
     @JoinColumn(name = "book_id", nullable = false)
