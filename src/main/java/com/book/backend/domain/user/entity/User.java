@@ -1,7 +1,6 @@
 package com.book.backend.domain.user.entity;
 
 import com.book.backend.domain.auth.entity.RefreshToken;
-import com.book.backend.domain.userLibcode.entity.UserLibcode;
 import com.book.backend.domain.userOpentalk.entity.UserOpentalk;
 import jakarta.persistence.*;
 import java.util.List;
