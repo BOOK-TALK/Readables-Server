@@ -7,6 +7,7 @@ import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.repository.UserRepository;
+import com.book.backend.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -17,12 +18,13 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class MessageMapper {
     private final ModelMapper mapper;
+    private final UserService userService;
     private final UserRepository userRepository;
     private final OpentalkRepository opentalkRepository;
 
     public Message convertToMessage(MessageRequestDto messageRequestDto) {
         Message message = mapper.map(messageRequestDto, Message.class);
-        User user = userRepository.findByLoginId(messageRequestDto.getLoginId()).orElseThrow();
+        User user = userService.loadLoggedinUser();
         Opentalk opentalk = opentalkRepository.findById(messageRequestDto.getOpentalkId()).orElseThrow();
 
         message.setUser(user);

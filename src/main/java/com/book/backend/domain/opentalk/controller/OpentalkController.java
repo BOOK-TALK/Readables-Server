@@ -70,8 +70,7 @@ public class OpentalkController {
     }
 
     // 채팅 저장하기
-    @Operation(summary="채팅 저장", description="오픈톡 id, loginId, content 를 입력으로 받아 DB에 채팅을 저장합니다.",
-            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "loginId", description = "로그인 아이디"), @Parameter(name = "content", description = "내용")},
+    @Operation(summary="채팅 저장", description="오픈톡 DB ID, content 를 입력으로 받아 DB에 채팅을 저장합니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
                     description = MessageResponseDto.description)})
     @PostMapping("/chat/save")

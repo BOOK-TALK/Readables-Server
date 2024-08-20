@@ -7,6 +7,5 @@ import lombok.Getter;
 @Builder
 public class MessageRequestDto {
     private Long opentalkId;
-    private String loginId;
     private String content;
 }
