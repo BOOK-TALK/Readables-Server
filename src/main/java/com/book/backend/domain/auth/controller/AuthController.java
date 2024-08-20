@@ -83,10 +83,8 @@ public class AuthController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserDto.class)),
                     description = UserDto.description)})
     @PostMapping("/kakaoLogin")
-    public ResponseEntity<?> kakaoLogin(HttpServletRequest request, String authorizationCode) {
-        RequestLogger.param(new String[] {"Session Id"}, request.getSession().getId());
-
-        LoginSuccessResponseDto loginSuccessResponseDto = kakaoService.kakaoLogin(request, authorizationCode);
+    public ResponseEntity<?> kakaoLogin(String authorizationCode) {
+        LoginSuccessResponseDto loginSuccessResponseDto = kakaoService.kakaoLogin(authorizationCode);
 
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
     }

@@ -7,6 +7,7 @@ import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
 import com.book.backend.domain.user.entity.Gender;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.repository.UserRepository;
+import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
@@ -45,6 +46,7 @@ public class KakaoService {
 
     private final RestTemplate restTemplate;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
     private final JwtRefreshTokenService jwtRefreshTokenService;
@@ -99,7 +101,7 @@ public class KakaoService {
 
     // 카카오 로그인
     @Transactional
-    public LoginSuccessResponseDto kakaoLogin(HttpServletRequest request, String authorizationCode) {
+    public LoginSuccessResponseDto kakaoLogin(String authorizationCode) {
         log.trace("kakaoLogin()");
 
         KakaoTokenResponseDto tokenResponseDto = getAccessToken(authorizationCode);
@@ -108,18 +110,22 @@ public class KakaoService {
         KakaoUserInfoDto userInfoDto = getUserInfo(accessToken);
         String kakaoId = String.valueOf(userInfoDto.getId());
 
-        // kakaoId로 유저 조회, 없을 시 생성
-        User user = userRepository.findByKakaoId(kakaoId)
-                .orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setKakaoId(kakaoId);
-                    newUser.setRegDate(LocalDateTime.now());
-                    newUser.setPassword("unused");
-                    newUser.setLoginId(null); // 카카오 로그인 사용자는 loginId가 null
-                    newUser.setNickname("kakaoUser@" + kakaoId);
-                    newUser.setGender(Gender.G0);
-                    return newUser;
-                });
+        // kakaoId로 유저 조회
+        User user = userService.findByKakaoId(kakaoId);
+        Boolean isNewUser = Boolean.FALSE;
+
+        // 조회된 유저가 없을 시 회원가입 처리
+        if (user == null) {
+            isNewUser = Boolean.TRUE;
+            User newUser = new User();
+            newUser.setKakaoId(kakaoId);
+            newUser.setRegDate(LocalDateTime.now());
+            newUser.setPassword("unused");
+            newUser.setLoginId(null); // 카카오 로그인 사용자는 loginId가 null
+            newUser.setNickname("kakaoUser@" + kakaoId);
+            newUser.setGender(Gender.G0);
+            user = newUser;
+        }
 
         userRepository.save(user);
 
@@ -136,6 +142,7 @@ public class KakaoService {
 
         return LoginSuccessResponseDto.builder()
                 .userId(user.getUserId())
+                .isNewUser(isNewUser)
                 .accessToken(jwtTokenDto.getAccessToken())
                 .refreshToken(jwtTokenDto.getRefreshToken())
                 .build();
