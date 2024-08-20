@@ -1,19 +1,17 @@
 package com.book.backend.domain.opentalk.service;
 
-import com.book.backend.domain.auth.service.AuthService;
-import com.book.backend.domain.book.entity.Book;
-import com.book.backend.domain.book.repository.BookRepository;
+import com.book.backend.domain.message.dto.MessageRequestDto;
+import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.detail.service.DetailService;
 import com.book.backend.domain.message.entity.Message;
+import com.book.backend.domain.message.mapper.MessageMapper;
 import com.book.backend.domain.message.repository.MessageRepository;
 import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
 import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
-import com.book.backend.domain.openapi.service.ResponseParser;
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
 import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
 import com.book.backend.domain.user.entity.User;
-import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.domain.user.service.UserService;
 import com.book.backend.domain.userOpentalk.entity.UserOpentalk;
 import com.book.backend.domain.userOpentalk.repository.UserOpentalkRepository;
@@ -24,21 +22,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.service.OpenAPIService;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class OpentalkService {
-    private final UserRepository userRepository;
     private final UserOpentalkRepository userOpentalkRepository;
     private final MessageRepository messageRepository;
     private final OpentalkRepository opentalkRepository;
-    private final BookRepository bookRepository;
     private final DetailService detailService;
     private final UserService userService;
     private final OpentalkResponseParser opentalkResponseParser;
+    private final MessageMapper messageMapper;
 
     /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
     public List<Long> hotOpentalk() {
@@ -73,14 +70,40 @@ public class OpentalkService {
         List<OpentalkDto> opentalkDtoList = new LinkedList<>();
 
         for(Long id : opentalkId) {
-            OpentalkDto opentalkDto = OpentalkDto.builder().build();
+            OpentalkDto opentalkDto = OpentalkDto.builder().id(id).build();
             Optional<Opentalk> opentalk = opentalkRepository.findByOpentalkId(id);
             String isbn = opentalk.get().getBook().getIsbn();
-//            String isbn = bookRepository.findIsbnByBookId(opentalkRepository.findByOpentalkId(id));
             DetailResponseDto detailResponseDto = detailService.detail(DetailRequestDto.builder().isbn13(isbn).build()); // 정보 가져오기
             opentalkResponseParser.setSimpleBookInfo(opentalkDto, detailResponseDto); // detailResponseDto 에서 title 이랑 imageUrl 만 추출하기
             opentalkDtoList.add(opentalkDto);
         }
         return opentalkDtoList;
+    }
+
+    public Page<Message> getOpentalkMessage(String opentalkId, Pageable pageRequest){
+        // 오픈톡 ID로 opentlak 객체 찾기
+        Opentalk opentalk = opentalkRepository.findByOpentalkId(Long.parseLong(opentalkId)).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
+        return messageRepository.findAllByOpentalk(opentalk, pageRequest);
+    }
+
+    public List<MessageResponseDto> pageToDto(Page<Message> page){
+        List<Message> messages = page.getContent();
+        List<MessageResponseDto> messageList = new LinkedList<>();
+
+        for(Message message : messages){
+            messageList.add(messageMapper.convertToMessageResponseDto(message));
+        }
+        return messageList;
+    }
+
+    // message 저장
+    public MessageResponseDto saveMessage(MessageRequestDto messageRequestDto){
+        Message message = messageMapper.convertToMessage(messageRequestDto);
+        try{
+            messageRepository.save(message);
+        } catch (Exception e){
+            throw new CustomException(ErrorCode.MESSAGE_SAVE_FAILED);
+        }
+        return messageMapper.convertToMessageResponseDto(message);
     }
 }
