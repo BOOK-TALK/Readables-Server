@@ -99,7 +99,7 @@ public class KakaoService {
 
     // 카카오 로그인
     @Transactional
-    public LoginSuccessResponseDto kakaoLogin(HttpServletRequest request, String authorizationCode) {
+    public LoginSuccessResponseDto kakaoLogin(String authorizationCode) {
         log.trace("kakaoLogin()");
 
         KakaoTokenResponseDto tokenResponseDto = getAccessToken(authorizationCode);
