@@ -1,6 +1,7 @@
 package com.book.backend.domain.user.entity;
 
 import com.book.backend.domain.auth.entity.RefreshToken;
+import com.book.backend.domain.userLibcode.entity.UserLibcode;
 import com.book.backend.domain.userOpentalk.entity.UserOpentalk;
 import jakarta.persistence.*;
 import java.util.List;
@@ -43,6 +44,11 @@ public class User {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private RefreshToken refreshToken;
 
-    @OneToMany(mappedBy = "userOpentalkId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<UserOpentalk> openTalkIds; //즐찾 오픈톡
+    @OneToMany(mappedBy = "userOpentalkId", fetch = FetchType.LAZY)
+    private List<UserOpentalk> openTalkIds;  // 즐찾 오픈톡
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_libraries", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "library")
+    private List<String> libraries;
 }
