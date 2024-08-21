@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedList;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/library")
@@ -26,7 +25,7 @@ public class LibraryController {
     private final LibraryService libraryService;
     private final ResponseTemplate responseTemplate;
 
-    @GetMapping("/libraries/searchByRegion")
+    @GetMapping("/searchByRegion")
     public ResponseEntity<?> searchLibrariesByRegion(@RequestParam String regionCode,
                                                      @RequestParam(required = false) String regionDetailCode) throws Exception {
         log.trace("LibraryController > searchLibrariesByRegion");
