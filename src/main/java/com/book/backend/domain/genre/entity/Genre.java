@@ -27,8 +27,6 @@ public class Genre {
     @OneToMany(mappedBy = "parentGenre", cascade = CascadeType.ALL)
     private List<Genre> subGenres;
 
-    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
-    private List<Book> books;
 
     public Integer getLevel() {
         if (parentGenre == null) {
@@ -36,13 +34,4 @@ public class Genre {
         }
         return 2;
     }
-
-    public List<Book> getBooks() {
-        if (this.getLevel() == 2) {
-            return books;
-        } else {
-            return null;
-        }
-    }
-
 }
