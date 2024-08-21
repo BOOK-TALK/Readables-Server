@@ -31,11 +31,12 @@ jobs:
         DB_URL: ${{ secrets.GLOBAL_DB_URL }}
         DB_USERNAME: ${{ secrets.GLOBAL_DB_USERNAME }}
         DB_PASSWORD: ${{ secrets.GLOBAL_DB_PASSWORD }}
-        RESTAPI_KEY: ${{secrets.RESTAPI_KEY}}
-        JWT_SECRET: ${{secrets.JWT_SECRET}}
-        ACCESS_TOKEN_EXPIRE_TIME: ${{secrets.ACCESS_TOKEN_EXPIRE_TIME}}
-        REFRESH_TOKEN_EXPIRE_TIME: ${{secrets.REFRESH_TOKEN_EXPIRE_TIME}}
-
+        SERVER_URL: ${{ secrets.SERVER_URL }}
+        RESTAPI_KEY: ${{ secrets.RESTAPI_KEY }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        ACCESS_TOKEN_EXPIRE_TIME: ${{ secrets.ACCESS_TOKEN_EXPIRE_TIME }}
+        REFRESH_TOKEN_EXPIRE_TIME: ${{ secrets.REFRESH_TOKEN_EXPIRE_TIME }}
+        
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
       with:
