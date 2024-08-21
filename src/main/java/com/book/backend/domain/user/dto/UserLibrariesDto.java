@@ -1,6 +1,7 @@
 package com.book.backend.domain.user.dto;
 
 import lombok.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -8,7 +9,5 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserLibrariesDto {
-    private String libCode1;
-    private String libCode2;
-    private String libCode3;
+    private List<String> libCodeList;
 }

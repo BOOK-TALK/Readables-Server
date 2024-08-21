@@ -1,5 +1,6 @@
 package com.book.backend.domain.user.service;
 
+import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.user.dto.UserInfoDto;
 import com.book.backend.domain.user.dto.UserLibrariesDto;
 import com.book.backend.domain.user.entity.User;
@@ -21,6 +22,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final RequestValidate requestValidate;
 
     public User loadLoggedinUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -66,11 +68,11 @@ public class UserService {
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-
         user.getLibraries().clear();
-        user.getLibraries().add(dto.getLibCode1());
-        user.getLibraries().add(dto.getLibCode2());
-        user.getLibraries().add(dto.getLibCode3());
+        for(String libCode : dto.getLibCodeList()) {
+            requestValidate.isValidLibCode(libCode);
+            user.getLibraries().add(libCode);
+        }
         userRepository.save(user);
 
         return user;
