@@ -22,6 +22,7 @@ public class SearchResponseDto implements OpenAPIResponseInterface, OpenAPIReque
     private String bookImageURL;
     private String bookDtlUrl;
     private String loan_count;
+    private boolean isDibs; // 찜 여부
 
     private boolean isLoanAvailable;
 

@@ -2,6 +2,7 @@ package com.book.backend.domain.user.entity;
 
 import com.book.backend.domain.auth.entity.RefreshToken;
 import com.book.backend.domain.user.dto.LibraryDto;
+import com.book.backend.domain.userBook.dto.UserBookDto;
 import com.book.backend.domain.userOpentalk.entity.UserOpentalk;
 import jakarta.persistence.*;
 import java.util.List;
@@ -47,4 +48,9 @@ public class User {
     @CollectionTable(name = "user_libraries", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "library")
     private List<LibraryDto> libraries;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_books", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "isbn")
+    private List<UserBookDto> books;  // 책 찜
 }

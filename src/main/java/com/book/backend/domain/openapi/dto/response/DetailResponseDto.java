@@ -20,6 +20,7 @@ public class DetailResponseDto implements OpenAPIResponseInterface {
     private LinkedList<CoLoanBooksDto> coLoanBooksDtoList;
     private LinkedList<RecommendDto> recommendResponseDtoList;
     private List<LoanAvailableDto> loanAvailableList;
+    private boolean isDibs; // 찜 여부
 
     public static final String description = "bookInfoDto:  책 상세 정보 | top3LoanUserDtoList: 대출 주 연령대 | "
             + "keywordDtoList: 책 연관 키워드 | coLoanBooksDtoList: 같이 대출한 도서 | recommendResponseDtoList: 추천 도서";
