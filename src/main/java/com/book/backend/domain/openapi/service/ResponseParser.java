@@ -347,6 +347,7 @@ public class ResponseParser {
                     .libName(lib.getAsString("libName"))
                     .address(lib.getAsString("address"))
                     .tel(lib.getAsString("tel"))
+                    .fax(lib.getAsString("fax"))
                     .latitude(lib.getAsString("latitude"))
                     .longitude(lib.getAsString("longitude"))
                     .homepage(lib.getAsString("homepage"))
