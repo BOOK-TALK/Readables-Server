@@ -39,6 +39,7 @@ public enum ErrorCode {
     // 외부 API 에러
     KAKAO_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "카카오 서버에 오류가 발생했습니다."),
     API_CALL_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "429", "OPEN API 일일 호출 횟수를 초과했습니다. (일 최대 500건)"),
+    LIBCODE_EXIST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "대출 가능 여부 조회 중 오류가 발생했습니다."),
 
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "400", "요청이 잘못되었습니다.");
 
