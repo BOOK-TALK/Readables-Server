@@ -45,7 +45,7 @@ public class DetailController {
         DetailRequestDto requestDto = DetailRequestDto.builder().isbn13(isbn).build();
         DetailResponseDto response = detailService.detail(requestDto);
 
-        detailService.setLoanAvailable(response);
+        response.setLoanAvailableList(detailService.getLoanAvailable(isbn));
         response.setDibs(userBookService.isDibs(isbn));
 
         return responseTemplate.success(response, HttpStatus.OK);
