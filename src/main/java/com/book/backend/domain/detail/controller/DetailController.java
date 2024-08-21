@@ -4,6 +4,7 @@ import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.detail.service.DetailService;
 import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
 import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
+import com.book.backend.domain.userBook.service.UserBookService;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,6 +30,7 @@ public class DetailController {
     private final DetailService detailService;
     private final RequestValidate requestValidate;
     private final ResponseTemplate responseTemplate;
+    private final UserBookService userBookService;
 
     // 도서 상세 (8) API
     @Operation(summary="책 상세", description="특정 책 코드를 입력으로 받아 해당 책 상세 정보, 대출 주 연령대, 키워드, 같이 대출한 도서, 추천 도서를 반환합니다.",
@@ -45,6 +46,7 @@ public class DetailController {
         DetailResponseDto response = detailService.detail(requestDto);
 
         detailService.setLoanAvailable(response);
+        response.setDibs(userBookService.isDibs(isbn));
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
