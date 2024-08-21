@@ -4,6 +4,7 @@ import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
 import com.book.backend.domain.search.dto.RequestDto;
 import com.book.backend.domain.search.service.SearchService;
+import com.book.backend.domain.userBook.service.UserBookService;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +32,7 @@ public class SearchController {
     private final SearchService searchService;
     private final RequestValidate requestValidate;
     private final ResponseTemplate responseTemplate;
+    private final UserBookService userBookService;
 
     // 도서검색(16) API
     @Operation(summary="책 검색", description="검색어, 도서관 코드를 입력으로 받아 검색된 책 목록을 반환합니다.",
@@ -53,9 +55,9 @@ public class SearchController {
                 .pageSize(pageSize)
                 .build();
         LinkedList<SearchResponseDto> response = searchService.search(requestDto);
-        //TODO : 10개 조회해도 중복값 때문에 줄어드네..
 
         response = searchService.duplicateChecker(response);
+        searchService.setDibs(response); // 찜 여부 설정
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
