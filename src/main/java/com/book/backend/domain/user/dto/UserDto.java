@@ -20,6 +20,7 @@ public class UserDto {
     private String gender;
     private LocalDate birthDate;
 
+
     public static final String description =
             "userId : 유저 아이디 | " +
             "loginId : 유저 로그인 아이디 (일반 로그인 시 생성) | " +

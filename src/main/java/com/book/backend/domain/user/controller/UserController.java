@@ -5,6 +5,7 @@ import com.book.backend.domain.user.dto.*;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.service.UserService;
+import com.book.backend.domain.userBook.service.UserBookService;
 import com.book.backend.global.ResponseTemplate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,11 +28,12 @@ public class UserController {
     private final UserService userService;
     private final ResponseTemplate responseTemplate;
     private final UserMapper userMapper;
+    private final UserBookService userBookService;
     private final RequestValidate requestValidate;
 
     @Operation(summary = "유저 정보 조회", description = "유저 정보를 불러옵니다.",
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserDto.class)),
-                    description = UserDto.description)})
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MyPageDto.class)),
+                    description = MyPageDto.description)})
     @GetMapping("/info")
     public ResponseEntity<?> getUserInfo() {
         log.trace("UserController > getUserInfo()");
@@ -39,7 +41,13 @@ public class UserController {
         User user = userService.loadLoggedinUser();
         UserDto userDto = userMapper.convertToUserDto(user);
 
-        return responseTemplate.success(userDto, HttpStatus.OK);
+        MyPageDto responseDto = MyPageDto.builder()
+                .userDto(userDto)
+                .libraries(userService.getLibraries(user))
+                .dibs(userBookService.getDibsList())
+                .build();
+
+        return responseTemplate.success(responseDto, HttpStatus.OK);
     }
 
     @Operation(summary = "유저 정보 수정", description = "유저의 변경 가능한 정보를 수정합니다.",
