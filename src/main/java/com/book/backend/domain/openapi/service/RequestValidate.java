@@ -3,6 +3,7 @@ package com.book.backend.domain.openapi.service;
 import com.book.backend.domain.openapi.dto.request.LoanItemSrchRequestDto;
 import com.book.backend.domain.openapi.entity.AgeRangeCode;
 import com.book.backend.domain.openapi.entity.RegionCode;
+import com.book.backend.domain.openapi.entity.RegionDetailCode;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import java.time.LocalDate;
@@ -104,6 +105,17 @@ public class RequestValidate {
             }
         }
         throw new CustomException(ErrorCode.INVALID_REGION_CODE);
+    }
+
+    public void isValidRegionDetailCode(String regionDetail) {
+        // 세부지역 코드 중 하나인지 확인
+        RegionDetailCode[] regionDetailCodes = RegionDetailCode.values();
+        for (RegionDetailCode code : regionDetailCodes) {
+            if(code.getCode().equals(regionDetail)) {
+                return;
+            }
+        }
+        throw new CustomException(ErrorCode.INVALID_REGION_DETAIL_CODE);
     }
 
     public void isValidLibCode(String libCode){
