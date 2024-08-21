@@ -42,17 +42,17 @@ public class DetailService {
 
         User user = userService.loadLoggedinUser();
         List<LoanAvailableDto> loanAvailableList = new LinkedList<>();
-        user.getLibraries().forEach(libCode -> {
+        user.getLibraries().forEach(library -> {
             try {
                 BookExistRequestDto bookExistRequestDto = BookExistRequestDto.builder()
-                        .libCode(libCode)
+                        .libCode(library.getCode())
                         .isbn13(detailDto.getBookInfoDto().getIsbn13()).build();
 
                 String subUrl = "bookExist";
                 JSONObject jsonResponse = openAPI.connect(subUrl, bookExistRequestDto, new BookExistResponseDto());
                 ResponseParser responseParser = new ResponseParser();
 
-                LoanAvailableDto dto = LoanAvailableDto.builder().libCode(libCode).isLoanable(responseParser.loanAvailable(jsonResponse)).build();
+                LoanAvailableDto dto = LoanAvailableDto.builder().libCode(library.getCode()).isLoanable(responseParser.loanAvailable(jsonResponse)).build();
                 loanAvailableList.add(dto);
             } catch (Exception e) {
                 throw new RuntimeException("대출 가능 여부 조회 중 오류가 발생했습니다.");
