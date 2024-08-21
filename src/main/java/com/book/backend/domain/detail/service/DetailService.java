@@ -67,7 +67,7 @@ public class DetailService {
                             .build();
                     loanAvailableList.add(dto);
                 } catch (Exception e) {
-                    throw new RuntimeException("대출 가능 여부 조회 중 오류가 발생했습니다.");
+                    throw new RuntimeException("대출 가능 여부 조회 중 오류가 발생했습니다. (존재하는 libCode 인지 확인해주세요)");
                 }
             });
         }
