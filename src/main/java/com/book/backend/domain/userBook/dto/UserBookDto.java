@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UserBookDto {
+    private String isbn;
     private String bookname;
     private String bookImageURL;
-    private String isbn;
+
+    public static final String description = "isbn: 책 ISBN | bookname: 책 이름 | bookImageURL: 책 이미지 URL";
 }
