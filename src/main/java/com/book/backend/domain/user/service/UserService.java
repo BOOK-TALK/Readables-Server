@@ -1,8 +1,9 @@
 package com.book.backend.domain.user.service;
 
 import com.book.backend.domain.openapi.service.RequestValidate;
+import com.book.backend.domain.user.dto.LibraryDto;
 import com.book.backend.domain.user.dto.UserInfoDto;
-import com.book.backend.domain.user.dto.UserLibrariesDto;
+import com.book.backend.domain.user.dto.UserLibrariesRequestDto;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.repository.UserRepository;
@@ -65,28 +66,32 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUserLibraries(User user, UserLibrariesDto dto) {
+    public User updateUserLibraries(User user, UserLibrariesRequestDto dto) {
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-        user.getLibraries().clear();
-        List<String> libCodeList = new LinkedList<>();
-        libCodeList.add(dto.getLibCode1());
-        libCodeList.add(dto.getLibCode2());
-        libCodeList.add(dto.getLibCode3());
 
-        for(String libCode : libCodeList){
-            if(!libCode.equals("null")){
-                requestValidate.isValidLibCode(libCode);
-                user.getLibraries().add(libCode);
+        // 리스트 사이즈가 3보다 크면 오류 반환
+        if (dto.getLibraries().size() > 3) {
+            throw new CustomException(ErrorCode.LIST_SIZE_EXCEEDED);
+        }
+
+        user.getLibraries().clear();
+
+        for (LibraryDto library : dto.getLibraries()) {
+            if (library.getCode().isBlank() || library.getName().isBlank()) {
+                continue;
             }
+
+            requestValidate.isValidLibCode(library.getCode());
+            user.getLibraries().add(library);
         }
         userRepository.save(user);
 
         return user;
     }
 
-    public List<String> getLibraries(User user) {
+    public List<LibraryDto> getLibraries(User user) {
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }

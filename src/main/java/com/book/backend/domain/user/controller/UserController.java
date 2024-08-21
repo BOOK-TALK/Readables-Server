@@ -1,10 +1,10 @@
 package com.book.backend.domain.user.controller;
 
-import com.book.backend.domain.openapi.dto.request.LibSrchRequestDto;
 import com.book.backend.domain.openapi.service.RequestValidate;
+import com.book.backend.domain.user.dto.LibraryDto;
 import com.book.backend.domain.user.dto.UserDto;
 import com.book.backend.domain.user.dto.UserInfoDto;
-import com.book.backend.domain.user.dto.UserLibrariesDto;
+import com.book.backend.domain.user.dto.UserLibrariesRequestDto;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.service.UserService;
@@ -66,19 +66,19 @@ public class UserController {
 
         User user = userService.loadLoggedinUser();
 
-        List<String> libraries = userService.getLibraries(user);
+        List<LibraryDto> libraries = userService.getLibraries(user);
 
         return responseTemplate.success(libraries, HttpStatus.OK);
     }
 
     @PutMapping("/libraries/edit")
-    public ResponseEntity<?> editUserLibraries(@RequestBody UserLibrariesDto requestDto) {
+    public ResponseEntity<?> editUserLibraries(@RequestBody UserLibrariesRequestDto requestDto) {
         log.trace("UserController > editUserLibrary()");
 
         User user = userService.loadLoggedinUser();
         User updatedUser = userService.updateUserLibraries(user, requestDto);
 
-        List<String> libraries = updatedUser.getLibraries();
+        List<LibraryDto> libraries = userService.getLibraries(updatedUser);
 
         return responseTemplate.success(libraries, HttpStatus.OK);
     }
