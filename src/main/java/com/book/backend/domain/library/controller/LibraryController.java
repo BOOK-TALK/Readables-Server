@@ -52,4 +52,17 @@ public class LibraryController {
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
+
+    @GetMapping("/searchByLibCode")
+    public ResponseEntity<?> searchLibraryByLibCode(@RequestParam String libCode) throws Exception {
+        log.trace("LibraryController > searchLibraryByLibCode");
+
+        LibSrchRequestDto requestDto = LibSrchRequestDto.builder()
+                .libCode(libCode)
+                .build();
+
+        LinkedList<LibSrchResponseDto> response = libraryService.searchLibraries(requestDto);
+
+        return responseTemplate.success(response, HttpStatus.OK);
+    }
 }
