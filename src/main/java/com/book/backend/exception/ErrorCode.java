@@ -18,7 +18,8 @@ public enum ErrorCode {
     INVALID_AGE_RANGE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 연령 코드입니다."),
     INVALID_GENDER(HttpStatus.BAD_REQUEST, "400", "MAN 또는 WOMAN 으로 입력해주세요."),
     INVALID_GENRE_CODE(HttpStatus.BAD_REQUEST, "400", "두 자리 세부장르 코드를 입력해주세요."),
-    INVALID_REGION_CODE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 지역 코드입니다."),
+    INVALID_REGION_CODE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 대지역 코드입니다."),
+    INVALID_REGION_DETAIL_CODE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 세부지역 코드입니다."),
     INVALID_LIB_CODE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 도서관 코드입니다. (6자리 숫자로 입력해주세요)"),
     INVALID_PAGE_NUM(HttpStatus.BAD_REQUEST, "400", "페이지 번호는 1 이상의 숫자로 입력해주세요."),
 
