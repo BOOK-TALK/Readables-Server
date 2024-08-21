@@ -1,5 +1,7 @@
 package com.book.backend.domain.user.controller;
 
+import com.book.backend.domain.openapi.dto.request.LibSrchRequestDto;
+import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.user.dto.UserDto;
 import com.book.backend.domain.user.dto.UserInfoDto;
 import com.book.backend.domain.user.dto.UserLibrariesDto;
@@ -28,6 +30,7 @@ public class UserController {
     private final UserService userService;
     private final ResponseTemplate responseTemplate;
     private final UserMapper userMapper;
+    private final RequestValidate requestValidate;
 
     @Operation(summary = "유저 정보 불러오기", description = "유저 정보를 불러옵니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserDto.class)),
@@ -64,8 +67,6 @@ public class UserController {
         User user = userService.loadLoggedinUser();
 
         List<String> libraries = userService.getLibraries(user);
-
-        // TODO: 도서관 이름도 반환에 포함?
 
         return responseTemplate.success(libraries, HttpStatus.OK);
     }
