@@ -36,4 +36,16 @@ public class UserBookService {
         userRepository.save(user);
         return user.getBooks();
     }
+
+    // 찜 리스트 조회
+    public List<UserBookDto> getDibsList() {
+        User user = userService.loadLoggedinUser();
+        return user.getBooks();
+    }
+
+    // 찜 여부 확인
+    public boolean isDibs(String isbn) {
+        User user = userService.loadLoggedinUser();
+        return user.getBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(isbn));
+    }
 }
