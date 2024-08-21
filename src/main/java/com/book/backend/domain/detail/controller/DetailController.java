@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,7 +43,8 @@ public class DetailController {
         DetailRequestDto requestDto = DetailRequestDto.builder().isbn13(isbn).build();
         DetailResponseDto response = detailService.detail(requestDto);
 
-        detailService.setLoanAvailable(response);
+        response.setLoanAvailableList(detailService.getLoanAvailable(isbn));
+        response.setOpentalkId(detailService.getOpentalkId(isbn));
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
