@@ -1,5 +1,6 @@
 package com.book.backend.domain.user.service;
 
+import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.user.dto.UserInfoDto;
 import com.book.backend.domain.user.dto.UserLibrariesDto;
 import com.book.backend.domain.user.entity.User;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -21,6 +23,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final RequestValidate requestValidate;
 
     public User loadLoggedinUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -66,11 +69,18 @@ public class UserService {
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-
         user.getLibraries().clear();
-        user.getLibraries().add(dto.getLibCode1());
-        user.getLibraries().add(dto.getLibCode2());
-        user.getLibraries().add(dto.getLibCode3());
+        List<String> libCodeList = new LinkedList<>();
+        libCodeList.add(dto.getLibCode1());
+        libCodeList.add(dto.getLibCode2());
+        libCodeList.add(dto.getLibCode3());
+
+        for(String libCode : libCodeList){
+            if(!libCode.equals("null")){
+                requestValidate.isValidLibCode(libCode);
+                user.getLibraries().add(libCode);
+            }
+        }
         userRepository.save(user);
 
         return user;
