@@ -5,6 +5,11 @@ import com.book.backend.domain.openapi.dto.request.LibSrchRequestDto;
 import com.book.backend.domain.openapi.dto.response.LibSrchResponseDto;
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.global.ResponseTemplate;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +30,13 @@ public class LibraryController {
     private final LibraryService libraryService;
     private final ResponseTemplate responseTemplate;
 
+    // 지역코드 기반 도서관 검색
+    @Operation(summary = "지역코드 기반 도서관 검색", description = "지역 코드를 입력받아 해당 지역의 정보 공개 도서관 리스트를 반환합니다.",
+            parameters = {
+                    @Parameter(name = "regionCode", description = "대지역 코드 (필수)"),
+                    @Parameter(name = "regionDetailCode", description = "세부지역 코드 (선택)")},
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LibSrchResponseDto.class)),
+                    description = LibSrchResponseDto.description)})
     @GetMapping("/searchByRegion")
     public ResponseEntity<?> searchLibrariesByRegion(@RequestParam String regionCode,
                                                      @RequestParam(required = false) String regionDetailCode) throws Exception {
@@ -53,6 +65,13 @@ public class LibraryController {
         return responseTemplate.success(response, HttpStatus.OK);
     }
 
+    // 도서관 코드 기반 도서관 검색
+    @Operation(summary = "도서관 코드 기반 도서관 검색", description = "도서관 코드를 입력받아 해당 도서관의 정보를 반환합니다.",
+            parameters = {
+                    @Parameter(name = "regionCode", description = "대지역 코드 (필수)"),
+                    @Parameter(name = "regionDetailCode", description = "세부지역 코드 (선택)")},
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LibSrchResponseDto.class)),
+                    description = LibSrchResponseDto.description)})
     @GetMapping("/searchByLibCode")
     public ResponseEntity<?> searchLibraryByLibCode(@RequestParam String libCode) throws Exception {
         log.trace("LibraryController > searchLibraryByLibCode");
@@ -61,7 +80,7 @@ public class LibraryController {
                 .libCode(libCode)
                 .build();
 
-        LinkedList<LibSrchResponseDto> response = libraryService.searchLibraries(requestDto);
+        LibSrchResponseDto response = libraryService.searchLibraries(requestDto).getFirst();
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
