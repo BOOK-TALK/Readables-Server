@@ -327,6 +327,37 @@ public class ResponseParser {
                 .build();
     }
 
+    public LinkedList<LibSrchResponseDto> libSrch(JSONObject jsonResponse) {
+        log.trace("ResponseParser > libSrch()");
+
+        JSONArray libs = (JSONArray) jsonResponse.get("libs");
+
+        LinkedList<LibSrchResponseDto> responseList = new LinkedList<>();
+
+        if (libs == null) {
+            return responseList;
+        }
+
+        for (Object o : libs) {
+            JSONObject libsElement = (JSONObject) o;
+            JSONObject lib = (JSONObject) libsElement.get("lib");
+
+            responseList.add(LibSrchResponseDto.builder()
+                    .libCode(lib.getAsString("libCode"))
+                    .libName(lib.getAsString("libName"))
+                    .address(lib.getAsString("address"))
+                    .tel(lib.getAsString("tel"))
+                    .latitude(lib.getAsString("latitude"))
+                    .longitude(lib.getAsString("longitude"))
+                    .homepage(lib.getAsString("homepage"))
+                    .closed(lib.getAsString("closed"))
+                    .operatingTime(lib.getAsString("operatingTime"))
+                    .BookCount(lib.getAsString("BookCount"))
+                    .build());
+        }
+        return responseList;
+    }
+
     public <T extends OpenAPIResponseInterface> LinkedList<T> customPageFilter(LinkedList<T> responseList, String filteredPageNo, String filteredPageSize) {
         log.trace("ResponseParser > customPageFilter()");
 
