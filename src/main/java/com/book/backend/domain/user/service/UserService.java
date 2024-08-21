@@ -10,17 +10,18 @@ import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -53,6 +54,8 @@ public class UserService {
 
     @Transactional
     public User updateUserInfo(User user, UserInfoDto requestDto) {
+        log.trace("UserService > updateUserInfo()");
+
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
@@ -67,6 +70,8 @@ public class UserService {
 
     @Transactional
     public User updateUserLibraries(User user, UserLibrariesRequestDto dto) {
+        log.trace("UserService > updateUserLibraries()");
+
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
@@ -92,6 +97,8 @@ public class UserService {
     }
 
     public List<LibraryDto> getLibraries(User user) {
+        log.trace("UserService > getLibraries()");
+
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }

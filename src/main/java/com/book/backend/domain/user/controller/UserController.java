@@ -1,10 +1,7 @@
 package com.book.backend.domain.user.controller;
 
 import com.book.backend.domain.openapi.service.RequestValidate;
-import com.book.backend.domain.user.dto.LibraryDto;
-import com.book.backend.domain.user.dto.UserDto;
-import com.book.backend.domain.user.dto.UserInfoDto;
-import com.book.backend.domain.user.dto.UserLibrariesRequestDto;
+import com.book.backend.domain.user.dto.*;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.service.UserService;
@@ -32,7 +29,7 @@ public class UserController {
     private final UserMapper userMapper;
     private final RequestValidate requestValidate;
 
-    @Operation(summary = "유저 정보 불러오기", description = "유저 정보를 불러옵니다.",
+    @Operation(summary = "유저 정보 조회", description = "유저 정보를 불러옵니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserDto.class)),
                     description = UserDto.description)})
     @GetMapping("/info")
@@ -60,17 +57,24 @@ public class UserController {
         return responseTemplate.success(userInfoDto, HttpStatus.OK);
     }
 
+    @Operation(summary = "저장된 도서관 조회", description = "유저가 저장한 도서관 목록을 불러옵니다.",
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserLibrariesResponseDto.class)),
+                description = UserLibrariesResponseDto.description)})
     @GetMapping("/libraries")
     public ResponseEntity<?> getUserLibraries() {
         log.trace("UserController > getUserLibraries()");
 
         User user = userService.loadLoggedinUser();
 
-        List<LibraryDto> libraries = userService.getLibraries(user);
+        UserLibrariesResponseDto responseDto = new UserLibrariesResponseDto();
+        responseDto.setLibraries(userService.getLibraries(user));
 
-        return responseTemplate.success(libraries, HttpStatus.OK);
+        return responseTemplate.success(responseDto, HttpStatus.OK);
     }
 
+    @Operation(summary = "저장된 도서관 수정", description = "저장된 도서관 목록을 수정합니다. 최대 3개의 도서관을 등록할 수 있습니다.",
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserLibrariesResponseDto.class)),
+                    description = UserLibrariesResponseDto.description)})
     @PutMapping("/libraries/edit")
     public ResponseEntity<?> editUserLibraries(@RequestBody UserLibrariesRequestDto requestDto) {
         log.trace("UserController > editUserLibrary()");
@@ -78,9 +82,10 @@ public class UserController {
         User user = userService.loadLoggedinUser();
         User updatedUser = userService.updateUserLibraries(user, requestDto);
 
-        List<LibraryDto> libraries = userService.getLibraries(updatedUser);
+        UserLibrariesResponseDto responseDto = new UserLibrariesResponseDto();
+        responseDto.setLibraries(userService.getLibraries(updatedUser));
 
-        return responseTemplate.success(libraries, HttpStatus.OK);
+        return responseTemplate.success(responseDto, HttpStatus.OK);
     }
 
 }
