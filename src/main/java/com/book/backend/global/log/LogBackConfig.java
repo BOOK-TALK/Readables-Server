@@ -1,6 +1,7 @@
 package com.book.backend.global.log;
 
 import static ch.qos.logback.classic.Level.TRACE;
+import static ch.qos.logback.classic.Level.ERROR;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -16,14 +17,15 @@ import org.springframework.context.annotation.Configuration;
 public class LogBackConfig {
     private final LoggerContext logCtx = (LoggerContext) LoggerFactory.getILoggerFactory();
     // 커스텀 영역
-    private final static String pattern = "%green(%d{yyyy-MM-dd HH:mm:ss, Asia/Seoul}) %cyan(%5level) %magenta(%method) %replace(%logger){'com.coffee.', ''} - %blue(%msg%n)";
-//    private final static String pattern = "%green(%d{yyyy-MM-dd HH:mm:ss}) %cyan(%5level) %magenta(%method) %logger{50} - %blue(%msg%n)";
-
+    private final static String pattern = "%green(%d{yyyy-MM-dd HH:mm:ss, Asia/Seoul}) %highlight(%5level) %magenta(%method) %replace(%logger){'com.coffee.', ''} - %blue(%msg%n)";
 
     private void createLoggers(ConsoleAppender<ILoggingEvent> appender) {
-        createLogger("com.book.backend", TRACE, false, appender);  // backend 패키지 TRACE 레벨로 로깅
-    }
+        // 특정 패키지의 로거 설정 (TRACE 레벨)
+        createLogger("com.book.backend", TRACE, false, appender);
 
+        // 루트 로거 설정 (ERROR 레벨)
+        createLogger(Logger.ROOT_LOGGER_NAME, ERROR, true, appender);
+    }
 
     @Bean
     public ConsoleAppender<ILoggingEvent> logConfig() {
@@ -35,7 +37,7 @@ public class LogBackConfig {
     private void createLogger(String loggerName, Level logLevel, Boolean additive,
                               ConsoleAppender<ILoggingEvent> appender) {
         Logger logger = logCtx.getLogger(loggerName);
-        logger.setAdditive(false); //로그 이벤트가 루트 로거까지 전파되지 않도록
+        logger.setAdditive(additive); // 로그 이벤트가 루트 로거까지 전파되도록?
         logger.setLevel(logLevel);
         logger.addAppender(appender);
     }
