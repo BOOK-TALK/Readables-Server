@@ -55,7 +55,7 @@ public class KakaoService {
 
     // Redirect URI에 전달된 코드값으로 Access Token 요청
     public KakaoTokenResponseDto getAccessToken(String authorizationCode) {
-        log.trace("getAccessToken()");
+        log.trace("KakaoService > getAccessToken()");
 
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -80,7 +80,7 @@ public class KakaoService {
 
     // Access Token으로 유저 정보 요청
     public KakaoUserInfoDto getUserInfo(String accessToken) {
-        log.trace("getUserInfo()");
+        log.trace("KakaoService > getUserInfo()");
 
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -104,7 +104,7 @@ public class KakaoService {
     // 카카오 로그인
     @Transactional
     public LoginSuccessResponseDto kakaoLogin(String idToken) {
-        log.trace("kakaoLogin()");
+        log.trace("KakaoService > kakaoLogin()");
 
         String providerId = oidcProviderFactory.getProviderId(Provider.KAKAO, idToken);
 
@@ -145,5 +145,4 @@ public class KakaoService {
                 .refreshToken(jwtTokenDto.getRefreshToken())
                 .build();
     }
-
 }

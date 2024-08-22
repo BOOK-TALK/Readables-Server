@@ -37,7 +37,7 @@ public class DetailService {
     private final BookRepository bookRepository;
 
     public DetailResponseDto detail(DetailRequestDto requestDto) throws Exception {
-        log.trace("detail()");
+        log.trace("DetailService > detail()");
         String subUrl = "usageAnalysisList";
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new SearchResponseDto());
         ResponseParser responseParser = new ResponseParser();
@@ -45,7 +45,7 @@ public class DetailService {
     }
 
     public List<LoanAvailableDto> getLoanAvailable(String isbn) {
-        log.trace("getLoanAvailable()");
+        log.trace("DetailService > getLoanAvailable()");
 
         User user = userService.loadLoggedinUser();
         List<LoanAvailableDto> loanAvailableList = new LinkedList<>();

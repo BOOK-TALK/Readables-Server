@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class OpentalkService {
     private final UserOpentalkRepository userOpentalkRepository;
     private final MessageRepository messageRepository;
@@ -48,6 +50,7 @@ public class OpentalkService {
 
     /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
     public List<Long> hotOpentalk() {
+        log.trace("OpentalkService > hotOpentalk()");
         List<Message> recent200Messages = messageRepository.findTop200ByOrderByCreatedAtDesc();
 
         // (key : opentalk_id, value : 출현빈도)
@@ -64,6 +67,7 @@ public class OpentalkService {
 
     /* 해당 user의 즐찾 opentalk list 반환*/
     public List<Long> favoriteOpentalk() {
+        log.trace("OpentalkService > favoriteOpentalk()");
         User user = userService.loadLoggedinUser();
         List<UserOpentalk> opentalkList = userOpentalkRepository.findAllByUserId(user);
 
@@ -76,6 +80,7 @@ public class OpentalkService {
 
     // 해당 오픈톡 id 와 맵핑되는 책 isbn 을 찾아서 8번 open API 로 title, imageUrl 불러오기
     public List<OpentalkDto> getBookInfo(List<Long> opentalkId) throws Exception {
+        log.trace("OpentalkService > getBookInfo()");
         List<OpentalkDto> opentalkDtoList = new LinkedList<>();
 
         for(Long id : opentalkId) {
@@ -90,12 +95,14 @@ public class OpentalkService {
     }
 
     public Page<Message> getOpentalkMessage(String opentalkId, Pageable pageRequest){
+        log.trace("OpentalkService > getOpentalkMessage()");
         // 오픈톡 ID로 opentlak 객체 찾기
         Opentalk opentalk = opentalkRepository.findByOpentalkId(Long.parseLong(opentalkId)).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
         return messageRepository.findAllByOpentalk(opentalk, pageRequest);
     }
 
     public List<MessageResponseDto> pageToDto(Page<Message> page){
+        log.trace("OpentalkService > pageToDto()");
         List<Message> messages = page.getContent();
         List<MessageResponseDto> messageList = new LinkedList<>();
 
@@ -107,6 +114,7 @@ public class OpentalkService {
 
     // message 저장
     public MessageResponseDto saveMessage(MessageRequestDto messageRequestDto){
+        log.trace("OpentalkService > saveMessage()");
         Message message = messageMapper.convertToMessage(messageRequestDto);
         try{
             messageRepository.save(message);
@@ -119,6 +127,7 @@ public class OpentalkService {
     // 오픈톡 참여하기
     @Transactional
     public OpentalkJoinResponseDto joinOpentalk(String isbn, int pageSize){
+        log.trace("OpentalkService > joinOpentalk()");
         Long opentalkId = checkExistOpentalk(isbn);
         if(opentalkId == null){
             opentalkId = createOpentalkIdByIsbn(isbn);
@@ -131,7 +140,8 @@ public class OpentalkService {
     }
 
     @Transactional
-    public Long createOpentalkIdByIsbn(String isbn) { // 새로운 오픈톡 생성
+    public Long createOpentalkIdByIsbn(String isbn) {
+        log.trace("OpentalkService > createOpentalkIdByIsbn");// 새로운 오픈톡 생성
         Book newBook = new Book();
         newBook.setIsbn(isbn);
         Book book = bookRepository.save(newBook);
@@ -143,6 +153,7 @@ public class OpentalkService {
     }
 
     public Long checkExistOpentalk(String isbn) {
+        log.trace("OpentalkService > checkExistOpentalk()");
         Book book = bookRepository.findByIsbn(isbn);
         if(book == null) return null;
         return opentalkRepository.findByBook(book).getOpentalkId();
