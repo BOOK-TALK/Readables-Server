@@ -1,5 +1,6 @@
 package com.book.backend.domain.opentalk.service;
 
+import com.book.backend.domain.book.entity.Book;
 import com.book.backend.domain.book.repository.BookRepository;
 import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
@@ -34,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OpentalkService {
     private final UserOpentalkRepository userOpentalkRepository;
     private final MessageRepository messageRepository;
@@ -43,7 +45,6 @@ public class OpentalkService {
     private final UserService userService;
     private final OpentalkResponseParser opentalkResponseParser;
     private final MessageMapper messageMapper;
-    private final OpentalkTransaction opentalkTransaction;
 
     /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
     public List<Long> hotOpentalk() {
@@ -116,15 +117,34 @@ public class OpentalkService {
     }
 
     // 오픈톡 참여하기
+    @Transactional
     public OpentalkJoinResponseDto joinOpentalk(String isbn, int pageSize){
-        Long opentalkId = opentalkTransaction.checkExistOpentalk(isbn);
+        Long opentalkId = checkExistOpentalk(isbn);
         if(opentalkId == null){
-            opentalkId = opentalkTransaction.createOpentalkIdByIsbn(isbn);
+            opentalkId = createOpentalkIdByIsbn(isbn);
             return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(null).build();
         }
         Pageable pageRequest = PageRequest.of(0, pageSize, Sort.by("createdAt").descending());
         Page<Message> messagePage = getOpentalkMessage(opentalkId.toString(), pageRequest);
         List<MessageResponseDto> response = pageToDto(messagePage);
         return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(response).build();
+    }
+
+    @Transactional
+    public Long createOpentalkIdByIsbn(String isbn) { // 새로운 오픈톡 생성
+        Book newBook = new Book();
+        newBook.setIsbn(isbn);
+        Book book = bookRepository.save(newBook);
+
+        Opentalk newOpentalk = new Opentalk();
+        newOpentalk.setBook(book);
+        Opentalk opentalk = opentalkRepository.save(newOpentalk);
+        return opentalk.getOpentalkId();
+    }
+
+    public Long checkExistOpentalk(String isbn) {
+        Book book = bookRepository.findByIsbn(isbn);
+        if(book == null) return null;
+        return opentalkRepository.findByBook(book).getOpentalkId();
     }
 }
