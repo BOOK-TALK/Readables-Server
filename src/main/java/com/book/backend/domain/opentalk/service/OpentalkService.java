@@ -1,5 +1,7 @@
 package com.book.backend.domain.opentalk.service;
 
+import com.book.backend.domain.book.entity.Book;
+import com.book.backend.domain.book.repository.BookRepository;
 import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.detail.service.DetailService;
@@ -9,6 +11,8 @@ import com.book.backend.domain.message.repository.MessageRepository;
 import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
 import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
+import com.book.backend.domain.opentalk.dto.OpentalkJoinResponseDto;
+import com.book.backend.domain.opentalk.dto.OpentalkResponseDto;
 import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
 import com.book.backend.domain.user.entity.User;
@@ -23,15 +27,20 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OpentalkService {
     private final UserOpentalkRepository userOpentalkRepository;
     private final MessageRepository messageRepository;
     private final OpentalkRepository opentalkRepository;
+    private final BookRepository bookRepository;
     private final DetailService detailService;
     private final UserService userService;
     private final OpentalkResponseParser opentalkResponseParser;
@@ -105,5 +114,37 @@ public class OpentalkService {
             throw new CustomException(ErrorCode.MESSAGE_SAVE_FAILED);
         }
         return messageMapper.convertToMessageResponseDto(message);
+    }
+
+    // 오픈톡 참여하기
+    @Transactional
+    public OpentalkJoinResponseDto joinOpentalk(String isbn, int pageSize){
+        Long opentalkId = checkExistOpentalk(isbn);
+        if(opentalkId == null){
+            opentalkId = createOpentalkIdByIsbn(isbn);
+            return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(null).build();
+        }
+        Pageable pageRequest = PageRequest.of(0, pageSize, Sort.by("createdAt").descending());
+        Page<Message> messagePage = getOpentalkMessage(opentalkId.toString(), pageRequest);
+        List<MessageResponseDto> response = pageToDto(messagePage);
+        return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(response).build();
+    }
+
+    @Transactional
+    public Long createOpentalkIdByIsbn(String isbn) { // 새로운 오픈톡 생성
+        Book newBook = new Book();
+        newBook.setIsbn(isbn);
+        Book book = bookRepository.save(newBook);
+
+        Opentalk newOpentalk = new Opentalk();
+        newOpentalk.setBook(book);
+        Opentalk opentalk = opentalkRepository.save(newOpentalk);
+        return opentalk.getOpentalkId();
+    }
+
+    public Long checkExistOpentalk(String isbn) {
+        Book book = bookRepository.findByIsbn(isbn);
+        if(book == null) return null;
+        return opentalkRepository.findByBook(book).getOpentalkId();
     }
 }

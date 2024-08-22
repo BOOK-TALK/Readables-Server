@@ -28,5 +28,5 @@ public class SearchResponseDto implements OpenAPIResponseInterface, OpenAPIReque
 
     public static final String description = "bookname: 책이름 | authors: 작가 옮긴이 | publisher: 출판사 | "
             + "publication_year: 출판년도 | isbn13: 책 바코드 | vol: 권? | "
-            + "bookImageURL: 책 표지 URL | bookDtlUrl: 책 상세설명 URL | loan_count: 총? 대출 회수";
+            + "bookImageURL: 책 표지 URL | bookDtlUrl: 책 상세설명 URL | loan_count: 총? 대출 회수 + isDibs: 책 찜 여부";
 }

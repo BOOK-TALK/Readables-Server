@@ -80,8 +80,8 @@ public class AuthController {
             parameters = {
                     @Parameter(name = "idToken", description = "id_token 값")
             },
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserDto.class)),
-                    description = UserDto.description)})
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoginSuccessResponseDto.class)),
+                    description = LoginSuccessResponseDto.description)})
     @PostMapping("/kakaoLogin")
     public ResponseEntity<?> kakaoLogin(String idToken) {
         LoginSuccessResponseDto loginSuccessResponseDto = kakaoService.kakaoLogin(idToken);
