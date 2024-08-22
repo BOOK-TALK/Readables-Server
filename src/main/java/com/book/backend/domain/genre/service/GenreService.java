@@ -29,16 +29,19 @@ public class GenreService {
     private final GenreResponseParser genreResponseParser;
 
     public Genre findById(Long id) {
+        log.trace("GenreService > findById()");
         return genreRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid genre Id:" + id));
     }
 
     public List<Genre> findSubGenresByKdcNum(String kdcNum) {
+        log.trace("GenreService > findSubGenresByKdcNum()");
         Optional<Genre> genre = genreRepository.findByKdcNum(kdcNum);
         return genre.map(Genre::getSubGenres).orElse(null);
     }
 
     public Genre findByMainKdcNumAndSubKdcNum(String mainKdcNum, String subKdcNum) {
+        log.trace("GenreService > findByMainKdcNumAndSubKdcNum()");
         return genreRepository.findByParentGenreKdcNumAndKdcNum(mainKdcNum, subKdcNum)
                 .orElseThrow(() -> new IllegalArgumentException("KDC 번호가" + mainKdcNum + subKdcNum + "인 장르를 찾을 수 없습니다."));
     }
@@ -114,5 +117,4 @@ public class GenreService {
 
         return new LinkedList<>(genreResponseParser.newTrend(JsonResponse, currentYear, filteredPageNo, filteredPageSize));
     }
-
 }

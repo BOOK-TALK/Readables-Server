@@ -8,15 +8,18 @@ import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class RequestValidate {
 
     public void isValidIsbn(String isbn) {
+        log.trace("RequestValidate > isValidIsbn()");
         // 숫자로 구성된 13자리 ISBN
         if(!(isbn.matches("^[0-9]*$") && isbn.length() == 13)) {
             throw new CustomException(ErrorCode.INVALID_ISBN);
@@ -25,6 +28,7 @@ public class RequestValidate {
 
     public LoanItemSrchRequestDto set_validLoanItemSrchRequest (String weekMonth, String peerAge, String ageRange, String gender,
                                                                   String genreCode, String regionCode, String libCode){
+        log.trace("RequestValidate > set_validLoanItemSrchRequest()");
         LoanItemSrchRequestDto request = new LoanItemSrchRequestDto();
 
         if(weekMonth != null) {
@@ -57,12 +61,14 @@ public class RequestValidate {
     }
 
     public void isValidWeekMonth(String weekMonth){
+        log.trace("RequestValidate > isValidWeekMonth()");
         if(!(weekMonth.equals("week") || weekMonth.equals("month"))){
             throw new CustomException(ErrorCode.INVALID_WEEK_MONTH);
         }
     }
 
     public void isValidAge(String age){
+        log.trace("RequestValidate > isValidAge()");
         try{ // 0~100 사이의 숫자인지 확인
             int intAge = Integer.parseInt(age);
             if(intAge < 0 || intAge > 100) throw new CustomException(ErrorCode.INVALID_AGE);
@@ -72,6 +78,7 @@ public class RequestValidate {
     }
 
     public void isValidAgeRange(String ageRange){
+        log.trace("RequestValidate > isValidAgeRange()");
         // AgeRangeCode 코드 중 하나인지 확인
         AgeRangeCode[] ageRangeCodes = AgeRangeCode.values();
         for(AgeRangeCode code : ageRangeCodes) {
@@ -83,6 +90,7 @@ public class RequestValidate {
     }
 
     public void isValidGender(String gender){
+        log.trace("RequestValidate > isValidGender()");
         // 남성, 여성 중 하나인지 확인
         if(!(gender.equals("man") || gender.equals("woman"))){
             throw new CustomException(ErrorCode.INVALID_GENDER);
@@ -90,6 +98,7 @@ public class RequestValidate {
     }
 
     public void isValidGenreCode(String genreCode){
+        log.trace("RequestValidate > isValidGenreCode()");
         // 두자리 숫자인지 확인
         if(!genreCode.matches("^[0-9][0-9]$")){
             throw new CustomException(ErrorCode.INVALID_GENRE_CODE);
@@ -97,6 +106,7 @@ public class RequestValidate {
     }
 
     public void isValidRegionCode(String region){
+        log.trace("RequestValidate > isValidRegionCode()");
         // 대지역 코드 중 하나인지 확인
         RegionCode[] regionCodes = RegionCode.values();
         for(RegionCode code : regionCodes){
@@ -108,6 +118,7 @@ public class RequestValidate {
     }
 
     public void isValidRegionDetailCode(String regionDetail) {
+        log.trace("RequestValidate > isValidRegionDetailCode()");
         // 세부지역 코드 중 하나인지 확인
         RegionDetailCode[] regionDetailCodes = RegionDetailCode.values();
         for (RegionDetailCode code : regionDetailCodes) {
@@ -119,6 +130,7 @@ public class RequestValidate {
     }
 
     public void isValidLibCode(String libCode){
+        log.trace("RequestValidate > isValidLibCode()");
         // 6자리 숫자인지 확인
         if(!(libCode.matches("^[0-9][0-9][0-9][0-9][0-9][0-9]$"))){
             throw new CustomException(ErrorCode.INVALID_LIB_CODE);
@@ -127,6 +139,7 @@ public class RequestValidate {
 
     // pageNo, pageSize
     public void isValidPageNum(int num) {
+        log.trace("RequestValidate > isValidPageNum()");
         // 1 이상의 숫자인지 확인
         if(num < 1) {
             throw new CustomException(ErrorCode.INVALID_PAGE_NUM);
