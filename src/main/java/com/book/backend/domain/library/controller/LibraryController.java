@@ -68,8 +68,7 @@ public class LibraryController {
     // 도서관 코드 기반 도서관 검색
     @Operation(summary = "도서관 코드 기반 도서관 검색", description = "도서관 코드를 입력받아 해당 도서관의 정보를 반환합니다.",
             parameters = {
-                    @Parameter(name = "regionCode", description = "대지역 코드 (필수)"),
-                    @Parameter(name = "regionDetailCode", description = "세부지역 코드 (선택)")},
+                    @Parameter(name = "libCode", description = "도서관 코드 (필수)")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LibSrchResponseDto.class)),
                     description = LibSrchResponseDto.description)})
     @GetMapping("/searchByLibCode")
