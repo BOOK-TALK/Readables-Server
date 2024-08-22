@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,17 +21,17 @@ import com.book.backend.global.ResponseTemplate;
 @RequestMapping("/api/book/dibs")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name="책 찜", description = "찜 추가 / 찜 해제")
 public class UserBookController {
     private final RequestValidate requestValidate;
     private final UserBookService userBookService;
     private final ResponseTemplate responseTemplate;
 
-    @Operation(summary="책 찜 설정", description="새로운 책을 찜하고 user의 최종 찜 리스트를 반환합니다.",
+    @Operation(summary="책 찜 추가", description="새로운 책을 찜하고 user의 최종 찜 리스트를 반환합니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserBookDto.class)),
                     description = UserBookDto.description)})
     @PostMapping("/")
     public ResponseEntity<?> setDibs(String isbn, String bookname, String bookImgUrl) throws Exception {
-        //  책 찜 설정
         requestValidate.isValidIsbn(isbn);
         List<UserBookDto> response = userBookService.setDibs(isbn, bookname, bookImgUrl);
         return responseTemplate.success(response, HttpStatus.OK);
@@ -42,7 +43,6 @@ public class UserBookController {
                     description = UserBookDto.description)})
     @DeleteMapping("/")
     public ResponseEntity<?> removeDibs(String isbn) {
-        // 책 찜 해제
         requestValidate.isValidIsbn(isbn);
         List<UserBookDto> response = userBookService.removeDibs(isbn);
         return responseTemplate.success(response, HttpStatus.OK);

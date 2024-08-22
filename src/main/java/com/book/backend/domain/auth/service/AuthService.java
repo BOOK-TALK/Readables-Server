@@ -41,7 +41,7 @@ public class AuthService {
 
     @Transactional
     public UserDto signup(SignupDto signupDto) {
-        log.trace("signup()");
+        log.trace("AuthService > signup()");
 
         validateNotDuplicatedLoginId(signupDto.getLoginId());
 
@@ -55,7 +55,7 @@ public class AuthService {
 
     @Transactional
     public LoginSuccessResponseDto login(LoginDto loginDto) {
-        log.trace("login()");
+        log.trace("AuthService > login()");
 
         try {
             // 사용자 인증 시도
@@ -87,7 +87,7 @@ public class AuthService {
 
     @Transactional
     public void deleteAccountByLoginId(String loginId) {
-        log.trace("deleteAccountByLoginId()");
+        log.trace("AuthService > deleteAccountByLoginId()");
 
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -95,7 +95,7 @@ public class AuthService {
     }
 
     private void validateNotDuplicatedLoginId(String loginId) {
-        log.trace("validateNotDuplicatedByLoginId()");
+        log.trace("AuthService > validateNotDuplicatedByLoginId()");
 
         Optional<User> userOptional = userRepository.findByLoginId(loginId);
 

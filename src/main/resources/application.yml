@@ -23,6 +23,12 @@ spring:
     open-in-view: false
     defer-datasource-initialization: true # ddl-auto 실행 후 data.sql 로 데이터 삽입
 
+spring-doc:
+  swagger-ui:
+    tags-sorter: alpha # tag 순서 - 알파벳
+    operations-sorter : method # HTTP 메소드 순서
+    doc-expansion : none # 펼치지 않기
+
   sql: #data.sql 의 DDL 실행
     init:
       mode: always
@@ -37,6 +43,7 @@ kakao:
   redirectUri: ${SERVER_URL}/login/oauth2/kakao
   tokenRequestUri: https://kauth.kakao.com/oauth/token
   userInfoUri: https://kapi.kakao.com/v2/user/me
+  publicKeyUri: https://kauth.kakao.com/.well-known/jwks.json
 
 jwt:
   secretKey: ${JWT_SECRET}
