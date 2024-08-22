@@ -21,8 +21,8 @@ public class KakaoTokenResponseDto {
 //    @JsonProperty("refresh_token")
 //    private String refreshToken;
 //
-//    @JsonProperty("id_token")
-//    private String idToken;
+    @JsonProperty("id_token")
+    private String idToken;
 //
 //    @JsonProperty("expires_in")
 //    private String expiresIn;

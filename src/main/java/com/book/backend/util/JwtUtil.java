@@ -1,7 +1,10 @@
 package com.book.backend.util;
 
 import com.book.backend.domain.auth.dto.JwtTokenDto;
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.security.PublicKey;
 import java.util.Date;
 
 @Slf4j
@@ -60,12 +64,25 @@ public class JwtUtil {
     }
 
     // 토큰에서 모든 클레임 추출
-    private Claims getAllClaims(String token) {
+    public Claims getAllClaims(String token) {
         log.info("getAllClaims token = {}", token);
         return Jwts.parser()
                 .setSigningKey(secret)  // secret 키로 검증
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public Claims getAllClaimsByPublicKey(String token, PublicKey publicKey) {
+        try {
+            return Jwts.parser()
+                    .setSigningKey(publicKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(ErrorCode.JWT_EXPIRED);
+        } catch (RuntimeException e) {
+            throw new CustomException(ErrorCode.WRONG_JWT_TOKEN);
+        }
     }
 
     // 토큰에서 username 추출하여 반환
