@@ -24,7 +24,7 @@ public class SearchService {
     private final UserService userService;
 
     public LinkedList<SearchResponseDto> search(RequestDto requestDto) throws Exception {
-        log.trace("search()");
+        log.trace("SearchService > search()");
         String subUrl = "srchBooks";
 
         ResponseParser responseParser = new ResponseParser();
@@ -60,7 +60,7 @@ public class SearchService {
     }
 
     public LinkedList<SearchResponseDto> duplicateChecker(LinkedList<SearchResponseDto> list){
-        log.trace("duplicateChecker()");
+        log.trace("searchService > duplicateChecker()");
         LinkedList<SearchResponseDto> duplicateRemovedList = new LinkedList<>();
         HashSet<String> set = new HashSet<>();
         for(SearchResponseDto dto : list){
@@ -73,6 +73,7 @@ public class SearchService {
 
     // 찜 여부 확인
     public void setDibs(LinkedList<SearchResponseDto> bookList) {
+        log.trace("SearchService > setDibs()");
         User user = userService.loadLoggedinUser();
         for(SearchResponseDto dto : bookList){
             if(user.getBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(dto.getIsbn13()))){

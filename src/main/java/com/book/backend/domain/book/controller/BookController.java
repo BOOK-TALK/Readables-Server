@@ -22,6 +22,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.LinkedList;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/book")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name="메인", description = "책 추천, 대출 급상승, 지난달 키워드, 조건형 인기 대출 도서")
 public class BookController {
     private final BookService bookService;
     private final ResponseTemplate responseTemplate;

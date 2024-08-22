@@ -28,7 +28,7 @@ public class BookService {
     private final OpenAPI openAPI;
 
     public LinkedList<RecommendListResponseDto> recommend(RecommendListRequestDto requestDto) throws Exception {
-        log.trace("recommend()");
+        log.trace("BookService > recommend()");
         String subUrl = "recommandList";
 
         LinkedList<RecommendListResponseDto> responseList = new LinkedList<>();
@@ -48,7 +48,7 @@ public class BookService {
 
     /* 추천 책 수가 5보다 작으면 추천된 isbn 으로 recommend() 다시 호출 */
     public void ensureRecommendationsCount(LinkedList<RecommendListResponseDto> list, HashSet<String> set) throws Exception {
-        log.trace("ensureRecommendationsCount()");
+        log.trace("BookService > ensureRecommendationsCount()");
         LinkedList<RecommendListResponseDto> originalList = new LinkedList<>(list);
         Iterator<RecommendListResponseDto> iterator = originalList.iterator();
         while (originalList.size() < 5 && iterator.hasNext()) {
@@ -63,7 +63,7 @@ public class BookService {
     }
 
     public LinkedList<RecommendListResponseDto> duplicateChecker(LinkedList<RecommendListResponseDto> list, HashSet<String> set){
-        log.trace("duplicateChecker()");
+        log.trace("BookService > duplicateChecker()");
         LinkedList<RecommendListResponseDto> duplicateRemovedList = new LinkedList<>();
         for(RecommendListResponseDto dto : list){
             String key = dto.getBookname() + dto.getAuthors();
@@ -73,7 +73,7 @@ public class BookService {
     }
 
     public LinkedList<HotTrendResponseDto> hotTrend(HotTrendRequestDto requestDto) throws Exception{
-        log.trace("hotTrend()");
+        log.trace("BookService > hotTrend()");
         String subUrl = "hotTrend";
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new HotTrendResponseDto());
         ResponseParser responseParser = new ResponseParser();
@@ -81,7 +81,7 @@ public class BookService {
     }
 
     public LinkedList<MonthlyKeywordsResponseDto> keywords(MonthlyKeywordsRequestDto requestDto) throws Exception{
-        log.trace("keywords()");
+        log.trace("BookService > keywords()");
         String subUrl = "monthlyKeywords";
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new MonthlyKeywordsResponseDto());
         ResponseParser responseParser = new ResponseParser();
@@ -89,7 +89,7 @@ public class BookService {
     }
 
     public LinkedList<LoanItemSrchResponseDto> loanItemSrch(LoanItemSrchRequestDto requestDto) throws Exception{
-        log.trace("customHotTrend()");
+        log.trace("BookService > customHotTrend()");
         String subUrl = "loanItemSrch";
         requestDto.setPageSize("10"); // 10개만 출력하도록 제한
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());

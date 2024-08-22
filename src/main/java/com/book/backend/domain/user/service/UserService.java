@@ -28,6 +28,7 @@ public class UserService {
     private final RequestValidate requestValidate;
 
     public User loadLoggedinUser() {
+        log.trace("UserService > loadLoggedinUser()");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -35,6 +36,7 @@ public class UserService {
     }
 
     public User findByUsername(String username) {
+        log.trace("UserService > findByUsername()");
         try {
             return findByLoginId(username);
         } catch (IllegalArgumentException e) {
@@ -43,11 +45,13 @@ public class UserService {
     }
 
     public User findByLoginId(String loginId) {
+        log.trace("UserService > findByLoginId()");
         return userRepository.findByLoginId(loginId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
     public User findByKakaoId(String kakaoId) {
+        log.trace("UserService > findByKakaoId()");
         return userRepository.findByKakaoId(kakaoId)
                 .orElseThrow(IllegalArgumentException::new);
     }

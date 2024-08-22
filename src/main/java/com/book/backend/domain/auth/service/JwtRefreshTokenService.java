@@ -5,6 +5,7 @@ import com.book.backend.domain.auth.entity.RefreshToken;
 import com.book.backend.domain.auth.repository.RefreshTokenRepository;
 import com.book.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,11 +14,13 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class JwtRefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     void updateRefreshToken(JwtTokenDto jwtTokenDto, User user) {
+        log.trace("JwtRefreshTokenService > updateRefreshToken()");
         // RefreshToken 있는지 확인
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUser(user);
 
