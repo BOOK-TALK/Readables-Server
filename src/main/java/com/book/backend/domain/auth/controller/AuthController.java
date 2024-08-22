@@ -80,8 +80,8 @@ public class AuthController {
             parameters = {
                     @Parameter(name = "authorizationCode", description = "인가 코드")
             },
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserDto.class)),
-                    description = UserDto.description)})
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoginSuccessResponseDto.class)),
+                    description = LoginSuccessResponseDto.description)})
     @PostMapping("/kakaoLogin")
     public ResponseEntity<?> kakaoLogin(String authorizationCode) {
         LoginSuccessResponseDto loginSuccessResponseDto = kakaoService.kakaoLogin(authorizationCode);
