@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import java.util.List;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name="마이페이지", description = "유저 정보 조회 / 유저 정보 수정 / 내 도서관 조회 / 내 도서관 수정")
 public class UserController {
     private final UserService userService;
     private final ResponseTemplate responseTemplate;
@@ -65,7 +67,7 @@ public class UserController {
         return responseTemplate.success(userInfoDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "저장된 도서관 조회", description = "유저가 저장한 도서관 목록을 불러옵니다.",
+    @Operation(summary = "내 도서관 조회", description = "유저가 저장한 도서관 목록을 불러옵니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserLibrariesResponseDto.class)),
                 description = UserLibrariesResponseDto.description)})
     @GetMapping("/libraries")
@@ -80,7 +82,7 @@ public class UserController {
         return responseTemplate.success(responseDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "저장된 도서관 수정", description = "저장된 도서관 목록을 수정합니다. 최대 3개의 도서관을 등록할 수 있습니다.",
+    @Operation(summary = "내 도서관 수정", description = "저장된 도서관 목록을 수정합니다. 최대 3개의 도서관을 등록할 수 있습니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserLibrariesResponseDto.class)),
                     description = UserLibrariesResponseDto.description)})
     @PutMapping("/libraries/edit")

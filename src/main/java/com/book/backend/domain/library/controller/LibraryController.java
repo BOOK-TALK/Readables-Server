@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ import java.util.LinkedList;
 @RequestMapping("/api/library")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name="도서관 검색", description = "지역코드 기반 도서관 검색 / libcode 기반 도서관 검색")
 public class LibraryController {
     private final RequestValidate requestValidate;
     private final LibraryService libraryService;
