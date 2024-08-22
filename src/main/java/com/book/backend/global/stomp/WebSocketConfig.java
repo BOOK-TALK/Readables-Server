@@ -1,4 +1,4 @@
-package com.book.backend.global;
+package com.book.backend.global.stomp;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
