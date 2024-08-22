@@ -1,5 +1,6 @@
 package com.book.backend.domain.opentalk.service;
 
+import com.book.backend.domain.book.repository.BookRepository;
 import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.detail.service.DetailService;
@@ -9,6 +10,8 @@ import com.book.backend.domain.message.repository.MessageRepository;
 import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
 import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
+import com.book.backend.domain.opentalk.dto.OpentalkJoinResponseDto;
+import com.book.backend.domain.opentalk.dto.OpentalkResponseDto;
 import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
 import com.book.backend.domain.user.entity.User;
@@ -23,8 +26,11 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -32,10 +38,12 @@ public class OpentalkService {
     private final UserOpentalkRepository userOpentalkRepository;
     private final MessageRepository messageRepository;
     private final OpentalkRepository opentalkRepository;
+    private final BookRepository bookRepository;
     private final DetailService detailService;
     private final UserService userService;
     private final OpentalkResponseParser opentalkResponseParser;
     private final MessageMapper messageMapper;
+    private final OpentalkTransaction opentalkTransaction;
 
     /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
     public List<Long> hotOpentalk() {
@@ -105,5 +113,18 @@ public class OpentalkService {
             throw new CustomException(ErrorCode.MESSAGE_SAVE_FAILED);
         }
         return messageMapper.convertToMessageResponseDto(message);
+    }
+
+    // 오픈톡 참여하기
+    public OpentalkJoinResponseDto joinOpentalk(String isbn, int pageSize){
+        Long opentalkId = opentalkTransaction.checkExistOpentalk(isbn);
+        if(opentalkId == null){
+            opentalkId = opentalkTransaction.createOpentalkIdByIsbn(isbn);
+            return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(null).build();
+        }
+        Pageable pageRequest = PageRequest.of(0, pageSize, Sort.by("createdAt").descending());
+        Page<Message> messagePage = getOpentalkMessage(opentalkId.toString(), pageRequest);
+        List<MessageResponseDto> response = pageToDto(messagePage);
+        return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(response).build();
     }
 }
