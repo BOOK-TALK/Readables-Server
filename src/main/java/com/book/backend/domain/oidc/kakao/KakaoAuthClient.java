@@ -1,6 +1,6 @@
-package com.book.backend.util.oidc.kakao;
+package com.book.backend.domain.oidc.kakao;
 
-import com.book.backend.util.oidc.record.OidcPublicKeyList;
+import com.book.backend.domain.oidc.record.OidcPublicKeyList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;

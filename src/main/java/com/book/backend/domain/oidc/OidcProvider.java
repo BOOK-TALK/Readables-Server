@@ -1,4 +1,4 @@
-package com.book.backend.util.oidc;
+package com.book.backend.domain.oidc;
 
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;

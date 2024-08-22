@@ -1,9 +1,9 @@
-package com.book.backend.util.oidc.kakao;
+package com.book.backend.domain.oidc.kakao;
 
+import com.book.backend.domain.oidc.OidcProvider;
+import com.book.backend.domain.oidc.PublicKeyProvider;
+import com.book.backend.domain.oidc.record.OidcPublicKeyList;
 import com.book.backend.util.JwtUtil;
-import com.book.backend.util.oidc.OidcProvider;
-import com.book.backend.util.oidc.record.OidcPublicKeyList;
-import com.book.backend.util.oidc.PublicKeyProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

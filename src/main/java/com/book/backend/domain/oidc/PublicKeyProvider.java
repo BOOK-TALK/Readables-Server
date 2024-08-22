@@ -1,9 +1,9 @@
-package com.book.backend.util.oidc;
+package com.book.backend.domain.oidc;
 
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
-import com.book.backend.util.oidc.record.OidcPublicKey;
-import com.book.backend.util.oidc.record.OidcPublicKeyList;
+import com.book.backend.domain.oidc.record.OidcPublicKey;
+import com.book.backend.domain.oidc.record.OidcPublicKeyList;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;

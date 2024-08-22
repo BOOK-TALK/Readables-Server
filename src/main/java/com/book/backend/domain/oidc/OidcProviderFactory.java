@@ -1,8 +1,8 @@
-package com.book.backend.util.oidc;
+package com.book.backend.domain.oidc;
 
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
-import com.book.backend.util.oidc.kakao.KakaoAuthProvider;
+import com.book.backend.domain.oidc.kakao.KakaoAuthProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;

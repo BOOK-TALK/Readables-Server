@@ -1,4 +1,4 @@
-package com.book.backend.util.oidc.record;
+package com.book.backend.domain.oidc.record;
 
 public record OidcPublicKey(
         String kid,
