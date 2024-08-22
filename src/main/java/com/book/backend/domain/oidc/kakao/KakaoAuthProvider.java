@@ -18,9 +18,13 @@ public class KakaoAuthProvider implements OidcProvider {
 
     @Override
     public String getProviderId(final String idToken) {
-        final OidcPublicKeyList oidcPublicKeyList = kakaoAuthClient.getPublicKeys();
-        final PublicKey publicKey = publicKeyProvider.generatePublicKey(parseHeaders(idToken), oidcPublicKeyList);
+        final PublicKey publicKey = getPublicKey(idToken);
 
         return jwtUtil.getAllClaimsByPublicKey(idToken, publicKey).getSubject();
+    }
+
+    private PublicKey getPublicKey(String idToken) {
+        final OidcPublicKeyList oidcPublicKeyList = kakaoAuthClient.getPublicKeys();
+        return publicKeyProvider.generatePublicKey(parseHeaders(idToken), oidcPublicKeyList);
     }
 }

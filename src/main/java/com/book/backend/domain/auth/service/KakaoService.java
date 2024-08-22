@@ -108,20 +108,7 @@ public class KakaoService {
     public LoginSuccessResponseDto kakaoLogin(String idToken) {
         log.trace("kakaoLogin()");
 
-//        KakaoTokenResponseDto tokenResponseDto = getAccessToken(authorizationCode);
-//        String accessToken = tokenResponseDto.getAccessToken();
-//
-//        KakaoUserInfoDto userInfoDto = getUserInfo(accessToken);
-//        String kakaoId = String.valueOf(userInfoDto.getId());
-
-//        log.trace("idToken: " + tokenResponseDto.getIdToken());
-
         String providerId = oidcProviderFactory.getProviderId(Provider.KAKAO, idToken);
-
-        // 필요한 필드 추출
-//        String kakaoId = kakaoJwtDecoder.getSub(allClaims);
-//        String nickname = kakaoJwtDecoder.getNickname(allClaims);
-//        String picture = kakaoJwtDecoder.getPicture(allClaims);
 
         // kakaoId로 유저 조회
         User user = userService.findByKakaoId(providerId);
