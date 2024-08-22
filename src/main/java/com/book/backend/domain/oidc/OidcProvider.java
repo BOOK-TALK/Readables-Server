@@ -5,9 +5,8 @@ import com.book.backend.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
-
-import static org.apache.tomcat.util.codec.binary.Base64.decodeBase64;
 
 public interface OidcProvider {
     String getProviderId(String idToken);
@@ -17,7 +16,7 @@ public interface OidcProvider {
         String header = token.split("\\.")[0];
 
         try {
-            return new ObjectMapper().readValue(decodeBase64(header), Map.class);
+            return new ObjectMapper().readValue(Base64.getUrlDecoder().decode(header), Map.class);
         } catch (IOException e) {
             throw new CustomException(ErrorCode.HEADER_PARSING_ERROR);
         }
