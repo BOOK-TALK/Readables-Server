@@ -7,6 +7,7 @@ import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.message.entity.Message;
 import com.book.backend.domain.opentalk.service.OpentalkService;
+import com.book.backend.domain.user.entity.User;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
 import java.util.List;
@@ -25,6 +26,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -74,14 +79,12 @@ public class OpentalkController {
     }
 
     // 채팅 저장하기
-    @Operation(summary="채팅 저장", description="오픈톡 DB ID, content 를 입력으로 받아 DB에 채팅을 저장합니다.",
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
-                    description = MessageResponseDto.description)})
-    @PostMapping("/chat/save")
-    public ResponseEntity<?> saveChat(@RequestBody MessageRequestDto messageRequestDto) {
-        RequestLogger.param(new String[]{"messageRequestDto"}, messageRequestDto);
-        MessageResponseDto response = opentalkService.saveMessage(messageRequestDto);
-        return responseTemplate.success(response, HttpStatus.OK);
+    @MessageMapping("/chat/{opentalkId}")
+    @SendTo("/sub/chat/{opentalkId}")
+    public ResponseEntity<?> chat(@DestinationVariable Long opentalkId, MessageRequestDto messageRequestDto) {
+        RequestLogger.param(new String[]{"opentalkId, messageRequestDto"}, opentalkId, messageRequestDto);
+        MessageResponseDto response = opentalkService.saveMessage(opentalkId, messageRequestDto);
+        return responseTemplate.success(response, HttpStatus.OK); // pub, sub 모두 이걸 받나?
     }
 
     // [오픈톡 참여하기]

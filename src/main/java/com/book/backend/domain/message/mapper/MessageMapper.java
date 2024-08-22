@@ -22,17 +22,18 @@ public class MessageMapper {
     private final UserRepository userRepository;
     private final OpentalkRepository opentalkRepository;
 
-    public Message convertToMessage(MessageRequestDto messageRequestDto) {
+    public Message convertToMessage(Long opentalkId, MessageRequestDto messageRequestDto) {
         Message message = mapper.map(messageRequestDto, Message.class);
         User user = userService.loadLoggedinUser();
-        Opentalk opentalk = opentalkRepository.findById(messageRequestDto.getOpentalkId()).orElseThrow();
+        Opentalk opentalk = opentalkRepository.findById(opentalkId).orElseThrow();
 
-        message.setUser(user);
+        message.setUser(user); // 보낸 사람
         message.setOpentalk(opentalk);
         message.setCreatedAt(new Date());
 
         return message;
     }
+
     public MessageResponseDto convertToMessageResponseDto(Message message) {
         User user = userRepository.findByLoginId(message.getUser().getLoginId()).orElseThrow();
         return MessageResponseDto.builder()

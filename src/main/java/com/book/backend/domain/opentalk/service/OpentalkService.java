@@ -112,10 +112,10 @@ public class OpentalkService {
         return messageList;
     }
 
-    // message 저장
-    public MessageResponseDto saveMessage(MessageRequestDto messageRequestDto){
-        log.trace("OpentalkService > saveMessage()");
-        Message message = messageMapper.convertToMessage(messageRequestDto);
+    // DB에 message 저장
+    public MessageResponseDto saveMessage(Long opentalkId, MessageRequestDto messageRequestDto){
+            log.trace("OpentalkService > saveMessage()");
+        Message message = messageMapper.convertToMessage(opentalkId, messageRequestDto);
         try{
             messageRepository.save(message);
         } catch (Exception e){
