@@ -13,11 +13,12 @@ import com.book.backend.domain.openapi.service.ResponseParser;
 
 import java.util.List;
 import java.util.LinkedList;
-import java.util.Optional;
 
 import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
 import com.book.backend.domain.user.service.UserService;
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
@@ -49,20 +50,25 @@ public class DetailService {
         User user = userService.loadLoggedinUser();
         List<LoanAvailableDto> loanAvailableList = new LinkedList<>();
         if(!user.getLibraries().isEmpty()) {
-            user.getLibraries().forEach(libCode -> {
+            user.getLibraries().forEach(libraryDto -> {
                 try {
                     BookExistRequestDto bookExistRequestDto = BookExistRequestDto.builder()
-                            .libCode(libCode)
+                            .libCode(libraryDto.getCode())
                             .isbn13(isbn).build();
 
                     String subUrl = "bookExist";
                     JSONObject jsonResponse = openAPI.connect(subUrl, bookExistRequestDto, new BookExistResponseDto());
                     ResponseParser responseParser = new ResponseParser();
+                    boolean isLoanable = responseParser.loanAvailable(jsonResponse);
 
-                    LoanAvailableDto dto = LoanAvailableDto.builder().libCode(libCode).isLoanable(responseParser.loanAvailable(jsonResponse)).build();
+                    LoanAvailableDto dto = LoanAvailableDto.builder()
+                            .libCode(libraryDto.getCode())
+                            .libName(libraryDto.getName())
+                            .isLoanable(isLoanable)
+                            .build();
                     loanAvailableList.add(dto);
                 } catch (Exception e) {
-                    throw new RuntimeException("대출 가능 여부 조회 중 오류가 발생했습니다.");
+                    throw new RuntimeException(new CustomException(ErrorCode.LIBCODE_EXIST_ERROR));
                 }
             });
         }

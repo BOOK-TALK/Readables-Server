@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.book.backend.domain.user.entity.User;
+import com.book.backend.domain.user.service.UserService;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class SearchService {
     private final OpenAPI openAPI;
+    private final UserService userService;
 
     public LinkedList<SearchResponseDto> search(RequestDto requestDto) throws Exception {
         log.trace("search()");
@@ -66,5 +69,15 @@ public class SearchService {
         }
         if(duplicateRemovedList.size() > 10) return new LinkedList<>(duplicateRemovedList.subList(0, 10));
         return duplicateRemovedList;
+    }
+
+    // 찜 여부 확인
+    public void setDibs(LinkedList<SearchResponseDto> bookList) {
+        User user = userService.loadLoggedinUser();
+        for(SearchResponseDto dto : bookList){
+            if(user.getBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(dto.getIsbn13()))){
+                dto.setDibs(true);
+            }
+        }
     }
 }
