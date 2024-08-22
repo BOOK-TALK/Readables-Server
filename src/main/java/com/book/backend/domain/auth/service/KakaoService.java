@@ -4,6 +4,8 @@ import com.book.backend.domain.auth.dto.JwtTokenDto;
 import com.book.backend.domain.auth.dto.KakaoTokenResponseDto;
 import com.book.backend.domain.auth.dto.KakaoUserInfoDto;
 import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
+import com.book.backend.domain.oidc.OidcProviderFactory;
+import com.book.backend.domain.oidc.Provider;
 import com.book.backend.domain.user.entity.Gender;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.repository.UserRepository;
@@ -50,8 +52,8 @@ public class KakaoService {
     private final UserService userService;
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
-    private final KakaoJwtDecoder kakaoJwtDecoder;
     private final JwtRefreshTokenService jwtRefreshTokenService;
+    private final OidcProviderFactory oidcProviderFactory;
 
     // Redirect URI에 전달된 코드값으로 Access Token 요청
     public KakaoTokenResponseDto getAccessToken(String authorizationCode) {
@@ -114,26 +116,26 @@ public class KakaoService {
 
 //        log.trace("idToken: " + tokenResponseDto.getIdToken());
 
-        Claims allClaims = kakaoJwtDecoder.getAllClaims(idToken);
+        String providerId = oidcProviderFactory.getProviderId(Provider.KAKAO, idToken);
 
         // 필요한 필드 추출
-        String kakaoId = kakaoJwtDecoder.getSub(allClaims);
-        String nickname = kakaoJwtDecoder.getNickname(allClaims);
-        String picture = kakaoJwtDecoder.getPicture(allClaims);
+//        String kakaoId = kakaoJwtDecoder.getSub(allClaims);
+//        String nickname = kakaoJwtDecoder.getNickname(allClaims);
+//        String picture = kakaoJwtDecoder.getPicture(allClaims);
 
         // kakaoId로 유저 조회
-        User user = userService.findByKakaoId(kakaoId);
+        User user = userService.findByKakaoId(providerId);
         Boolean isNewUser = Boolean.FALSE;
 
         // 조회된 유저가 없을 시 회원가입 처리
         if (user == null) {
             isNewUser = Boolean.TRUE;
             User newUser = new User();
-            newUser.setKakaoId(kakaoId);
+            newUser.setKakaoId(providerId);
             newUser.setRegDate(LocalDateTime.now());
             newUser.setPassword("unused");  // 카카오 로그인 사용자는 패스워드 사용하지 않음
             newUser.setLoginId(null);  // 카카오 로그인 사용자는 loginId가 null
-            newUser.setNickname(nickname);
+            newUser.setNickname("kakao@" + providerId);  // 수정 필요
             newUser.setGender(Gender.G0);
             user = newUser;
         }
@@ -141,7 +143,7 @@ public class KakaoService {
         userRepository.save(user);
 
         // UserDetailsService를 사용하여 UserDetails 객체 생성
-        UserDetails userDetails = userDetailsService.loadUserByKakaoId(kakaoId);
+        UserDetails userDetails = userDetailsService.loadUserByKakaoId(providerId);
         JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
 
         // Refresh Token 갱신
