@@ -78,15 +78,15 @@ public class AuthController {
         return responseTemplate.success("회원 탈퇴가 완료되었습니다.", HttpStatus.NO_CONTENT);
     }
 
-    @Operation(summary = "카카오 로그인", description = "사용자가 카카오 인증 서버에서 받은 인가 코드를 parameter로 받아 카카오계정으로 로그인을 진행하고, 완료된 유저 정보를 반환합니다.",
+    @Operation(summary = "카카오 로그인", description = "카카오 iOS SDK에서 발급된 id_token을 parameter로 받아 카카오 로그인을 진행하고, 완료된 유저 정보를 반환합니다.",
             parameters = {
-                    @Parameter(name = "authorizationCode", description = "인가 코드")
+                    @Parameter(name = "idToken", description = "id_token 값")
             },
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoginSuccessResponseDto.class)),
                     description = LoginSuccessResponseDto.description)})
     @PostMapping("/kakaoLogin")
-    public ResponseEntity<?> kakaoLogin(String authorizationCode) {
-        LoginSuccessResponseDto loginSuccessResponseDto = kakaoService.kakaoLogin(authorizationCode);
+    public ResponseEntity<?> kakaoLogin(String idToken) {
+        LoginSuccessResponseDto loginSuccessResponseDto = kakaoService.kakaoLogin(idToken);
 
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
     }

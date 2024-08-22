@@ -4,6 +4,8 @@ import com.book.backend.domain.auth.dto.JwtTokenDto;
 import com.book.backend.domain.auth.dto.KakaoTokenResponseDto;
 import com.book.backend.domain.auth.dto.KakaoUserInfoDto;
 import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
+import com.book.backend.domain.oidc.OidcProviderFactory;
+import com.book.backend.domain.oidc.Provider;
 import com.book.backend.domain.user.entity.Gender;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.repository.UserRepository;
@@ -11,7 +13,6 @@ import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,6 +51,7 @@ public class KakaoService {
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
     private final JwtRefreshTokenService jwtRefreshTokenService;
+    private final OidcProviderFactory oidcProviderFactory;
 
     // Redirect URI에 전달된 코드값으로 Access Token 요청
     public KakaoTokenResponseDto getAccessToken(String authorizationCode) {
@@ -101,28 +103,24 @@ public class KakaoService {
 
     // 카카오 로그인
     @Transactional
-    public LoginSuccessResponseDto kakaoLogin(String authorizationCode) {
+    public LoginSuccessResponseDto kakaoLogin(String idToken) {
         log.trace("KakaoService > kakaoLogin()");
 
-        KakaoTokenResponseDto tokenResponseDto = getAccessToken(authorizationCode);
-        String accessToken = tokenResponseDto.getAccessToken();
-
-        KakaoUserInfoDto userInfoDto = getUserInfo(accessToken);
-        String kakaoId = String.valueOf(userInfoDto.getId());
+        String providerId = oidcProviderFactory.getProviderId(Provider.KAKAO, idToken);
 
         // kakaoId로 유저 조회
-        User user = userService.findByKakaoId(kakaoId);
+        User user = userService.findByKakaoId(providerId);
         Boolean isNewUser = Boolean.FALSE;
 
         // 조회된 유저가 없을 시 회원가입 처리
         if (user == null) {
             isNewUser = Boolean.TRUE;
             User newUser = new User();
-            newUser.setKakaoId(kakaoId);
+            newUser.setKakaoId(providerId);
             newUser.setRegDate(LocalDateTime.now());
-            newUser.setPassword("unused");
-            newUser.setLoginId(null); // 카카오 로그인 사용자는 loginId가 null
-            newUser.setNickname("kakaoUser@" + kakaoId);
+            newUser.setPassword("unused");  // 카카오 로그인 사용자는 패스워드 사용하지 않음
+            newUser.setLoginId(null);  // 카카오 로그인 사용자는 loginId가 null
+            newUser.setNickname("kakao@" + providerId);  // 수정 필요
             newUser.setGender(Gender.G0);
             user = newUser;
         }
@@ -130,7 +128,7 @@ public class KakaoService {
         userRepository.save(user);
 
         // UserDetailsService를 사용하여 UserDetails 객체 생성
-        UserDetails userDetails = userDetailsService.loadUserByKakaoId(kakaoId);
+        UserDetails userDetails = userDetailsService.loadUserByKakaoId(providerId);
         JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
 
         // Refresh Token 갱신
