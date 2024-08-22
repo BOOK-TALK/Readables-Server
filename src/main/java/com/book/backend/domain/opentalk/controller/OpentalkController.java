@@ -1,6 +1,7 @@
 package com.book.backend.domain.opentalk.controller;
 
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
+import com.book.backend.domain.opentalk.dto.OpentalkJoinResponseDto;
 import com.book.backend.domain.opentalk.dto.OpentalkResponseDto;
 import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
@@ -35,7 +36,6 @@ public class OpentalkController {
 
     // 오픈톡 메인 화면 (현재 핫한 오픈톡, 내가 즐찾한 오픈톡)
     @Operation(summary="오픈톡 메인 화면", description="현재 핫한 오픈톡 top 5의 ID List 와 사용자가 즐겨찾기한 오픈톡 ID List 를 반환합니다.",
-            parameters = {@Parameter(name = "loginId", description = "아이디")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkResponseDto.class)),
                     description = OpentalkResponseDto.description)})
     @GetMapping("/main")
@@ -79,6 +79,19 @@ public class OpentalkController {
     public ResponseEntity<?> saveChat(@RequestBody MessageRequestDto messageRequestDto) {
         RequestLogger.param(new String[]{"messageRequestDto"}, messageRequestDto);
         MessageResponseDto response = opentalkService.saveMessage(messageRequestDto);
+        return responseTemplate.success(response, HttpStatus.OK);
+    }
+
+    // [오픈톡 참여하기]
+    @Operation(summary="오픈톡 참여하기", description="isbn, pageSize를 입력으로 받아, 오픈톡 ID, 채팅 내역 반환",
+            parameters = {@Parameter(name = "isbn", description = "책 ISBN"), @Parameter(name = "pageSize", description = "페이지 당 개수")},
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkResponseDto.class)),
+                    description = OpentalkResponseDto.description)})
+    @PostMapping("/join")
+    public ResponseEntity<?> joinOpentalk(@RequestParam String isbn, int pageSize) {
+        RequestLogger.param(new String[]{"isbn"}, isbn);
+        OpentalkJoinResponseDto response = opentalkService.joinOpentalk(isbn, pageSize);
+
         return responseTemplate.success(response, HttpStatus.OK);
     }
 }

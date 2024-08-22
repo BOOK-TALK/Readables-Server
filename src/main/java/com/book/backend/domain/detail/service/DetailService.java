@@ -75,20 +75,5 @@ public class DetailService {
         return loanAvailableList;
     }
 
-    @Transactional
-    public Long getOpentalkId(String isbn) {
-        Book book = bookRepository.findByIsbn(isbn);
-        if (book == null) { // 새로운 오픈톡 생성
-            Book newBook = new Book();
-            newBook.setIsbn(isbn);
-            book = bookRepository.save(newBook);
 
-            Opentalk opentalk = new Opentalk();
-            opentalk.setBook(book);
-            opentalk = opentalkRepository.save(opentalk);
-            return opentalk.getOpentalkId();
-        }
-        Opentalk opentalk = opentalkRepository.findByBook(book);
-        return opentalk.getOpentalkId();
-    }
 }

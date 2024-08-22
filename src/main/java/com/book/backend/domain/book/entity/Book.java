@@ -19,8 +19,4 @@ public class Book {
 
     @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Opentalk opentalk;
-
-    @ManyToOne
-    @JoinColumn(name = "genre_id")
-    private Genre genre;
 }
