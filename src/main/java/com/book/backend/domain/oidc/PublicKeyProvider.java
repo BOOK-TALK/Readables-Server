@@ -12,9 +12,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
 import java.util.Map;
-
-import static org.apache.tomcat.util.codec.binary.Base64.decodeBase64;
 
 @Component
 public class PublicKeyProvider {
@@ -27,8 +26,8 @@ public class PublicKeyProvider {
     // OidcPublicKey 객체에서 n, e 추출 -> 바이트 배열로 디코딩
     private PublicKey getPublicKey(final OidcPublicKey publicKey) {
         // n, e 추출
-        final byte[] nBytes = decodeBase64(publicKey.n());
-        final byte[] eBytes = decodeBase64(publicKey.e());
+        final byte[] nBytes = Base64.getUrlDecoder().decode(publicKey.n());
+        final byte[] eBytes = Base64.getUrlDecoder().decode(publicKey.e());
 
         // 바이트 배열로 디코딩
         final RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(new BigInteger(1, nBytes),

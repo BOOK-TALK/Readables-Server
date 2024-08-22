@@ -75,13 +75,11 @@ public class JwtUtil {
     public Claims getAllClaimsByPublicKey(String token, PublicKey publicKey) {
         try {
             return Jwts.parser()
-                    .setSigningKey(publicKey)
+                    .setSigningKey(publicKey)  // public 키로 검증
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
             throw new CustomException(ErrorCode.JWT_EXPIRED);
-        } catch (RuntimeException e) {
-            throw new CustomException(ErrorCode.WRONG_JWT_TOKEN);
         }
     }
 
