@@ -1,3 +1,69 @@
+USE booktalk;
+CREATE TABLE IF NOT EXISTS book
+(
+    book_id  bigint auto_increment
+        primary key,
+    isbn     varchar(255) null,
+    genre_id bigint       null,
+    constraint FK2wrw92qged8jq0ucjtt972pbc
+        foreign key (genre_id) references genre (genre_id)
+);
+CREATE TABLE IF NOT EXISTS opentalk
+(
+    opentalk_id bigint auto_increment
+        primary key,
+    book_id     bigint not null,
+    constraint UK2xjdoiqspesxa8oenlmyt52us
+        unique (book_id),
+    constraint FK3v2bbp8k2bt96wybtbk6pv9yp
+        foreign key (book_id) references book (book_id)
+);
+CREATE TABLE IF NOT EXISTS user
+(
+    user_id    bigint auto_increment
+        primary key,
+    birth_date date         null,
+    gender     tinyint      null,
+    kakao_id   varchar(255) null,
+    login_id   varchar(255) null,
+    nickname   varchar(255) null,
+    password   varchar(255) null,
+    reg_date   datetime(6)  null,
+    constraint UK792t1v1e9f43yusiryq37re13
+        unique (kakao_id),
+    constraint UKns0jdvuknugj5tmxq82un8q1x
+        unique (login_id),
+    check (`gender` between 0 and 2)
+);
+CREATE TABLE IF NOT EXISTS user_opentalk
+(
+    user_opentalk_id bigint auto_increment
+        primary key,
+    opentalk_id      bigint null,
+    user_id          bigint null,
+    constraint FK1klbjl6843fae6vli3yu88s0a
+        foreign key (opentalk_id) references opentalk (opentalk_id),
+    constraint FKhri45w7pin1p8n1drbpiy0bgh
+        foreign key (user_id) references user (user_id)
+);
+CREATE TABLE IF NOT EXISTS message
+(
+    message_id  bigint auto_increment
+        primary key,
+    content     varchar(255) null,
+    created_at  datetime(6)  null,
+    opentalk_id bigint       null,
+    user_id     bigint       null,
+    constraint FK1iwnhnomrpim1phe1x0qlnva7
+        foreign key (opentalk_id) references opentalk (opentalk_id),
+    constraint FK2op594yomeg261726h4dj75jq
+        foreign key (user_id) references user (user_id)
+);
+create index idx_message_createdAt
+    on message (created_at);
+
+
+
 INSERT IGNORE INTO book (book_id, isbn)
 VALUES (1, '9788956055466'),
        (2, '9788994120966'),
@@ -21,6 +87,9 @@ VALUES (1, 1),
        (8, 8),
        (9, 9),
        (10, 10);
+
+
+
 
 INSERT IGNORE INTO user (user_id, login_id, password, gender, birth_date, reg_date)
 values (1, 'user1', 'useruser1!', '1', '1990-01-01', '2024-06-10'),
