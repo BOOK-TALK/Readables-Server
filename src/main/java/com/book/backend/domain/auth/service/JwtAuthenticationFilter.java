@@ -57,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     // TODO: 리팩토링 필요
                     try {
-                        userDetails = userDetailsService.loadUserByUsername(username);
+                        userDetails = userDetailsService.loadUserByloginId(username);
                     } catch (CustomException e1) {
                         try {
                             userDetails = userDetailsService.loadUserByKakaoId(username);

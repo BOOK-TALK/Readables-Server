@@ -70,7 +70,7 @@ public class AuthService {
         }
 
         // 인증 성공 후 유저 정보 로드
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getLoginId());
+        UserDetails userDetails = userDetailsService.loadUserByloginId(loginDto.getLoginId());
         JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
 
         User user = userRepository.findByLoginId(loginDto.getLoginId())
