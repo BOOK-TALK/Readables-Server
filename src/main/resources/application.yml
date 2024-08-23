@@ -27,7 +27,7 @@ spring:
     init:
       encoding: utf-8
       mode: always
-      data-locations: classpath:sql/data.sql, classpath:sql/dummy.sql
+      data-locations: classpath:../../../data.sql, classpath:../../../dummy.sql
 
 spring-doc:
   swagger-ui:
