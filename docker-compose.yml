@@ -31,7 +31,9 @@ services:
       - backend-network
     volumes:
       - ./mysql/data:/var/lib/mysql
-       - ./src/main/resources/sql:/docker-entrypoint-initdb.d
+      - ./data.sql:/docker-entrypoint-initdb.d/data.sql
+      - ./dummy.sql:/docker-entrypoint-initdb.d/dummy.sql
+#       - ./src/main/resources/sql:/docker-entrypoint-initdb.d
 
   portainer:
     container_name: portainer
