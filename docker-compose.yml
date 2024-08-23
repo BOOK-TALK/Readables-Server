@@ -29,6 +29,9 @@ services:
       - "3306:3306"
     networks:
       - backend-network
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+       - ./src/main/resources/sql:/docker-entrypoint-initdb.d
 
   portainer:
     container_name: portainer
