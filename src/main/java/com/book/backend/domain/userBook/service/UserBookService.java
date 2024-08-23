@@ -4,6 +4,8 @@ import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.domain.user.service.UserService;
 import com.book.backend.domain.userBook.dto.UserBookDto;
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,9 @@ public class UserBookService {
     public List<UserBookDto> setDibs(String isbn, String bookname, String bookImgUrl) {
         log.trace("UserBookService > setDibs()");
         User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
         UserBookDto userBookDto = UserBookDto.builder()
                 .isbn(isbn)
                 .bookname(bookname)
@@ -36,6 +41,9 @@ public class UserBookService {
     public List<UserBookDto> removeDibs(String isbn) {
         log.trace("UserBookService > removeDibs()");
         User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
         user.getBooks().removeIf(userBookDto -> userBookDto.getIsbn().equals(isbn));
         userRepository.save(user);
         return user.getBooks();
@@ -45,6 +53,9 @@ public class UserBookService {
     public List<UserBookDto> getDibsList() {
         log.trace("UserBookService > getDibsList()");
         User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
         return user.getBooks();
     }
 

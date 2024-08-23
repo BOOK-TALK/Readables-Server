@@ -48,6 +48,9 @@ public class DetailService {
         log.trace("DetailService > getLoanAvailable()");
 
         User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
         List<LoanAvailableDto> loanAvailableList = new LinkedList<>();
         if(!user.getLibraries().isEmpty()) {
             user.getLibraries().forEach(libraryDto -> {

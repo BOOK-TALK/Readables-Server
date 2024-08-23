@@ -40,8 +40,12 @@ public class UserService {
         log.trace("UserService > findByUsername()");
         try {
             return findByLoginId(username);
-        } catch (IllegalArgumentException e) {
-            return findByKakaoId(username);
+        } catch (IllegalArgumentException e1) {
+            try {
+                return findByKakaoId(username);
+            } catch (IllegalArgumentException e2) {
+                return null;
+            }
         }
     }
 

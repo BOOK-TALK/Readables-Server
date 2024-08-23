@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -109,10 +108,11 @@ public class AuthService {
     private void validateNotDuplicatedUsername(String loginId) {
         log.trace("AuthService > validateNotDuplicatedByUsername()");
 
-        try {
-            userService.findByUsername(loginId);
-        } catch (IllegalArgumentException e) {
+        User user = userService.findByUsername(loginId);
+        if (user != null) {
             throw new CustomException(ErrorCode.USERNAME_DUPLICATED);
         }
     }
 }
+
+
