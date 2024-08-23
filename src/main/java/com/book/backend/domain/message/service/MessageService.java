@@ -60,10 +60,15 @@ public class MessageService {
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails;
                 try {
-                    userDetails = userDetailsService.loadUserByUsername(username);
-                } catch (CustomException e) {
-                    userDetails = userDetailsService.loadUserByKakaoId(username);
+                    userDetails = userDetailsService.loadUserByloginId(username);
+                } catch (CustomException e1) {
+                    try {
+                        userDetails = userDetailsService.loadUserByKakaoId(username);
+                    } catch (CustomException e2) {
+                        userDetails = userDetailsService.loadUserByAppleId(username);
+                    }
                 }
+
                 // 토큰 유효성 검증
                 if (jwtUtil.isValidToken(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authenticated
