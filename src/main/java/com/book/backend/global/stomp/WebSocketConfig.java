@@ -15,10 +15,10 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     /*
         request URL = ws://localhost:8080/ws-stomp
-        Subscription URL = /sub/
-        Destination = /pub/
-    */
+        Destination (발신 URL) = /pub/message
+        Subscription (수신 URL) = /sub/message/{opentalkId}
 
+    */
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-stomp")

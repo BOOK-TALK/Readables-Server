@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,12 +34,14 @@ import java.util.List;
 public class MessageController {
     private final MessageService messageService;
     private final ResponseTemplate responseTemplate;
+    private final SimpMessageSendingOperations sendingOperations;
 
     // 채팅 저장하기 (apic 으로 테스트)
-    @MessageMapping("/chat")
+    @MessageMapping("/message")
     public void chat(MessageRequestDto messageRequestDto) {
         RequestLogger.param(new String[]{"messageRequestDto"}, messageRequestDto);
         MessageResponseDto response = messageService.saveMessage(messageRequestDto);
+        sendingOperations.convertAndSend("/sub/message/" + messageRequestDto.getOpentalkId(), response);
     }
 
 
