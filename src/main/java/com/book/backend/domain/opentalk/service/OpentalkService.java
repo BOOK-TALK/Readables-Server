@@ -8,6 +8,7 @@ import com.book.backend.domain.detail.service.DetailService;
 import com.book.backend.domain.message.entity.Message;
 import com.book.backend.domain.message.mapper.MessageMapper;
 import com.book.backend.domain.message.repository.MessageRepository;
+import com.book.backend.domain.message.service.MessageService;
 import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
 import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
@@ -25,19 +26,14 @@ import com.book.backend.exception.ErrorCode;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.book.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import com.book.backend.domain.auth.service.CustomUserDetailsService;
 
 @Component
 @RequiredArgsConstructor
@@ -51,9 +47,7 @@ public class OpentalkService {
     private final DetailService detailService;
     private final UserService userService;
     private final OpentalkResponseParser opentalkResponseParser;
-    private final MessageMapper messageMapper;
-    private final JwtUtil jwtUtil;
-    private final CustomUserDetailsService userDetailsService;
+    private final MessageService messageService;
 
     /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
     public List<Long> hotOpentalk() {
@@ -101,62 +95,6 @@ public class OpentalkService {
         return opentalkDtoList;
     }
 
-    public Page<Message> getOpentalkMessage(String opentalkId, Pageable pageRequest){
-        log.trace("OpentalkService > getOpentalkMessage()");
-        // 오픈톡 ID로 opentlak 객체 찾기
-        Opentalk opentalk = opentalkRepository.findByOpentalkId(Long.parseLong(opentalkId)).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
-        return messageRepository.findAllByOpentalk(opentalk, pageRequest);
-    }
-
-    public List<MessageResponseDto> pageToDto(Page<Message> page){
-        log.trace("OpentalkService > pageToDto()");
-        List<Message> messages = page.getContent();
-        List<MessageResponseDto> messageList = new LinkedList<>();
-
-        for(Message message : messages){
-            messageList.add(messageMapper.convertToMessageResponseDto(message));
-        }
-        return messageList;
-    }
-
-    @Transactional
-    public MessageResponseDto saveMessage(MessageRequestDto messageRequestDto){
-        log.trace("OpentalkService > saveMessage()");
-        // 토큰 유효성 검사
-        String token = messageRequestDto.getJwtToken();
-        validateToken(token);
-
-        // message DB에 저장
-        Message message = messageMapper.convertToMessage(messageRequestDto);
-        try{
-            messageRepository.save(message);
-        } catch (Exception e){
-            throw new CustomException(ErrorCode.MESSAGE_SAVE_FAILED);
-        }
-        return messageMapper.convertToMessageResponseDto(message);
-    }
-
-    public void validateToken(String token) {
-        String username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
-
-        // 현재 SecurityContextHolder에 인증객체가 있는지 확인
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails;
-            try {
-                userDetails = userDetailsService.loadUserByUsername(username);
-            } catch (CustomException e) {
-                userDetails = userDetailsService.loadUserByKakaoId(username);
-            }
-
-            // 토큰 유효성 검증
-            if (jwtUtil.isValidToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authenticated
-                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authenticated);
-            }
-        }
-    }
-
 
     // 오픈톡 참여하기
     @Transactional
@@ -168,8 +106,8 @@ public class OpentalkService {
             return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(null).build();
         }
         Pageable pageRequest = PageRequest.of(0, pageSize, Sort.by("createdAt").descending());
-        Page<Message> messagePage = getOpentalkMessage(opentalkId.toString(), pageRequest);
-        List<MessageResponseDto> response = pageToDto(messagePage);
+        Page<Message> messagePage = messageService.getMessage(opentalkId.toString(), pageRequest);
+        List<MessageResponseDto> response = messageService.pageToDto(messagePage);
         return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(response).build();
     }
 

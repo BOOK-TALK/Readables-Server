@@ -3,11 +3,7 @@ package com.book.backend.domain.opentalk.controller;
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
 import com.book.backend.domain.opentalk.dto.OpentalkJoinResponseDto;
 import com.book.backend.domain.opentalk.dto.OpentalkResponseDto;
-import com.book.backend.domain.message.dto.MessageRequestDto;
-import com.book.backend.domain.message.dto.MessageResponseDto;
-import com.book.backend.domain.message.entity.Message;
 import com.book.backend.domain.opentalk.service.OpentalkService;
-import com.book.backend.domain.user.entity.User;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
 import java.util.List;
@@ -20,16 +16,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -61,23 +49,6 @@ public class OpentalkController {
                 .build();
         return responseTemplate.success(response, HttpStatus.OK);
     }
-
-    // 채팅 불러오기
-    @Operation(summary="특정 오픈톡 채팅 불러오기", description="오픈톡 ID 를 입력으로 받아 pageSize개 데이터를 반환합니다. (pageNo로 페이지네이션)",
-            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "pageNo", description = "페이지 번호(0부터)"), @Parameter(name = "pageSize", description = "페이지 당 개수")},
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
-                    description = MessageResponseDto.description)})
-    @GetMapping("/chat/get")
-    public ResponseEntity<?> getChat(@RequestParam String opentalkId, int pageNo, int pageSize) {
-        RequestLogger.param(new String[]{"opentalkId, pageNo, pageSize"}, opentalkId, pageNo, pageSize);
-
-        Pageable pageRequest = PageRequest.of(pageNo, pageSize, Sort.by("createdAt").descending());
-        Page<Message> MessagePage = opentalkService.getOpentalkMessage(opentalkId, pageRequest);
-        List<MessageResponseDto> response = opentalkService.pageToDto(MessagePage);
-
-        return responseTemplate.success(response, HttpStatus.OK);
-    }
-
 
 
     // [오픈톡 참여하기]
