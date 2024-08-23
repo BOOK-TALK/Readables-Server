@@ -109,7 +109,7 @@ public class KakaoService {
         String providerId = oidcProviderFactory.getProviderId(Provider.KAKAO, idToken);
 
         // kakaoId로 유저 조회
-        User user = userService.findByKakaoId(providerId);
+        User user = userService.findByUsername(providerId);
         Boolean isNewUser = Boolean.FALSE;
 
         // 조회된 유저가 없을 시 회원가입 처리
