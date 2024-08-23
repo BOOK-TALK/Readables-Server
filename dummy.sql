@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS user
     constraint UKns0jdvuknugj5tmxq82un8q1x
         unique (login_id),
     check (`gender` between 0 and 2)
-)engine=InnoDB DEFAULT CHARSET=uft8;
+)engine=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE IF NOT EXISTS user_opentalk
 (
     user_opentalk_id bigint auto_increment
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS message
         foreign key (opentalk_id) references opentalk (opentalk_id),
     constraint FK2op594yomeg261726h4dj75jq
         foreign key (user_id) references user (user_id)
-) engine=InnoDB DEFAULT CHARSET=uft8;
+) engine=InnoDB DEFAULT CHARSET=utf8;
 create index idx_message_createdAt
     on message (created_at);
 
