@@ -23,12 +23,14 @@ public class MessageMapper {
     private final OpentalkRepository opentalkRepository;
 
     public Message convertToMessage(Long opentalkId, MessageRequestDto messageRequestDto) {
-        Message message = mapper.map(messageRequestDto, Message.class);
+        Message message = new Message();
+        String content = messageRequestDto.getContent();
         User user = userService.loadLoggedinUser();
         Opentalk opentalk = opentalkRepository.findById(opentalkId).orElseThrow();
 
         message.setUser(user); // 보낸 사람
         message.setOpentalk(opentalk);
+        message.setContent(content);
         message.setCreatedAt(new Date());
 
         return message;

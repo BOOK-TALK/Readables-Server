@@ -78,14 +78,7 @@ public class OpentalkController {
         return responseTemplate.success(response, HttpStatus.OK);
     }
 
-    // 채팅 저장하기
-    @MessageMapping("/chat/{opentalkId}")
-    @SendTo("/sub/chat/{opentalkId}")
-    public ResponseEntity<?> chat(@DestinationVariable Long opentalkId, MessageRequestDto messageRequestDto) {
-        RequestLogger.param(new String[]{"opentalkId, messageRequestDto"}, opentalkId, messageRequestDto);
-        MessageResponseDto response = opentalkService.saveMessage(opentalkId, messageRequestDto);
-        return responseTemplate.success(response, HttpStatus.OK); // pub, sub 모두 이걸 받나?
-    }
+
 
     // [오픈톡 참여하기]
     @Operation(summary="오픈톡 참여하기", description="isbn, pageSize를 입력으로 받아, 오픈톡 ID, 채팅 내역 반환",

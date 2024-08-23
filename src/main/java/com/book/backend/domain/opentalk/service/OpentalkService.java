@@ -25,14 +25,19 @@ import com.book.backend.exception.ErrorCode;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.book.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import com.book.backend.domain.auth.service.CustomUserDetailsService;
 
 @Component
 @RequiredArgsConstructor
@@ -47,6 +52,8 @@ public class OpentalkService {
     private final UserService userService;
     private final OpentalkResponseParser opentalkResponseParser;
     private final MessageMapper messageMapper;
+    private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService userDetailsService;
 
     /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
     public List<Long> hotOpentalk() {
@@ -115,6 +122,12 @@ public class OpentalkService {
     // DB에 message 저장
     public MessageResponseDto saveMessage(Long opentalkId, MessageRequestDto messageRequestDto){
             log.trace("OpentalkService > saveMessage()");
+            //TODO : messageRequestDto 에서 jwtToken 값 추출해서 유효성 검사하기
+        String token = messageRequestDto.getJwtToken();
+        validateToken(token);
+
+
+        // TODO : messageRequestDto 에서 content 만 추출해서 message 객체 생성하기
         Message message = messageMapper.convertToMessage(opentalkId, messageRequestDto);
         try{
             messageRepository.save(message);
@@ -123,6 +136,29 @@ public class OpentalkService {
         }
         return messageMapper.convertToMessageResponseDto(message);
     }
+
+    public void validateToken(String token) {
+        //TODO : token 유효성 검사하기
+        String username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
+
+        // 현재 SecurityContextHolder에 인증객체가 있는지 확인
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails;
+            try {
+                userDetails = userDetailsService.loadUserByUsername(username);
+            } catch (CustomException e) {
+                userDetails = userDetailsService.loadUserByKakaoId(username);
+            }
+
+            // 토큰 유효성 검증
+            if (jwtUtil.isValidToken(token, userDetails)) {
+                UsernamePasswordAuthenticationToken authenticated
+                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authenticated);
+            }
+        }
+    }
+
 
     // 오픈톡 참여하기
     @Transactional
