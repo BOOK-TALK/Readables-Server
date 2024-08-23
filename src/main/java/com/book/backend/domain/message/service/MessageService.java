@@ -11,6 +11,7 @@ import com.book.backend.domain.opentalk.repository.OpentalkRepository;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -53,22 +54,27 @@ public class MessageService {
 
 
     public void validateToken(String token) {
-        String username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
-
-        // 현재 SecurityContextHolder에 인증객체가 있는지 확인
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails;
-            try {
-                userDetails = userDetailsService.loadUserByUsername(username);
-            } catch (CustomException e) {
-                userDetails = userDetailsService.loadUserByKakaoId(username);
+        try{
+            String username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
+            // 현재 SecurityContextHolder에 인증객체가 있는지 확인
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails;
+                try {
+                    userDetails = userDetailsService.loadUserByUsername(username);
+                } catch (CustomException e) {
+                    userDetails = userDetailsService.loadUserByKakaoId(username);
+                }
+                // 토큰 유효성 검증
+                if (jwtUtil.isValidToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authenticated
+                            = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authenticated);
+                }
             }
-            // 토큰 유효성 검증
-            if (jwtUtil.isValidToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authenticated
-                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authenticated);
-            }
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(ErrorCode.JWT_EXPIRED);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.WRONG_JWT_TOKEN);
         }
     }
 
