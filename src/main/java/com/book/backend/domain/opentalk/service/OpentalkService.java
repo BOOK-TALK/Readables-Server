@@ -119,16 +119,15 @@ public class OpentalkService {
         return messageList;
     }
 
-    // DB에 message 저장
-    public MessageResponseDto saveMessage(Long opentalkId, MessageRequestDto messageRequestDto){
-            log.trace("OpentalkService > saveMessage()");
-            //TODO : messageRequestDto 에서 jwtToken 값 추출해서 유효성 검사하기
+    @Transactional
+    public MessageResponseDto saveMessage(MessageRequestDto messageRequestDto){
+        log.trace("OpentalkService > saveMessage()");
+        // 토큰 유효성 검사
         String token = messageRequestDto.getJwtToken();
         validateToken(token);
 
-
-        // TODO : messageRequestDto 에서 content 만 추출해서 message 객체 생성하기
-        Message message = messageMapper.convertToMessage(opentalkId, messageRequestDto);
+        // message DB에 저장
+        Message message = messageMapper.convertToMessage(messageRequestDto);
         try{
             messageRepository.save(message);
         } catch (Exception e){
@@ -138,7 +137,6 @@ public class OpentalkService {
     }
 
     public void validateToken(String token) {
-        //TODO : token 유효성 검사하기
         String username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
 
         // 현재 SecurityContextHolder에 인증객체가 있는지 확인

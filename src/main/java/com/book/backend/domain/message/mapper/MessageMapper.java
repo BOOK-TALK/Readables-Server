@@ -11,6 +11,7 @@ import com.book.backend.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -22,12 +23,14 @@ public class MessageMapper {
     private final UserRepository userRepository;
     private final OpentalkRepository opentalkRepository;
 
-    public Message convertToMessage(Long opentalkId, MessageRequestDto messageRequestDto) {
-        Message message = new Message();
-        String content = messageRequestDto.getContent();
+    @Transactional
+    public Message convertToMessage(MessageRequestDto dto) {
+        String content = dto.getContent();
         User user = userService.loadLoggedinUser();
-        Opentalk opentalk = opentalkRepository.findById(opentalkId).orElseThrow();
+        System.out.println("user = " + user.getNickname());
+        Opentalk opentalk = opentalkRepository.findById(dto.getOpentalkId()).orElseThrow();
 
+        Message message = new Message();
         message.setUser(user); // 보낸 사람
         message.setOpentalk(opentalk);
         message.setContent(content);
