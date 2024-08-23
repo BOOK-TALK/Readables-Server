@@ -54,10 +54,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 현재 SecurityContextHolder에 인증객체가 있는지 확인
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails;
+
+                    // TODO: 리팩토링 필요
                     try {
-                        userDetails = userDetailsService.loadUserByUsername(username);
-                    } catch (CustomException e) {
-                        userDetails = userDetailsService.loadUserByKakaoId(username);
+                        userDetails = userDetailsService.loadUserByloginId(username);
+                    } catch (CustomException e1) {
+                        try {
+                            userDetails = userDetailsService.loadUserByKakaoId(username);
+                        } catch (CustomException e2) {
+                            userDetails = userDetailsService.loadUserByAppleId(username);
+                        }
                     }
 
                     // 토큰 유효성 검증

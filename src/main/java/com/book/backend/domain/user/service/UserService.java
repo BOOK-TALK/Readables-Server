@@ -38,13 +38,19 @@ public class UserService {
     // username으로 사용자 조회
     public User findByUsername(String username) {
         log.trace("UserService > findByUsername()");
+
+        // TODO: 리팩토링 필요
         try {
             return findByLoginId(username);
         } catch (IllegalArgumentException e1) {
             try {
                 return findByKakaoId(username);
             } catch (IllegalArgumentException e2) {
-                return null;
+                try {
+                    return findByAppleId(username);
+                } catch (IllegalArgumentException e3) {
+                    return null;
+                }
             }
         }
     }
@@ -58,6 +64,12 @@ public class UserService {
     private User findByKakaoId(String kakaoId) {
         log.trace("UserService > findByKakaoId()");
         return userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private User findByAppleId(String appleId) {
+        log.trace("UserService > findByAppleId()");
+        return userRepository.findByAppleId(appleId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
