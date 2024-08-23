@@ -14,7 +14,7 @@ public class AppleAuthClient {
 
     public AppleAuthClient(
             RestClient restClient,
-            @Value("${kakao.publicKeyUri}") String publicKeyUri
+            @Value("${apple.publicKeyUri}") String publicKeyUri
     ) {
         this.restClient = restClient;
         this.publicKeyUri = publicKeyUri;
