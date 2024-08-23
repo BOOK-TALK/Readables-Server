@@ -14,6 +14,7 @@ public class UserDto {
     private Long userId;
     private String loginId;
     private String kakaoId;
+    private String appleId;
     private LocalDateTime regDate;
     private String nickname;
     private String password;
@@ -24,6 +25,7 @@ public class UserDto {
             "userId : 유저 아이디 | " +
             "loginId : 유저 로그인 아이디 (일반 로그인 시 생성) | " +
             "kakaoId : 유저 카카오 아이디 (카카오 로그인 시 생성) | " +
+            "appleId : 유저 애플 아이디 (애플 로그인 시 생성) | " +
             "regDate : 가입 시각 | " +
             "nickname : 닉네임 | " +
             "password : 암호화된 비밀번호 (일반 로그인 시 생성) | " +
