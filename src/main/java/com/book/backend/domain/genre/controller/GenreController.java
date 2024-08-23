@@ -24,7 +24,7 @@ import java.util.LinkedList;
 @RequestMapping("/api/genre")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name="장르", description = "일주일 인기순 / 한 달 인기순 / 이번 주 인기 도서 / 무작위순 / 신작 인기순")
+@Tag(name="장르", description = "이번 주 인기 도서 / 무작위순 / 신작 인기순 / 일주일 인기순 / 한 달 인기순")
 public class GenreController {
     private final GenreService genreService;
     private final RequestValidate requestValidate;

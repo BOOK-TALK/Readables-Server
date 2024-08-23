@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name="마이페이지", description = "유저 정보 조회 / 유저 정보 수정 / 내 도서관 조회 / 내 도서관 수정")
+@Tag(name="마이페이지", description = "내 도서관 조회 / 유저 정보 조회 / 내 도서관 수정 / 유저 정보 수정")
 public class UserController {
     private final UserService userService;
     private final ResponseTemplate responseTemplate;

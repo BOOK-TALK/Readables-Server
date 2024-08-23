@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/opentalk")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name="오픈톡", description = "메인 / 채팅 불러오기 / 오픈톡 참여하기")
+@Tag(name="오픈톡", description = "메인 / 오픈톡 참여하기")
 public class OpentalkController {
     private final OpentalkService opentalkService;
     private final ResponseTemplate responseTemplate;

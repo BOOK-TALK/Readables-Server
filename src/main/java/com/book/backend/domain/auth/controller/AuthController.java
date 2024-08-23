@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "유저 관리", description = "회원가입 / 로그인 / 로그아웃 / 회원 탈퇴 / 카카오 로그인 / 애플 로그인")
+@Tag(name="유저 관리", description = "탈퇴 / 회원가입 / 로그인 / 카카오 로그인 / 애플 로그인")
 public class AuthController {
 
     private final AuthService authService;
@@ -67,6 +66,8 @@ public class AuthController {
 //        return ResponseEntity.ok("success");
 //    }
 
+    @Operation(summary = "탈퇴",
+            responses = {@ApiResponse(responseCode = "204", description = "회원 탈퇴가 완료되었습니다.")})
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

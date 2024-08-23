@@ -34,7 +34,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name="채팅", description = "메세지 저장 / 메세지 불러오기")
+@Tag(name="채팅", description = "메세지 불러오기 / 메세지 저장")
 public class MessageController {
     private final MessageService messageService;
     private final ResponseTemplate responseTemplate;
@@ -50,7 +50,7 @@ public class MessageController {
 
 
     // 채팅 불러오기
-    @Operation(summary="채팅 불러오기 (특정 오픈톡)", description="오픈톡 ID 를 입력으로 받아 pageSize개 데이터를 반환합니다. (pageNo로 페이지네이션)",
+    @Operation(summary="메세지 불러오기 (특정 오픈톡)", description="오픈톡 ID 를 입력으로 받아 pageSize개 데이터를 반환합니다. (pageNo로 페이지네이션)",
             parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "pageNo", description = "페이지 번호(0부터)"), @Parameter(name = "pageSize", description = "페이지 당 개수")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
                     description = MessageResponseDto.description)})
@@ -66,7 +66,7 @@ public class MessageController {
     }
 
     // swagger docs 에 남기기 위한 용도
-    @Operation(summary="채팅 stomp 통신", description="APIC 테스터기를 이용해서 stomp 통신을 합니다.  \n" +
+    @Operation(summary="메세지 저장 (채팅 stomp 통신)", description="APIC 테스터기를 이용해서 stomp 통신을 합니다.  \n" +
             "- Request URL: ws://52.79.187.133:8080/ws-stomp  \n"+
             "- Destination Queue: /pub/message  \n"+
             "- Subscription URL: /sub/message/{opentalkId}",
