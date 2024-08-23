@@ -44,7 +44,8 @@ public class SecurityConfig {
                         .requestMatchers("/login/oauth2/**").permitAll()  // OAuth2 Callback 경로
                         .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/kakaoLogin", "/api/auth/appleLogin").permitAll()  // 회원가입, 로그인 경로
                         .requestMatchers("/.well-known/**").permitAll()
-//                        .requestMatchers("/api/**")  // 모든 API에 대한 인증 비활성화 (개발용)
+                        .requestMatchers("/ws-stomp/**").permitAll()  // stomp 통신
+//                        .requestMatchers("/**").permitAll()  // 모든 API에 대한 인증 비활성화 (개발용)
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling((exception) -> exception
