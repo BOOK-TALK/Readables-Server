@@ -59,8 +59,6 @@ CREATE TABLE IF NOT EXISTS message
     constraint FK2op594yomeg261726h4dj75jq
         foreign key (user_id) references user (user_id)
 ) engine=InnoDB DEFAULT CHARSET=utf8;
-create index idx_message_createdAt
-    on message (created_at);
 
 
 
