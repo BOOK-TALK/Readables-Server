@@ -6,6 +6,8 @@ import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.service.UserService;
 import com.book.backend.domain.userBook.service.UserBookService;
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import com.book.backend.global.ResponseTemplate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,6 +41,9 @@ public class UserController {
         log.trace("UserController > getUserInfo()");
 
         User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
         UserDto userDto = userMapper.convertToUserDto(user);
 
         MyPageDto responseDto = MyPageDto.builder()
@@ -58,6 +63,9 @@ public class UserController {
         log.trace("UserController > editUserInfo()");
 
         User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
         User updatedUser = userService.updateUserInfo(user, requestDto);
 
         UserInfoDto userInfoDto = userMapper.convertToUserInfoDto(updatedUser);
@@ -73,6 +81,9 @@ public class UserController {
         log.trace("UserController > getUserLibraries()");
 
         User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
 
         UserLibrariesResponseDto responseDto = new UserLibrariesResponseDto();
         responseDto.setLibraries(userService.getLibraries(user));
@@ -88,6 +99,9 @@ public class UserController {
         log.trace("UserController > editUserLibrary()");
 
         User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
         User updatedUser = userService.updateUserLibraries(user, requestDto);
 
         UserLibrariesResponseDto responseDto = new UserLibrariesResponseDto();

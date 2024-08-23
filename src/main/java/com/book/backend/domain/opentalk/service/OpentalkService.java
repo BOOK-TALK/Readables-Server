@@ -70,6 +70,9 @@ public class OpentalkService {
     public List<Long> favoriteOpentalk() {
         log.trace("OpentalkService > favoriteOpentalk()");
         User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
         List<UserOpentalk> opentalkList = userOpentalkRepository.findAllByUserId(user);
 
         List<Long> opentalkIds = new LinkedList<>();

@@ -7,6 +7,9 @@ import com.book.backend.domain.openapi.service.ResponseParser;
 import com.book.backend.domain.search.dto.RequestDto;
 import java.util.HashSet;
 import java.util.LinkedList;
+
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
@@ -75,6 +78,9 @@ public class SearchService {
     public void setDibs(LinkedList<SearchResponseDto> bookList) {
         log.trace("SearchService > setDibs()");
         User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
         for(SearchResponseDto dto : bookList){
             if(user.getBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(dto.getIsbn13()))){
                 dto.setDibs(true);

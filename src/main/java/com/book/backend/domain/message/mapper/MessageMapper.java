@@ -8,6 +8,8 @@ import com.book.backend.domain.opentalk.repository.OpentalkRepository;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.domain.user.service.UserService;
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -25,9 +27,11 @@ public class MessageMapper {
 
     @Transactional
     public Message convertToMessage(MessageRequestDto dto) {
-        String content = dto.getContent();
         User user = userService.loadLoggedinUser();
-        System.out.println("user = " + user.getNickname());
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+        String content = dto.getContent();
         Opentalk opentalk = opentalkRepository.findById(dto.getOpentalkId()).orElseThrow();
 
         Message message = new Message();
