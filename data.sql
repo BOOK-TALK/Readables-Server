@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS genre (
      parent_genre_id bigint       null,
      constraint FKroi0p36nixht1l7b3hadih34l
          foreign key (parent_genre_id) references genre (genre_id)
-);
+)engine=InnoDB DEFAULT CHARSET=uft8; #한글 인코딩
 
 INSERT IGNORE INTO genre (parent_genre_id, kdc_num, name)
 values
