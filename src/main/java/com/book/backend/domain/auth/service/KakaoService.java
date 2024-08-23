@@ -106,6 +106,10 @@ public class KakaoService {
     public LoginSuccessResponseDto kakaoLogin(String idToken) {
         log.trace("KakaoService > kakaoLogin()");
 
+        if (idToken == null || idToken.isEmpty()){
+            throw new CustomException(ErrorCode.ID_TOKEN_IS_NULL);
+        }
+
         String providerId = oidcProviderFactory.getProviderId(Provider.KAKAO, idToken);
 
         // kakaoId로 유저 조회

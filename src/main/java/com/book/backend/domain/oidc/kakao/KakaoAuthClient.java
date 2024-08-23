@@ -9,7 +9,6 @@ import org.springframework.web.client.RestClient;
 public class KakaoAuthClient {
 
     private final RestClient restClient;
-
     private final String publicKeyUri;
 
     public KakaoAuthClient(

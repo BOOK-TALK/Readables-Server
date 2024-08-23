@@ -47,6 +47,7 @@ public enum ErrorCode {
     HEADER_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "Header 파싱 중 에러가 발생했습니다."),
     WRONG_PROVIDER(HttpStatus.INTERNAL_SERVER_ERROR, "500", "잘못된 인증 제공자입니다."),
     EXTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "외부 서버에 오류가 발생했습니다."),
+    ID_TOKEN_IS_NULL(HttpStatus.UNAUTHORIZED, "401", "idToken이 입력되지 않았습니다."),
 
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "400", "요청이 잘못되었습니다.");
 
