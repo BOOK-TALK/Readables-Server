@@ -60,9 +60,9 @@ public class WebSocketEventListener {
                         = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
 //                // wrappedRequest 대신에 accessor 로 HttpServletRequest 를 대신할 수 없을까
-                authenticated.setDetails((new WebAuthenticationDetailsSource()).buildDetails(
-                        (HttpServletRequest)((GenericMessage) accessor.getMessageHeaders().get("simpConnectMessage")).getHeaders().get("nativeHeaders")
-                ));
+//                authenticated.setDetails((new WebAuthenticationDetailsSource()).buildDetails(
+//                        (HttpServletRequest)((GenericMessage) accessor.getMessageHeaders().get("simpConnectMessage")).getHeaders().get("nativeHeaders")
+//                ));
                 SecurityContextHolder.getContext().setAuthentication(authenticated);
             }
         } else {
