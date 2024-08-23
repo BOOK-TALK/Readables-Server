@@ -31,8 +31,8 @@ services:
       - backend-network
     volumes:
       - ./mysql/data:/var/lib/mysql
-      - ./data.sql:/docker-entrypoint-initdb.d/data.sql
-      - ./dummy.sql:/docker-entrypoint-initdb.d/dummy.sql
+      - ./src/main/resources/sql/:/docker-entrypoint-initdb.d
+      -
     command: # 한글 인코딩
       - --character-set-server=utf8
       - --collation-server=utf8_unicode_ci
