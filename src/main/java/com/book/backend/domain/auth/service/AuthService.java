@@ -9,6 +9,7 @@ import com.book.backend.domain.user.dto.UserDto;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.repository.UserRepository;
+import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
@@ -32,6 +33,7 @@ import java.util.Optional;
 @Slf4j
 public class AuthService {
     private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtRefreshTokenService jwtRefreshTokenService;
     private final AuthMapper authMapper;
     private final UserMapper userMapper;
@@ -43,7 +45,7 @@ public class AuthService {
     public UserDto signup(SignupDto signupDto) {
         log.trace("AuthService > signup()");
 
-        validateNotDuplicatedLoginId(signupDto.getLoginId());
+        validateNotDuplicatedUsername(signupDto.getLoginId());
 
         User user = authMapper.convertToUser(signupDto);
         user.setRegDate(LocalDateTime.now());
@@ -94,13 +96,23 @@ public class AuthService {
         userRepository.delete(user);
     }
 
-    private void validateNotDuplicatedLoginId(String loginId) {
-        log.trace("AuthService > validateNotDuplicatedByLoginId()");
+//    private void validateNotDuplicatedLoginId(String loginId) {
+//        log.trace("AuthService > validateNotDuplicatedByLoginId()");
+//
+//        Optional<User> userOptional = userRepository.findByLoginId(loginId);
+//
+//        if (userOptional.isPresent()) {
+//            throw new CustomException(ErrorCode.LOGIN_ID_DUPLICATED);
+//        }
+//    }
 
-        Optional<User> userOptional = userRepository.findByLoginId(loginId);
+    private void validateNotDuplicatedUsername(String loginId) {
+        log.trace("AuthService > validateNotDuplicatedByUsername()");
 
-        if (userOptional.isPresent()) {
-            throw new CustomException(ErrorCode.LOGIN_ID_DUPLICATED);
+        try {
+            userService.findByUsername(loginId);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorCode.USERNAME_DUPLICATED);
         }
     }
 }
