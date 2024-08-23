@@ -45,6 +45,9 @@ kakao:
   userInfoUri: https://kapi.kakao.com/v2/user/me
   publicKeyUri: https://kauth.kakao.com/.well-known/jwks.json
 
+apple:
+  publicKeyUri: https://appleid.apple.com/auth/keys
+
 jwt:
   secretKey: ${JWT_SECRET}
   accessTokenExpireTime: ${ACCESS_TOKEN_EXPIRE_TIME}
