@@ -23,16 +23,17 @@ spring:
     open-in-view: false
     defer-datasource-initialization: true # ddl-auto 실행 후 data.sql 로 데이터 삽입
 
+  sql: #data.sql 의 DDL 실행
+    init:
+      encoding: utf-8
+      mode: always
+      data-locations: classpath:sql/data.sql, classpath:sql/dummy.sql
+
 spring-doc:
   swagger-ui:
     tags-sorter: alpha # tag 순서 - 알파벳
     operations-sorter : method # HTTP 메소드 순서
     doc-expansion : none # 펼치지 않기
-
-  sql: #data.sql 의 DDL 실행
-    init:
-      mode: always
-      data-locations: classpath:data.sql, classpath:dummy.sql
 
 openapi:
   url: ${OPENAPI_URL}

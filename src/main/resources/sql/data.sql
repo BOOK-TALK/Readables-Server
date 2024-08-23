@@ -1,4 +1,15 @@
 -- 장르 초기화 (한국십진분류법(KDC) 6판 기준)
+USE booktalk;
+CREATE TABLE IF NOT EXISTS genre (
+     genre_id        bigint auto_increment
+         primary key,
+     kdc_num         varchar(255) null,
+     name            varchar(255) null,
+     parent_genre_id bigint       null,
+     constraint FKroi0p36nixht1l7b3hadih34l
+         foreign key (parent_genre_id) references genre (genre_id)
+)engine=InnoDB DEFAULT CHARSET=utf8; #한글 인코딩
+
 INSERT IGNORE INTO genre (parent_genre_id, kdc_num, name)
 values
        -- Level 1
