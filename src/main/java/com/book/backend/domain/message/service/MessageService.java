@@ -60,7 +60,7 @@ public class MessageService {
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails;
                 try {
-                    userDetails = userDetailsService.loadUserByloginId(username);
+                    userDetails = userDetailsService.loadUserByUsername(username);
                 } catch (CustomException e1) {
                     try {
                         userDetails = userDetailsService.loadUserByKakaoId(username);
