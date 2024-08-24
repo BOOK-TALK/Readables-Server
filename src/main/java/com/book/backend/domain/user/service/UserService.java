@@ -1,5 +1,6 @@
 package com.book.backend.domain.user.service;
 
+import com.book.backend.domain.auth.service.AuthService;
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.user.dto.LibraryDto;
 import com.book.backend.domain.user.dto.UserInfoDto;
@@ -26,6 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final RequestValidate requestValidate;
+    private final AuthService authService;
 
     public User loadLoggedinUser() {
         log.trace("UserService > loadLoggedinUser()");
@@ -81,6 +83,8 @@ public class UserService {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
+        validateNotDuplicatedNickname(requestDto.getNickname());
+
         user.setNickname(requestDto.getNickname());
         user.setGender(userMapper.convertStringToGender(requestDto.getGender()));
         user.setBirthDate(requestDto.getBirthDate());
@@ -125,5 +129,21 @@ public class UserService {
         }
 
         return user.getLibraries();
+    }
+
+    public void validateNotDuplicatedUsername(String username) {
+        log.trace("UserService > validateNotDuplicatedByUsername()");
+
+        User user = findByUsername(username);
+        if (user != null) {
+            throw new CustomException(ErrorCode.USERNAME_DUPLICATED);
+        }
+    }
+
+    public void validateNotDuplicatedNickname(String nickname) {
+        log.trace("UserService > validateNotDuplicatedNickname()");
+
+        userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new CustomException(ErrorCode.NICKNAME_DUPLICATED));
     }
 }

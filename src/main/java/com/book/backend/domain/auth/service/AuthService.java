@@ -44,7 +44,8 @@ public class AuthService {
     public UserDto signup(SignupDto signupDto) {
         log.trace("AuthService > signup()");
 
-        validateNotDuplicatedUsername(signupDto.getLoginId());
+        userService.validateNotDuplicatedUsername(signupDto.getLoginId());
+        userService.validateNotDuplicatedNickname(signupDto.getNickname());
 
         User user = authMapper.convertToUser(signupDto);
         user.setRegDate(LocalDateTime.now());
@@ -98,14 +99,6 @@ public class AuthService {
         userRepository.delete(user);
     }
 
-    private void validateNotDuplicatedUsername(String loginId) {
-        log.trace("AuthService > validateNotDuplicatedByUsername()");
-
-        User user = userService.findByUsername(loginId);
-        if (user != null) {
-            throw new CustomException(ErrorCode.USERNAME_DUPLICATED);
-        }
-    }
 }
 
 
