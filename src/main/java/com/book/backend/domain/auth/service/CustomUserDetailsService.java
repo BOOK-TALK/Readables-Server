@@ -19,12 +19,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     // TODO: 리팩토링 필요
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
-    }
 
-    public UserDetails loadUserByloginId(String loginId) throws UsernameNotFoundException {
+    @Override
+    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
         // username이 아닌 loginId로 간주
         log.trace("CustomUserDetailsService > loadUserByUsername()");
 
