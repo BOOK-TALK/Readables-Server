@@ -90,6 +90,18 @@ public class AuthService {
                 .build();
     }
 
+    public void logout(String accessToken) {
+        log.trace("AuthService > logout()");
+
+        String username = jwtUtil.getUsernameFromToken(accessToken);
+
+        jwtUtil.addTokenToBlacklist(accessToken);
+
+        // Redis에서 사용자의 Refresh Token 삭제
+        redisTemplate.delete(username);
+        SecurityContextHolder.clearContext();
+    }
+
     public JwtTokenDto reissueToken(String refreshToken) {
         // Refresh Token 검증
         Claims claims = jwtUtil.getAllClaims(refreshToken);
@@ -125,5 +137,3 @@ public class AuthService {
     }
 
 }
-
-

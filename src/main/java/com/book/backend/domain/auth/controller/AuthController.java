@@ -59,15 +59,19 @@ public class AuthController {
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
     }
 
-//    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(HttpServletRequest request) {
-//        RequestLogger.param(new String[] {"Session ID"}, request.getSession().getId());
-//
-//        SecurityContextHolder.clearContext();
-//        return ResponseEntity.ok("success");
-//    }
+    @Operation(summary = "로그아웃", description = "사용자의 Access Token을 parameter로 받아 카카오 로그인을 진행하고, 완료된 유저 정보를 반환합니다.",
+            parameters = {
+                    @Parameter(name = "accessToken", description = "Access Token 값")
+            },
+            responses = {@ApiResponse(responseCode = "200", description = "로그아웃이 완료되었습니다.")})
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestParam String accessToken) {
+        authService.logout(accessToken);
 
-    @Operation(summary = "탈퇴",
+        return responseTemplate.success("로그아웃이 완료되었습니다.", HttpStatus.OK);
+    }
+
+    @Operation(summary = "회원 탈퇴",
             responses = {@ApiResponse(responseCode = "204", description = "회원 탈퇴가 완료되었습니다.")})
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteAccount() {
@@ -75,7 +79,6 @@ public class AuthController {
         String username = authentication.getName();
 
         authService.deleteAccountByUsername(username);
-        SecurityContextHolder.clearContext();
 
         // TODO: 토큰 비활성화 처리 필요
 
@@ -89,7 +92,7 @@ public class AuthController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoginSuccessResponseDto.class)),
                     description = LoginSuccessResponseDto.description)})
     @PostMapping("/kakaoLogin")
-    public ResponseEntity<?> kakaoLogin(String idToken) {
+    public ResponseEntity<?> kakaoLogin(@RequestParam String idToken) {
         LoginSuccessResponseDto loginSuccessResponseDto = kakaoService.kakaoLogin(idToken);
 
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
@@ -102,7 +105,7 @@ public class AuthController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoginSuccessResponseDto.class)),
                     description = LoginSuccessResponseDto.description)})
     @PostMapping("/appleLogin")
-    public ResponseEntity<?> appleLogin(String idToken) {
+    public ResponseEntity<?> appleLogin(@RequestParam String idToken) {
         LoginSuccessResponseDto loginSuccessResponseDto = appleService.appleLogin(idToken);
 
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
@@ -115,7 +118,7 @@ public class AuthController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = JwtTokenDto.class)),
                     description = JwtTokenDto.description)})
     @PostMapping("/reissueToken")
-    public ResponseEntity<?> reissueToken(String refreshToken) {
+    public ResponseEntity<?> reissueToken(@RequestParam String refreshToken) {
         JwtTokenDto jwtTokenDto = authService.reissueToken(refreshToken);
 
         return responseTemplate.success(jwtTokenDto, HttpStatus.OK);
