@@ -50,7 +50,6 @@ public class KakaoService {
     private final UserService userService;
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
-    private final JwtRefreshTokenService jwtRefreshTokenService;
     private final OidcProviderFactory oidcProviderFactory;
 
     // Redirect URI에 전달된 코드값으로 Access Token 요청
@@ -141,10 +140,6 @@ public class KakaoService {
 
         // Redis에 RefreshToken 저장
         jwtUtil.storeRefreshTokenInRedis(authentication, jwtTokenDto.getRefreshToken());
-
-        // FIXME: 수정 필요
-        // Refresh Token 갱신
-        jwtRefreshTokenService.updateRefreshToken(jwtTokenDto, user);
 
         return LoginSuccessResponseDto.builder()
                 .userId(user.getUserId())
