@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 public class OpentalkDto {
     private Long id;
+    private String isbn13;
     private String bookName;
     private String bookImageURL;
 }
