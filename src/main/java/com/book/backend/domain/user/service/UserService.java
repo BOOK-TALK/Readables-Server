@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -83,7 +84,10 @@ public class UserService {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
-        validateNotDuplicatedNickname(requestDto.getNickname());
+        // 변경 요청된 닉네임과 현재 닉네임이 다르면
+        if (!Objects.equals(user.getNickname(), requestDto.getNickname())) {
+            validateNotDuplicatedNickname(requestDto.getNickname());
+        }
 
         user.setNickname(requestDto.getNickname());
         user.setGender(userMapper.convertStringToGender(requestDto.getGender()));
