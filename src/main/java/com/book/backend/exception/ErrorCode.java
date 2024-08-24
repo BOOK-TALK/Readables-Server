@@ -34,6 +34,7 @@ public enum ErrorCode {
     USERNAME_DUPLICATED(HttpStatus.CONFLICT,"409", "사용자의 username이 중복됩니다."),
     NICKNAME_DUPLICATED(HttpStatus.CONFLICT,"409", "사용자의 닉네임이 중복됩니다."),
     WRONG_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "401", "JWT 토큰이 잘못되었습니다."),
+    NOT_EXIST_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "404", "해당하는 Refresh token이 없습니다."),
 
     // opentalk, message
     OPENTALK_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 오픈톡을 찾을 수 없습니다.([오픈톡 참여하기]로 생성해주세요)"),
