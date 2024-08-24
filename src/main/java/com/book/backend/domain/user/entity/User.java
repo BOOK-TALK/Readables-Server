@@ -54,7 +54,12 @@ public class User {
     private List<LibraryDto> libraries;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_books", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user dibs_books", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "isbn")
-    private List<UserBookDto> books;  // 책 찜
+    private List<UserBookDto> dibsBooks;  // 책 찜
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_read_books", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "isbn")
+    private List<UserBookDto> readBooks;  // 읽은 책
 }
