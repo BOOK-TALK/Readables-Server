@@ -99,6 +99,29 @@ public class AuthService {
 
         // Redis에서 사용자의 Refresh Token 삭제
         redisTemplate.delete(username);
+
+        SecurityContextHolder.clearContext();
+    }
+
+    @Transactional
+    public void deleteUser(String accessToken) {
+        log.trace("AuthService > deleteUser()");
+
+        String username = jwtUtil.getUsernameFromToken(accessToken);
+
+        jwtUtil.addTokenToBlacklist(accessToken);
+
+        // Redis에서 사용자의 Refresh Token 삭제
+        redisTemplate.delete(username);
+
+        // 회원 엔티티 삭제
+        User user = userService.findByUsername(username);
+        if (user != null) {
+            userRepository.delete(user);
+        } else {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
         SecurityContextHolder.clearContext();
     }
 
@@ -124,16 +147,16 @@ public class AuthService {
         return tokenDto;
     }
 
-    @Transactional
-    public void deleteAccountByUsername(String username) {
-        log.trace("AuthService > deleteAccountByLoginId()");
-
-        User user = userService.findByUsername(username);
-
-        if (user == null) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
-        userRepository.delete(user);
-    }
+//    @Transactional
+//    public void deleteAccountByUsername(String username) {
+//        log.trace("AuthService > deleteAccountByLoginId()");
+//
+//        User user = userService.findByUsername(username);
+//
+//        if (user == null) {
+//            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+//        }
+//        userRepository.delete(user);
+//    }
 
 }

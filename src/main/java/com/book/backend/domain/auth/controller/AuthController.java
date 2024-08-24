@@ -74,13 +74,8 @@ public class AuthController {
     @Operation(summary = "회원 탈퇴",
             responses = {@ApiResponse(responseCode = "204", description = "회원 탈퇴가 완료되었습니다.")})
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteAccount() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        authService.deleteAccountByUsername(username);
-
-        // TODO: 토큰 비활성화 처리 필요
+    public ResponseEntity<?> deleteAccount(@RequestParam String accessToken) {
+        authService.deleteUser(accessToken);
 
         return responseTemplate.success("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
     }
