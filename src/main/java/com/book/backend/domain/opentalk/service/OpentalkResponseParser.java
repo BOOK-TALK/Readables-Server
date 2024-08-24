@@ -13,6 +13,7 @@ public class OpentalkResponseParser {
     public void setSimpleBookInfo(OpentalkDto opentalkDto, DetailResponseDto responseDto){
         log.trace("OpentalkResponseParser > setSimpleBookInfo()");
 
+        opentalkDto.setIsbn13(responseDto.getBookInfoDto().getIsbn13());
         opentalkDto.setBookName(responseDto.getBookInfoDto().getBookname());
         opentalkDto.setBookImageURL(responseDto.getBookInfoDto().getBookImageURL());
     }

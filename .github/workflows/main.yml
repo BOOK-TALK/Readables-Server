@@ -36,6 +36,7 @@ jobs:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         ACCESS_TOKEN_EXPIRE_TIME: ${{ secrets.ACCESS_TOKEN_EXPIRE_TIME }}
         REFRESH_TOKEN_EXPIRE_TIME: ${{ secrets.REFRESH_TOKEN_EXPIRE_TIME }}
+        REDIS_HOST: ${{ secrets.REDIS_HOST }}
         
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3

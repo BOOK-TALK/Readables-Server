@@ -14,7 +14,10 @@ import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
 import io.jsonwebtoken.Claims;
+<<<<<<< HEAD
 import jakarta.servlet.http.HttpServletRequest;
+=======
+>>>>>>> main
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
