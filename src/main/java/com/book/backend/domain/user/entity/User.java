@@ -1,6 +1,5 @@
 package com.book.backend.domain.user.entity;
 
-import com.book.backend.domain.auth.entity.RefreshToken;
 import com.book.backend.domain.user.dto.LibraryDto;
 import com.book.backend.domain.userBook.dto.UserBookDto;
 import com.book.backend.domain.userOpentalk.entity.UserOpentalk;
@@ -41,9 +40,6 @@ public class User {
     private Gender gender;
 
     private LocalDate birthDate;
-
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    private RefreshToken refreshToken;
 
     @OneToMany(mappedBy = "userOpentalkId", fetch = FetchType.LAZY)
     private List<UserOpentalk> openTalkIds;  // 즐찾 오픈톡
