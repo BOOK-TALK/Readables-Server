@@ -52,6 +52,7 @@ public class AppleService {
             newUser.setPassword("unused");  // 애플 로그인 사용자는 패스워드 사용하지 않음
             newUser.setLoginId(null);  // 애플 로그인 사용자는 loginId가 null
             newUser.setNickname("");  // 빈 문자열로 설정
+            newUser.setGender(Gender.G0);
             user = newUser;
         }
 
