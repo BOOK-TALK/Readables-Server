@@ -1,11 +1,11 @@
 server:
   port: 8080
   address: 0.0.0.0
-  ssl:
-    key-store: readables.jks
-    key-store-password: ${KEY_STORE_PASSWORD}
-    key-store-type: JKS
-    key-alias: 1
+#  ssl:
+#    key-store: readables.jks
+#    key-store-password: ${KEY_STORE_PASSWORD}
+#    key-store-type: JKS
+#    key-alias: 1
 
 spring:
   application:
