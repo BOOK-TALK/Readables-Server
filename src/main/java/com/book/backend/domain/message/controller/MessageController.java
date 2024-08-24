@@ -23,10 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -55,13 +52,25 @@ public class MessageController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
                     description = MessageResponseDto.description)})
     @GetMapping("/api/message/get")
-    public ResponseEntity<?> getChat(@RequestParam String opentalkId, int pageNo, int pageSize) {
+    public ResponseEntity<?> getChat(@RequestParam Long opentalkId, int pageNo, int pageSize) {
         RequestLogger.param(new String[]{"opentalkId, pageNo, pageSize"}, opentalkId, pageNo, pageSize);
 
         Pageable pageRequest = PageRequest.of(pageNo, pageSize, Sort.by("createdAt").descending());
         Page<Message> MessagePage = messageService.getMessage(opentalkId, pageRequest);
         List<MessageResponseDto> response = messageService.pageToDto(MessagePage);
 
+        return responseTemplate.success(response, HttpStatus.OK);
+    }
+
+    // HTTP 단방향 채팅 저장
+    @Operation(summary="메세지 저장 (HTTP)", description="임시 채팅 저장 API 입니다. opentalkId, text 를 입력으로 받아 저장 결과를 반환합니다.",
+            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "text", description = "채팅 내용")},
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
+                    description = MessageResponseDto.description)})
+    @PostMapping("/api/message/save")
+    public ResponseEntity<?> httpChat(@RequestParam Long opentalkId, String text) {
+        RequestLogger.param(new String[]{"opentalkId, text"}, opentalkId, text);
+        MessageResponseDto response = messageService.saveHttpMessage(opentalkId, text);
         return responseTemplate.success(response, HttpStatus.OK);
     }
 
@@ -73,7 +82,7 @@ public class MessageController {
             requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = MessageRequestDto.class))),
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
                     description = MessageResponseDto.description)})
-    @PostMapping("")
+    @PutMapping("")
     public void chatForSwagger(MessageRequestDto messageRequestDto) {
         return;
     }

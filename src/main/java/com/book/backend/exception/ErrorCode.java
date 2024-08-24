@@ -36,8 +36,9 @@ public enum ErrorCode {
     WRONG_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "401", "JWT 토큰이 잘못되었습니다."),
 
     // opentalk, message
-    OPENTALK_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 오픈톡을 찾을 수 없습니다."),
+    OPENTALK_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 오픈톡을 찾을 수 없습니다.([오픈톡 참여하기]로 생성해주세요)"),
     MESSAGE_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "메시지 저장에 실패했습니다."),
+    USER_OPENTALK_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 오픈톡은 유저의 즐겨찾기 리스트에 없습니다."),
 
     // 외부 API 에러
     KAKAO_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "카카오 서버에 오류가 발생했습니다."),
