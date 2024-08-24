@@ -1,5 +1,6 @@
 package com.book.backend.domain.auth.controller;
 
+import com.book.backend.domain.auth.dto.JwtTokenDto;
 import com.book.backend.domain.auth.dto.LoginDto;
 import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
 import com.book.backend.domain.auth.dto.SignupDto;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name="유저 관리", description = "탈퇴 / 회원가입 / 로그인 / 카카오 로그인 / 애플 로그인")
+@Tag(name = "유저 관리", description = "탈퇴 / 회원가입 / 로그인 / 카카오 로그인 / 애플 로그인")
 public class AuthController {
 
     private final AuthService authService;
@@ -105,5 +106,18 @@ public class AuthController {
         LoginSuccessResponseDto loginSuccessResponseDto = appleService.appleLogin(idToken);
 
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "JWT 토큰 재발급", description = "Refresh Token을 parameter로 받아, 해당 사용자의 Access Token 및 Refresh Token을 재발급합니다.",
+            parameters = {
+                    @Parameter(name = "refreshToken", description = "Refresh Token 값")
+            },
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = JwtTokenDto.class)),
+                    description = JwtTokenDto.description)})
+    @PostMapping("/reissueToken")
+    public ResponseEntity<?> reissueToken(String refreshToken) {
+        JwtTokenDto jwtTokenDto = authService.reissueToken(refreshToken);
+
+        return responseTemplate.success(jwtTokenDto, HttpStatus.OK);
     }
 }

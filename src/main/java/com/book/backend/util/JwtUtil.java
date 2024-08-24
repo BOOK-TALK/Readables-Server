@@ -60,7 +60,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // 토큰 유효 여부 확인
+    // 토큰 유효 여부 확인 (by userDetails)
     public Boolean isValidToken(String token, UserDetails userDetails) {
         log.info("isValidToken token = {}", token);
         String username = getUsernameFromToken(token);

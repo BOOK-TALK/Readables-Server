@@ -13,6 +13,7 @@ import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,6 +41,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public UserDto signup(SignupDto signupDto) {
@@ -91,6 +93,28 @@ public class AuthService {
                 .accessToken(jwtTokenDto.getAccessToken())
                 .refreshToken(jwtTokenDto.getRefreshToken())
                 .build();
+    }
+
+    public JwtTokenDto reissueToken(String refreshToken) {
+        // Refresh Token 검증
+        Claims claims = jwtUtil.getAllClaims(refreshToken);
+        String username = String.valueOf(claims.get("username"));
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        String redisRefreshToken = redisTemplate.opsForValue().get(username);
+
+        if (!redisRefreshToken.equals(refreshToken)) {
+            throw new CustomException(ErrorCode.NOT_EXIST_REFRESH_TOKEN);
+        }
+
+        // 토큰 재발행
+        JwtTokenDto tokenDto = jwtUtil.generateToken(userDetails);
+        jwtUtil.storeRefreshTokenInRedis(authentication, refreshToken);
+
+        return tokenDto;
     }
 
     @Transactional
