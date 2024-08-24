@@ -14,10 +14,8 @@ import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
 import io.jsonwebtoken.Claims;
-<<<<<<< HEAD
+
 import jakarta.servlet.http.HttpServletRequest;
-=======
->>>>>>> main
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -152,17 +150,5 @@ public class AuthService {
 
         return tokenDto;
     }
-
-//    @Transactional
-//    public void deleteAccountByUsername(String username) {
-//        log.trace("AuthService > deleteAccountByLoginId()");
-//
-//        User user = userService.findByUsername(username);
-//
-//        if (user == null) {
-//            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-//        }
-//        userRepository.delete(user);
-//    }
 
 }
