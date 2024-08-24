@@ -14,6 +14,8 @@ import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
 import io.jsonwebtoken.Claims;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -90,6 +92,43 @@ public class AuthService {
                 .build();
     }
 
+    public void logout(HttpServletRequest request) {
+        log.trace("AuthService > logout()");
+
+        String accessToken = jwtUtil.getAccessTokenByHttpRequest(request);
+        String username = jwtUtil.getUsernameFromToken(accessToken);
+
+        jwtUtil.addTokenToBlacklist(accessToken);
+
+        // Redis에서 사용자의 Refresh Token 삭제
+        redisTemplate.delete(username);
+
+        SecurityContextHolder.clearContext();
+    }
+
+    @Transactional
+    public void deleteUser(HttpServletRequest request) {
+        log.trace("AuthService > deleteUser()");
+
+        String accessToken = jwtUtil.getAccessTokenByHttpRequest(request);
+        String username = jwtUtil.getUsernameFromToken(accessToken);
+
+        jwtUtil.addTokenToBlacklist(accessToken);
+
+        // Redis에서 사용자의 Refresh Token 삭제
+        redisTemplate.delete(username);
+
+        // 회원 엔티티 삭제
+        User user = userService.findByUsername(username);
+        if (user != null) {
+            userRepository.delete(user);
+        } else {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        SecurityContextHolder.clearContext();
+    }
+
     public JwtTokenDto reissueToken(String refreshToken) {
         // Refresh Token 검증
         Claims claims = jwtUtil.getAllClaims(refreshToken);
@@ -112,18 +151,4 @@ public class AuthService {
         return tokenDto;
     }
 
-    @Transactional
-    public void deleteAccountByUsername(String username) {
-        log.trace("AuthService > deleteAccountByLoginId()");
-
-        User user = userService.findByUsername(username);
-
-        if (user == null) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
-        userRepository.delete(user);
-    }
-
 }
-
-

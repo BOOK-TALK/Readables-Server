@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,25 +60,20 @@ public class AuthController {
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
     }
 
-//    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(HttpServletRequest request) {
-//        RequestLogger.param(new String[] {"Session ID"}, request.getSession().getId());
-//
-//        SecurityContextHolder.clearContext();
-//        return ResponseEntity.ok("success");
-//    }
+    @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다.",
+            responses = {@ApiResponse(responseCode = "200", description = "로그아웃이 완료되었습니다.")})
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        authService.logout(request);
 
-    @Operation(summary = "탈퇴",
+        return responseTemplate.success("로그아웃이 완료되었습니다.", HttpStatus.OK);
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴를 진행합니다.",
             responses = {@ApiResponse(responseCode = "204", description = "회원 탈퇴가 완료되었습니다.")})
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteAccount() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        authService.deleteAccountByUsername(username);
-        SecurityContextHolder.clearContext();
-
-        // TODO: 토큰 비활성화 처리 필요
+    public ResponseEntity<?> deleteAccount(HttpServletRequest request) {
+        authService.deleteUser(request);
 
         return responseTemplate.success("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
     }
@@ -89,7 +85,7 @@ public class AuthController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoginSuccessResponseDto.class)),
                     description = LoginSuccessResponseDto.description)})
     @PostMapping("/kakaoLogin")
-    public ResponseEntity<?> kakaoLogin(String idToken) {
+    public ResponseEntity<?> kakaoLogin(@RequestParam String idToken) {
         LoginSuccessResponseDto loginSuccessResponseDto = kakaoService.kakaoLogin(idToken);
 
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
@@ -102,7 +98,7 @@ public class AuthController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoginSuccessResponseDto.class)),
                     description = LoginSuccessResponseDto.description)})
     @PostMapping("/appleLogin")
-    public ResponseEntity<?> appleLogin(String idToken) {
+    public ResponseEntity<?> appleLogin(@RequestParam String idToken) {
         LoginSuccessResponseDto loginSuccessResponseDto = appleService.appleLogin(idToken);
 
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
@@ -115,7 +111,7 @@ public class AuthController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = JwtTokenDto.class)),
                     description = JwtTokenDto.description)})
     @PostMapping("/reissueToken")
-    public ResponseEntity<?> reissueToken(String refreshToken) {
+    public ResponseEntity<?> reissueToken(@RequestParam String refreshToken) {
         JwtTokenDto jwtTokenDto = authService.reissueToken(refreshToken);
 
         return responseTemplate.success(jwtTokenDto, HttpStatus.OK);

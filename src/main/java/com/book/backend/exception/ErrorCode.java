@@ -29,6 +29,7 @@ public enum ErrorCode {
     LOGIN_REQUIRED(HttpStatus.UNAUTHORIZED, "401", "로그인이 필요합니다."),
     JWT_NOT_FOUND(HttpStatus.UNAUTHORIZED, "401", "JWT 토큰이 입력되지 않았습니다."),
     JWT_EXPIRED(HttpStatus.UNAUTHORIZED, "401", "JWT 토큰이 만료되었습니다."),
+    JWT_IS_BLACKLISTED(HttpStatus.UNAUTHORIZED, "401", "더 이상 사용할 수 없는 토큰입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 사용자를 찾을 수 없습니다."),
     LOGIN_ID_DUPLICATED(HttpStatus.CONFLICT,"409", "사용자의 아이디가 중복됩니다."),
     USERNAME_DUPLICATED(HttpStatus.CONFLICT,"409", "사용자의 username이 중복됩니다."),
