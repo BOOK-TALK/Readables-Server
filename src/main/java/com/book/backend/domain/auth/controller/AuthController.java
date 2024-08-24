@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,23 +60,20 @@ public class AuthController {
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "로그아웃", description = "사용자의 Access Token을 parameter로 받아 카카오 로그인을 진행하고, 완료된 유저 정보를 반환합니다.",
-            parameters = {
-                    @Parameter(name = "accessToken", description = "Access Token 값")
-            },
+    @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다.",
             responses = {@ApiResponse(responseCode = "200", description = "로그아웃이 완료되었습니다.")})
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestParam String accessToken) {
-        authService.logout(accessToken);
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        authService.logout(request);
 
         return responseTemplate.success("로그아웃이 완료되었습니다.", HttpStatus.OK);
     }
 
-    @Operation(summary = "회원 탈퇴",
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴를 진행합니다.",
             responses = {@ApiResponse(responseCode = "204", description = "회원 탈퇴가 완료되었습니다.")})
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteAccount(@RequestParam String accessToken) {
-        authService.deleteUser(accessToken);
+    public ResponseEntity<?> deleteAccount(HttpServletRequest request) {
+        authService.deleteUser(request);
 
         return responseTemplate.success("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
     }

@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -139,4 +140,16 @@ public class JwtUtil {
         return Boolean.TRUE.equals(redisTemplate.hasKey(token));
     }
 
+    public String getAccessTokenByHttpRequest(HttpServletRequest request) {
+        String authorization = request.getHeader("Authorization");
+
+        String token = "";
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            token = authorization.substring(7);
+        } else {
+            throw new CustomException(ErrorCode.JWT_NOT_FOUND);
+        }
+
+        return token;
+    }
 }

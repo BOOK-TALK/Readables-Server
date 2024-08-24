@@ -14,6 +14,7 @@ import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -90,9 +91,10 @@ public class AuthService {
                 .build();
     }
 
-    public void logout(String accessToken) {
+    public void logout(HttpServletRequest request) {
         log.trace("AuthService > logout()");
 
+        String accessToken = jwtUtil.getAccessTokenByHttpRequest(request);
         String username = jwtUtil.getUsernameFromToken(accessToken);
 
         jwtUtil.addTokenToBlacklist(accessToken);
@@ -104,9 +106,10 @@ public class AuthService {
     }
 
     @Transactional
-    public void deleteUser(String accessToken) {
+    public void deleteUser(HttpServletRequest request) {
         log.trace("AuthService > deleteUser()");
 
+        String accessToken = jwtUtil.getAccessTokenByHttpRequest(request);
         String username = jwtUtil.getUsernameFromToken(accessToken);
 
         jwtUtil.addTokenToBlacklist(accessToken);
