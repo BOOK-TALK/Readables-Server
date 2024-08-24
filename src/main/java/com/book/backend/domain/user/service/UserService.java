@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +28,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final RequestValidate requestValidate;
-    private final AuthService authService;
 
     public User loadLoggedinUser() {
         log.trace("UserService > loadLoggedinUser()");
@@ -143,7 +143,9 @@ public class UserService {
     public void validateNotDuplicatedNickname(String nickname) {
         log.trace("UserService > validateNotDuplicatedNickname()");
 
-        userRepository.findByNickname(nickname)
-                .orElseThrow(() -> new CustomException(ErrorCode.NICKNAME_DUPLICATED));
+        Optional<User> user = userRepository.findByNickname(nickname);
+        if (user.isPresent()) {
+            throw new CustomException(ErrorCode.NICKNAME_DUPLICATED);
+        }
     }
 }
