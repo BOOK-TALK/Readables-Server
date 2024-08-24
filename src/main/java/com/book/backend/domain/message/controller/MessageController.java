@@ -1,5 +1,6 @@
 package com.book.backend.domain.message.controller;
 
+import com.book.backend.domain.message.dto.MessageImgRequsetDto;
 import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.message.entity.Message;
@@ -20,14 +21,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -46,6 +47,14 @@ public class MessageController {
         RequestLogger.param(new String[]{"messageRequestDto"}, messageRequestDto);
         MessageResponseDto response = messageService.saveMessage(messageRequestDto);
         sendingOperations.convertAndSend("/sub/message/" + messageRequestDto.getOpentalkId(), response); // 수신자들에게 전송
+    }
+
+    // 이미지 s3 에 저장 테스트
+    @PostMapping(value = "/api/message/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> saveImage(MessageImgRequsetDto dto) throws IOException {
+        messageService.saveImage(dto);
+        return responseTemplate.success("success", HttpStatus.OK);
     }
 
 

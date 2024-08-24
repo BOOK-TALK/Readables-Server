@@ -1,6 +1,9 @@
 package com.book.backend.domain.message.service;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.book.backend.domain.auth.service.CustomUserDetailsService;
+import com.book.backend.domain.message.dto.MessageImgRequsetDto;
 import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.message.entity.Message;
@@ -8,8 +11,11 @@ import com.book.backend.domain.message.mapper.MessageMapper;
 import com.book.backend.domain.message.repository.MessageRepository;
 import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
+import com.book.backend.domain.user.entity.User;
+import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
+import com.book.backend.global.s3.S3Config;
 import com.book.backend.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +27,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,6 +43,9 @@ public class MessageService {
     private final MessageMapper messageMapper;
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
+    private final UserRepository UserRepository;
+    private final UserRepository userRepository;
+    private final S3Config s3Client;
 
     @Transactional
     public MessageResponseDto saveMessage(MessageRequestDto messageRequestDto){
@@ -50,6 +62,24 @@ public class MessageService {
             throw new CustomException(ErrorCode.MESSAGE_SAVE_FAILED);
         }
         return messageMapper.convertToMessageResponseDto(message);
+    }
+
+    @Transactional
+    public void saveImage(MessageImgRequsetDto dto) throws IOException {
+        MultipartFile image = dto.getImage();
+        log.trace("MessageService > saveImage()");
+        User user = userRepository.findByLoginId("user6").orElseThrow();
+        s3Client.uploadImageToS3(image);
+
+        Opentalk opentalk = opentalkRepository.findByOpentalkId(1L).orElseThrow();
+        Message message = new Message();
+        message.createMessage(opentalk, user, "이미지", null);
+        // TODO : 이미지 메타데이터 DB에 저장
+//        try{
+//            messageRepository.save(message);
+//        } catch (Exception e){
+//            throw new CustomException(ErrorCode.MESSAGE_SAVE_FAILED);
+//        }
     }
 
 
