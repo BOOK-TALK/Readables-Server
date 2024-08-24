@@ -1,5 +1,6 @@
 package com.book.backend.domain.user.service;
 
+import com.book.backend.domain.auth.service.AuthService;
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.user.dto.LibraryDto;
 import com.book.backend.domain.user.dto.UserInfoDto;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -81,6 +83,8 @@ public class UserService {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
+        validateNotDuplicatedNickname(requestDto.getNickname());
+
         user.setNickname(requestDto.getNickname());
         user.setGender(userMapper.convertStringToGender(requestDto.getGender()));
         user.setBirthDate(requestDto.getBirthDate());
@@ -125,5 +129,23 @@ public class UserService {
         }
 
         return user.getLibraries();
+    }
+
+    public void validateNotDuplicatedUsername(String username) {
+        log.trace("UserService > validateNotDuplicatedByUsername()");
+
+        User user = findByUsername(username);
+        if (user != null) {
+            throw new CustomException(ErrorCode.USERNAME_DUPLICATED);
+        }
+    }
+
+    public void validateNotDuplicatedNickname(String nickname) {
+        log.trace("UserService > validateNotDuplicatedNickname()");
+
+        Optional<User> user = userRepository.findByNickname(nickname);
+        if (user.isPresent()) {
+            throw new CustomException(ErrorCode.NICKNAME_DUPLICATED);
+        }
     }
 }

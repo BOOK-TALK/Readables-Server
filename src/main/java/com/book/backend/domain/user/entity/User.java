@@ -32,6 +32,7 @@ public class User {
 
     private LocalDateTime regDate;
 
+    @Column(unique = true)
     private String nickname;
 
     private String password;

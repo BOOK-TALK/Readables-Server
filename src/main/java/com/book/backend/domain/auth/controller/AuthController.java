@@ -71,12 +71,14 @@ public class AuthController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String loginId = authentication.getName();
+        String username = authentication.getName();
 
-        authService.deleteAccountByLoginId(loginId);
+        authService.deleteAccountByUsername(username);
         SecurityContextHolder.clearContext();
 
-        return responseTemplate.success("회원 탈퇴가 완료되었습니다.", HttpStatus.NO_CONTENT);
+        // TODO: 토큰 비활성화 처리 필요
+
+        return responseTemplate.success("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
     }
 
     @Operation(summary = "카카오 로그인", description = "iOS SDK에서 발급된 id_token을 parameter로 받아 카카오 로그인을 진행하고, 완료된 유저 정보를 반환합니다.",
