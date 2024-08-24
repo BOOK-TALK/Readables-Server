@@ -87,23 +87,16 @@ public class AuthService {
     }
 
     @Transactional
-    public void deleteAccountByLoginId(String loginId) {
+    public void deleteAccountByUsername(String username) {
         log.trace("AuthService > deleteAccountByLoginId()");
 
-        User user = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
         userRepository.delete(user);
     }
-
-//    private void validateNotDuplicatedLoginId(String loginId) {
-//        log.trace("AuthService > validateNotDuplicatedByLoginId()");
-//
-//        Optional<User> userOptional = userRepository.findByLoginId(loginId);
-//
-//        if (userOptional.isPresent()) {
-//            throw new CustomException(ErrorCode.LOGIN_ID_DUPLICATED);
-//        }
-//    }
 
     private void validateNotDuplicatedUsername(String loginId) {
         log.trace("AuthService > validateNotDuplicatedByUsername()");

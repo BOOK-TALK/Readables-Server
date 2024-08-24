@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.LinkedHashMap;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -70,12 +67,14 @@ public class AuthController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String loginId = authentication.getName();
+        String username = authentication.getName();
 
-        authService.deleteAccountByLoginId(loginId);
+        authService.deleteAccountByUsername(username);
         SecurityContextHolder.clearContext();
 
-        return responseTemplate.success("회원 탈퇴가 완료되었습니다.", HttpStatus.NO_CONTENT);
+        // TODO: 토큰 비활성화 처리 필요
+
+        return responseTemplate.success("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
     }
 
     @Operation(summary = "카카오 로그인", description = "카카오 iOS SDK에서 발급된 id_token을 parameter로 받아 카카오 로그인을 진행하고, 완료된 유저 정보를 반환합니다.",
