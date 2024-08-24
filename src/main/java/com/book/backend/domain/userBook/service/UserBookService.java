@@ -31,10 +31,10 @@ public class UserBookService {
                 .bookname(bookname)
                 .bookImageURL(bookImgUrl)
                 .build();
-        user.getBooks().add(userBookDto);
+        user.getDibsBooks().add(userBookDto);
         userRepository.save(user);
 
-        return user.getBooks();
+        return user.getDibsBooks();
     }
 
     // 찜 해제
@@ -44,9 +44,9 @@ public class UserBookService {
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-        user.getBooks().removeIf(userBookDto -> userBookDto.getIsbn().equals(isbn));
+        user.getDibsBooks().removeIf(userBookDto -> userBookDto.getIsbn().equals(isbn));
         userRepository.save(user);
-        return user.getBooks();
+        return user.getDibsBooks();
     }
 
     // 찜 리스트 조회
@@ -56,13 +56,13 @@ public class UserBookService {
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-        return user.getBooks();
+        return user.getDibsBooks();
     }
 
     // 찜 여부 확인
     public boolean isDibs(String isbn) {
         log.trace("UserBookService > isDibs()");
         User user = userService.loadLoggedinUser();
-        return user.getBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(isbn));
+        return user.getDibsBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(isbn));
     }
 }
