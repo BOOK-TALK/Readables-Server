@@ -133,7 +133,7 @@ public class KakaoService {
         userRepository.save(user);
 
         // UserDetailsService를 사용하여 UserDetails 객체 생성
-        UserDetails userDetails = userDetailsService.loadUserByKakaoId(providerId);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(providerId);
         JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
 
         // 사용자 인증 정보 생성 및 SecurityContext에 저장
