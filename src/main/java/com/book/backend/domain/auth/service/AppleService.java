@@ -30,7 +30,6 @@ public class AppleService {
     private final CustomUserDetailsService userDetailsService;
     private final OidcProviderFactory oidcProviderFactory;
     private final JwtUtil jwtUtil;
-    private final JwtRefreshTokenService jwtRefreshTokenService;
 
     // TODO: kakaoLogin과 중복되는 코드 리팩토링 필요
     @Transactional
@@ -68,10 +67,6 @@ public class AppleService {
 
         // Redis에 RefreshToken 저장
         jwtUtil.storeRefreshTokenInRedis(authentication, jwtTokenDto.getRefreshToken());
-
-        // FIXME: 수정 필요
-        // Refresh Token 갱신
-        jwtRefreshTokenService.updateRefreshToken(jwtTokenDto, user);
 
         return LoginSuccessResponseDto.builder()
                 .userId(user.getUserId())

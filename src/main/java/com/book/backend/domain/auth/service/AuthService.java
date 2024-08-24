@@ -35,7 +35,6 @@ import java.time.LocalDateTime;
 public class AuthService {
     private final UserRepository userRepository;
     private final UserService userService;
-    private final JwtRefreshTokenService jwtRefreshTokenService;
     private final AuthMapper authMapper;
     private final UserMapper userMapper;
     private final AuthenticationManager authenticationManager;
@@ -83,10 +82,6 @@ public class AuthService {
 
         // Redis에 RefreshToken 저장
         jwtUtil.storeRefreshTokenInRedis(authentication, jwtTokenDto.getRefreshToken());
-
-        // FIXME: 수정 필요
-        // RefreshToken 갱신
-        jwtRefreshTokenService.updateRefreshToken(jwtTokenDto, user);
 
         return LoginSuccessResponseDto.builder()
                 .userId(user.getUserId())
