@@ -15,6 +15,7 @@ import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -59,9 +60,10 @@ public class AuthService {
     public LoginSuccessResponseDto login(LoginDto loginDto) {
         log.trace("AuthService > login()");
 
+        Authentication authentication;
         try {
             // 사용자 인증 시도
-            Authentication authentication = authenticationManager.authenticate(
+            authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDto.getLoginId(), loginDto.getPassword()));
 
             // 인증 성공 시 Security Context에 인증 정보 저장
@@ -77,6 +79,10 @@ public class AuthService {
         User user = userRepository.findByLoginId(loginDto.getLoginId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        // Redis에 RefreshToken 저장
+        jwtUtil.storeRefreshTokenInRedis(authentication, jwtTokenDto.getRefreshToken());
+
+        // FIXME: 수정 필요
         // RefreshToken 갱신
         jwtRefreshTokenService.updateRefreshToken(jwtTokenDto, user);
 
