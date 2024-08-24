@@ -21,7 +21,7 @@ import com.book.backend.global.ResponseTemplate;
 @RequestMapping("/api/book/dibs")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name="책 찜", description = "찜 추가 / 찜 해제")
+@Tag(name="책 찜", description = "찜 해제 / 찜 추가")
 public class UserBookController {
     private final RequestValidate requestValidate;
     private final UserBookService userBookService;

@@ -18,11 +18,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    // TODO: 리팩토링 필요
+
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+        // username이 아닌 loginId로 간주
         log.trace("CustomUserDetailsService > loadUserByUsername()");
 
-        User user = userRepository.findByLoginId(username)
+        User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getLoginId())
@@ -38,7 +41,19 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getKakaoId())
-                .password(user.getPassword())
+                .password(user.getPassword())  // FIXME : 제거 가능한지 확인
+                .authorities("ROLE_USER")
+                .build();
+    }
+
+    public UserDetails loadUserByAppleId(String appleId) throws UsernameNotFoundException {
+        log.trace("CustomUserDetailsService > loadUserByAppleId()");
+
+        User user = userRepository.findByAppleId(appleId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getAppleId())
+                .password(user.getPassword())  // FIXME : 제거 가능한지 확인
                 .authorities("ROLE_USER")
                 .build();
     }

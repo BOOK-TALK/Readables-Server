@@ -8,6 +8,7 @@ import com.book.backend.domain.detail.service.DetailService;
 import com.book.backend.domain.message.entity.Message;
 import com.book.backend.domain.message.mapper.MessageMapper;
 import com.book.backend.domain.message.repository.MessageRepository;
+import com.book.backend.domain.message.service.MessageService;
 import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
 import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
@@ -46,7 +47,7 @@ public class OpentalkService {
     private final DetailService detailService;
     private final UserService userService;
     private final OpentalkResponseParser opentalkResponseParser;
-    private final MessageMapper messageMapper;
+    private final MessageService messageService;
 
     /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
     public List<Long> hotOpentalk() {
@@ -97,35 +98,6 @@ public class OpentalkService {
         return opentalkDtoList;
     }
 
-    public Page<Message> getOpentalkMessage(String opentalkId, Pageable pageRequest){
-        log.trace("OpentalkService > getOpentalkMessage()");
-        // 오픈톡 ID로 opentlak 객체 찾기
-        Opentalk opentalk = opentalkRepository.findByOpentalkId(Long.parseLong(opentalkId)).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
-        return messageRepository.findAllByOpentalk(opentalk, pageRequest);
-    }
-
-    public List<MessageResponseDto> pageToDto(Page<Message> page){
-        log.trace("OpentalkService > pageToDto()");
-        List<Message> messages = page.getContent();
-        List<MessageResponseDto> messageList = new LinkedList<>();
-
-        for(Message message : messages){
-            messageList.add(messageMapper.convertToMessageResponseDto(message));
-        }
-        return messageList;
-    }
-
-    // message 저장
-    public MessageResponseDto saveMessage(MessageRequestDto messageRequestDto){
-        log.trace("OpentalkService > saveMessage()");
-        Message message = messageMapper.convertToMessage(messageRequestDto);
-        try{
-            messageRepository.save(message);
-        } catch (Exception e){
-            throw new CustomException(ErrorCode.MESSAGE_SAVE_FAILED);
-        }
-        return messageMapper.convertToMessageResponseDto(message);
-    }
 
     // 오픈톡 참여하기
     @Transactional
@@ -137,8 +109,8 @@ public class OpentalkService {
             return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(null).build();
         }
         Pageable pageRequest = PageRequest.of(0, pageSize, Sort.by("createdAt").descending());
-        Page<Message> messagePage = getOpentalkMessage(opentalkId.toString(), pageRequest);
-        List<MessageResponseDto> response = pageToDto(messagePage);
+        Page<Message> messagePage = messageService.getMessage(opentalkId.toString(), pageRequest);
+        List<MessageResponseDto> response = messageService.pageToDto(messagePage);
         return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(response).build();
     }
 

@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/book")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name="메인", description = "책 추천, 대출 급상승, 지난달 키워드, 조건형 인기 대출 도서")
+@Tag(name="메인", description = "책 추천 / 지난달 키워드 / 대출 급상승 / 조건형 인기 대출 도서")
 public class BookController {
     private final BookService bookService;
     private final ResponseTemplate responseTemplate;

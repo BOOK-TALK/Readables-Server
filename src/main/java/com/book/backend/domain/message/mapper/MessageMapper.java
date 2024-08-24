@@ -13,6 +13,7 @@ import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -24,20 +25,24 @@ public class MessageMapper {
     private final UserRepository userRepository;
     private final OpentalkRepository opentalkRepository;
 
-    public Message convertToMessage(MessageRequestDto messageRequestDto) {
-        Message message = mapper.map(messageRequestDto, Message.class);
+    @Transactional
+    public Message convertToMessage(MessageRequestDto dto) {
         User user = userService.loadLoggedinUser();
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-        Opentalk opentalk = opentalkRepository.findById(messageRequestDto.getOpentalkId()).orElseThrow();
+        String content = dto.getContent();
+        Opentalk opentalk = opentalkRepository.findById(dto.getOpentalkId()).orElseThrow();
 
-        message.setUser(user);
+        Message message = new Message();
+        message.setUser(user); // 보낸 사람
         message.setOpentalk(opentalk);
+        message.setContent(content);
         message.setCreatedAt(new Date());
 
         return message;
     }
+
     public MessageResponseDto convertToMessageResponseDto(Message message) {
         User user = userRepository.findByLoginId(message.getUser().getLoginId()).orElseThrow();
         return MessageResponseDto.builder()
