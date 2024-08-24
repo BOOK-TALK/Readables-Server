@@ -142,7 +142,7 @@ public class OpentalkService {
             return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(null).build();
         }
         Pageable pageRequest = PageRequest.of(0, pageSize, Sort.by("createdAt").descending());
-        Page<Message> messagePage = messageService.getMessage(opentalkId.toString(), pageRequest);
+        Page<Message> messagePage = messageService.getMessage(opentalkId, pageRequest);
         List<MessageResponseDto> response = messageService.pageToDto(messagePage);
         return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(response).build();
     }
