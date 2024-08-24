@@ -29,6 +29,11 @@ spring:
       mode: always
       data-locations: classpath:sql/data.sql, classpath:sql/dummy.sql
 
+  data:
+    redis:
+      host: redis
+      port: 6379
+
 spring-doc:
   swagger-ui:
     tags-sorter: alpha # tag 순서 - 알파벳

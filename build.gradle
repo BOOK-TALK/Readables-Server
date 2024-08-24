@@ -27,9 +27,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'javax.xml.bind:jaxb-api:2.3.0'
 
-//	// flyway
-//	implementation 'org.flywaydb:flyway-core'
-//	implementation 'org.flywaydb:flyway-mysql'
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	// swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
