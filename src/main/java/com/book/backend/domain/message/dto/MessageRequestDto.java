@@ -1,11 +1,10 @@
 package com.book.backend.domain.message.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
-@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class MessageRequestDto {
 //    private String type; //text, img
     private String jwtToken;

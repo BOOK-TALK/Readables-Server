@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/opentalk")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name="오픈톡", description = "메인 / 오픈톡 참여하기")
+@Tag(name="오픈톡", description = "즐찾 오픈톡 삭제 / 메인 / 오픈톡 참여하기 / 즐찾 오픈톡 추가")
 public class OpentalkController {
     private final OpentalkService opentalkService;
     private final ResponseTemplate responseTemplate;
@@ -61,6 +61,26 @@ public class OpentalkController {
         RequestLogger.param(new String[]{"isbn"}, isbn);
         OpentalkJoinResponseDto response = opentalkService.joinOpentalk(isbn, pageSize);
 
+        return responseTemplate.success(response, HttpStatus.OK);
+    }
+
+    // 즐겨찾기 추가
+    @Operation(summary="즐찾 오픈톡 추가", description="opentalkId 를 입력으로 받아, 사용자의 최종 즐찾 opentalkId List 반환",
+            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID")})
+    @PostMapping("/favorite")
+    public ResponseEntity<?> addFavoriteOpentalk(@RequestParam Long opentalkId) {
+        RequestLogger.param(new String[]{"opentalkId"}, opentalkId);
+        List<Long> response = opentalkService.addFavoriteOpentalk(opentalkId);
+        return responseTemplate.success(response, HttpStatus.OK);
+    }
+
+    // 즐겨찾기 삭제
+    @Operation(summary="즐찾 오픈톡 삭제", description="opentalkId 를 입력으로 받아, 사용자의 최종 즐찾 opentalkId List 반환",
+            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID")})
+    @DeleteMapping("/favorite")
+    public ResponseEntity<?> deleteFavoriteOpentalk(@RequestParam Long opentalkId) {
+        RequestLogger.param(new String[]{"opentalkId"}, opentalkId);
+        List<Long> response = opentalkService.deleteFavoriteOpentalk(opentalkId);
         return responseTemplate.success(response, HttpStatus.OK);
     }
 }

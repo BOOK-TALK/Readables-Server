@@ -29,12 +29,17 @@ CREATE TABLE IF NOT EXISTS user
     nickname   varchar(255) null,
     password   varchar(255) null,
     reg_date   datetime(6)  null,
+    email      varchar(255) null,
+    phone      varchar(255) null,
+    apple_id   varchar(255) null,
     constraint UK792t1v1e9f43yusiryq37re13
         unique (kakao_id),
+    constraint UKmnjg735lsf6wola6yyxxfj08l
+        unique (apple_id),
     constraint UKns0jdvuknugj5tmxq82un8q1x
         unique (login_id),
     check (`gender` between 0 and 2)
-)engine=InnoDB DEFAULT CHARSET=utf8;
+);
 CREATE TABLE IF NOT EXISTS user_opentalk
 (
     user_opentalk_id bigint auto_increment

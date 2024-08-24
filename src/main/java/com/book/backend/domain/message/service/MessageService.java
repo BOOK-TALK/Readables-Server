@@ -35,6 +35,23 @@ public class MessageService {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
+    public MessageResponseDto saveHttpMessage(Long opentalkId, String text){
+        log.trace("MessageService > saveHttpMessage()");
+        MessageRequestDto messageRequestDto = MessageRequestDto.builder()
+                .jwtToken(null)
+                .opentalkId(opentalkId)
+                .content(text)
+                .build();
+        Message message = messageMapper.convertToMessage(messageRequestDto);
+        // message DB에 저장
+        try{
+            messageRepository.save(message);
+        } catch (Exception e){
+            throw new CustomException(ErrorCode.MESSAGE_SAVE_FAILED);
+        }
+        return messageMapper.convertToMessageResponseDto(message);
+    }
+
     @Transactional
     public MessageResponseDto saveMessage(MessageRequestDto messageRequestDto){
         log.trace("MessageService > saveMessage()");
@@ -75,10 +92,10 @@ public class MessageService {
         }
     }
 
-    public Page<Message> getMessage(String opentalkId, Pageable pageRequest){
+    public Page<Message> getMessage(Long opentalkId, Pageable pageRequest){
         log.trace("MessageService > getOpentalkMessage()");
         // 오픈톡 ID로 opentlak 객체 찾기
-        Opentalk opentalk = opentalkRepository.findByOpentalkId(Long.parseLong(opentalkId)).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
+        Opentalk opentalk = opentalkRepository.findByOpentalkId(opentalkId).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
         return messageRepository.findAllByOpentalk(opentalk, pageRequest);
     }
 
