@@ -115,4 +115,24 @@ public class JwtUtil {
         );
     }
 
+    // 블랙리스트에 토큰 저장
+    public void addTokenToBlacklist(String token) {
+        // 토큰의 만료 시간 계산
+        long expirationTime = getExpirationDate(token).getTime();
+        long currentTime = System.currentTimeMillis();
+        long ttl = expirationTime - currentTime;
+
+        log.trace(String.valueOf(ttl));
+
+        if (ttl > 0) {
+            // 블랙리스트에 저장
+            redisTemplate.opsForValue().set(
+                    token,
+                    "blacklisted",
+                    ttl,
+                    TimeUnit.MILLISECONDS
+            );
+        }
+    }
+
 }
