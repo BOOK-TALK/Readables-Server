@@ -61,12 +61,16 @@ public class AppleService {
         UserDetails userDetails = userDetailsService.loadUserByAppleId(providerId);
         JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
 
-        // Refresh Token 갱신
-        jwtRefreshTokenService.updateRefreshToken(jwtTokenDto, user);
-
         // 사용자 인증 정보 생성 및 SecurityContext에 저장
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Redis에 RefreshToken 저장
+        jwtUtil.storeRefreshTokenInRedis(authentication, jwtTokenDto.getRefreshToken());
+
+        // FIXME: 수정 필요
+        // Refresh Token 갱신
+        jwtRefreshTokenService.updateRefreshToken(jwtTokenDto, user);
 
         return LoginSuccessResponseDto.builder()
                 .userId(user.getUserId())

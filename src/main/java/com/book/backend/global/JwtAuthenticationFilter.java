@@ -1,5 +1,6 @@
-package com.book.backend.domain.auth.service;
+package com.book.backend.global;
 
+import com.book.backend.domain.auth.service.CustomUserDetailsService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;

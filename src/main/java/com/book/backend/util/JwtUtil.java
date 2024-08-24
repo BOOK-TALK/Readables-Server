@@ -10,11 +10,14 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.PublicKey;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -26,6 +29,7 @@ public class JwtUtil {
     private Long accessTokenExpireTime;
     @Value("${jwt.refreshTokenExpireTime}")
     private Long refreshTokenExpireTime;
+    private final RedisTemplate<String, String> redisTemplate;
 
     // 토큰 생성
     public JwtTokenDto generateToken(UserDetails userDetails) {
@@ -99,6 +103,16 @@ public class JwtUtil {
     // 토큰이 만료되었는지
     private boolean isTokenExpired(String token) {
         return getExpirationDate(token).before(new Date());
+    }
+
+    // Redis에 RefreshToken 저장
+    public void storeRefreshTokenInRedis(Authentication authentication, String refreshToken) {
+        redisTemplate.opsForValue().set(
+                authentication.getName(),
+                refreshToken,
+                refreshTokenExpireTime,
+                TimeUnit.MILLISECONDS
+        );
     }
 
 }
