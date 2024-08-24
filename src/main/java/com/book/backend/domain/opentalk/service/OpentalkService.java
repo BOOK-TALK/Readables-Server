@@ -2,18 +2,15 @@ package com.book.backend.domain.opentalk.service;
 
 import com.book.backend.domain.book.entity.Book;
 import com.book.backend.domain.book.repository.BookRepository;
-import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.detail.service.DetailService;
 import com.book.backend.domain.message.entity.Message;
-import com.book.backend.domain.message.mapper.MessageMapper;
 import com.book.backend.domain.message.repository.MessageRepository;
 import com.book.backend.domain.message.service.MessageService;
 import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
 import com.book.backend.domain.openapi.dto.response.DetailResponseDto;
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
 import com.book.backend.domain.opentalk.dto.OpentalkJoinResponseDto;
-import com.book.backend.domain.opentalk.dto.OpentalkResponseDto;
 import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
 import com.book.backend.domain.user.entity.User;
@@ -64,6 +61,42 @@ public class OpentalkService {
                 .limit(5)
                 .map(Map.Entry::getKey)
                 .toList();
+    }
+
+    // 오픈톡 즐찾 추가
+    @Transactional
+    public List<Long> addFavoriteOpentalk(Long opentalkId) {
+        log.trace("OpentalkService > addFavoriteOpentalk()");
+        User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+        Opentalk opentalk = opentalkRepository.findById(opentalkId).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
+
+        UserOpentalk userOpentalk = new UserOpentalk();
+        userOpentalk.setOpentalkId(opentalk);
+        userOpentalk.setUserId(user);
+
+        userOpentalkRepository.save(userOpentalk);
+        return favoriteOpentalk();
+    }
+
+    // 오픈톡 즐찾 삭제
+    @Transactional
+    public List<Long> deleteFavoriteOpentalk(Long opentalkId) {
+        log.trace("OpentalkService > deleteFavoriteOpentalk()");
+        User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+        Opentalk opentalk = opentalkRepository.findById(opentalkId).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
+
+        UserOpentalk userOpentalk = userOpentalkRepository.findByUserIdAndOpentalkId(user, opentalk);
+        if(userOpentalk == null) {
+            throw new CustomException(ErrorCode.USER_OPENTALK_NOT_FOUND);
+        }
+        userOpentalkRepository.delete(userOpentalk);
+        return favoriteOpentalk();
     }
 
     /* 해당 user의 즐찾 opentalk list 반환*/
