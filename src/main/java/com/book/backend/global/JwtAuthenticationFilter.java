@@ -50,6 +50,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (authorization != null && authorization.startsWith("Bearer ")) {  // Bearer 토큰 파싱
                 token = authorization.substring(7);  // jwt token 파싱
+
+                // 블랙리스트에 있는 토큰인지 검증
+                if (jwtUtil.isBlacklisted(token)) {
+                    request.setAttribute("JWTException", new CustomException(ErrorCode.JWT_IS_BLACKLISTED));
+                    filterChain.doFilter(wrappedRequest, response);
+                    return;
+                }
+
                 username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
 
                 // 현재 SecurityContextHolder에 인증객체가 있는지 확인
