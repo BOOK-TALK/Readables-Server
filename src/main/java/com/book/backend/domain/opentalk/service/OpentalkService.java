@@ -139,12 +139,17 @@ public class OpentalkService {
         Long opentalkId = checkExistOpentalk(isbn);
         if(opentalkId == null){
             opentalkId = createOpentalkIdByIsbn(isbn);
-            return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(null).build();
+            return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(null).isFavorite(false).build();
         }
         Pageable pageRequest = PageRequest.of(0, pageSize, Sort.by("createdAt").descending());
         Page<Message> messagePage = messageService.getMessage(opentalkId, pageRequest);
         List<MessageResponseDto> response = messageService.pageToDto(messagePage);
-        return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(response).build();
+
+        // 즐찾 여부
+        UserOpentalk userOpentalk= userOpentalkRepository.findByUserIdAndOpentalkId(userService.loadLoggedinUser(), opentalkRepository.findById(opentalkId).get());
+        boolean isFavorite = userOpentalk != null;
+
+        return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(response).isFavorite(isFavorite).build();
     }
 
     @Transactional

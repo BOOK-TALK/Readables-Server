@@ -52,10 +52,10 @@ public class OpentalkController {
 
 
     // [오픈톡 참여하기]
-    @Operation(summary="오픈톡 참여하기", description="isbn, pageSize를 입력으로 받아, 오픈톡 ID, 채팅 내역 반환",
+    @Operation(summary="오픈톡 참여하기", description="isbn, pageSize를 입력으로 받아 오픈톡 ID, 즐찾여부, 채팅 내역 반환",
             parameters = {@Parameter(name = "isbn", description = "책 ISBN"), @Parameter(name = "pageSize", description = "페이지 당 개수")},
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkResponseDto.class)),
-                    description = OpentalkResponseDto.description)})
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkJoinResponseDto.class)),
+                    description = OpentalkJoinResponseDto.description)})
     @PostMapping("/join")
     public ResponseEntity<?> joinOpentalk(@RequestParam String isbn, int pageSize) {
         RequestLogger.param(new String[]{"isbn"}, isbn);
