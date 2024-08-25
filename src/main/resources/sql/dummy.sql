@@ -1,76 +1,95 @@
- USE booktalk;
+USE booktalk;
+CREATE TABLE IF NOT EXISTS user
+(
+    birth_date date         null,
+    gender     tinyint      null,
+    reg_date   datetime(6)  null,
+    user_id    bigint auto_increment
+        primary key,
+    apple_id   varchar(255) null,
+    kakao_id   varchar(255) null,
+    nickname   varchar(255) null,
+    constraint UK792t1v1e9f43yusiryq37re13
+        unique (kakao_id),
+    constraint UKah2bnumq4fnjg70axxky0j5xs
+        unique (nickname),
+    constraint UKmnjg735lsf6wola6yyxxfj08l
+        unique (apple_id),
+    check (`gender` between 0 and 2)
+);
 CREATE TABLE IF NOT EXISTS book
 (
-    book_id  bigint auto_increment
-        primary key,
-    isbn     varchar(255) null,
-    genre_id bigint       null,
-    constraint FK2wrw92qged8jq0ucjtt972pbc
-        foreign key (genre_id) references genre (genre_id)
+    book_id bigint auto_increment
+    primary key,
+    isbn    varchar(255) null
 );
 CREATE TABLE IF NOT EXISTS opentalk
 (
+    book_id     bigint not null,
     opentalk_id bigint auto_increment
         primary key,
-    book_id     bigint not null,
     constraint UK2xjdoiqspesxa8oenlmyt52us
         unique (book_id),
     constraint FK3v2bbp8k2bt96wybtbk6pv9yp
         foreign key (book_id) references book (book_id)
 );
-CREATE TABLE IF NOT EXISTS user
- (
-     user_id           bigint auto_increment
-     primary key,
-     birth_date        date         null,
-     gender            tinyint      null,
-     kakao_id          varchar(255) null,
-     login_id          varchar(255) null,
-     nickname          varchar(255) null,
-     password          varchar(255) null,
-     reg_date          datetime(6)  null,
-     email             varchar(255) null,
-     phone             varchar(255) null,
-     apple_id          varchar(255) null,
-     profile_image     varchar(255) null,
-     profile_image_url varchar(255) null,
-     constraint UK792t1v1e9f43yusiryq37re13
-     unique (kakao_id),
-     constraint UKmnjg735lsf6wola6yyxxfj08l
-     unique (apple_id),
-     constraint UKns0jdvuknugj5tmxq82un8q1x
-     unique (login_id),
-     check (`gender` between 0 and 2)
- );
-CREATE TABLE IF NOT EXISTS user_opentalk
-(
-    user_opentalk_id bigint auto_increment
-        primary key,
-    opentalk_id      bigint null,
-    user_id          bigint null,
-    constraint FK1klbjl6843fae6vli3yu88s0a
-        foreign key (opentalk_id) references opentalk (opentalk_id),
-    constraint FKhri45w7pin1p8n1drbpiy0bgh
-        foreign key (user_id) references user (user_id)
-);
 CREATE TABLE IF NOT EXISTS message
 (
+    created_at  datetime(6)  null,
     message_id  bigint auto_increment
         primary key,
-    content     varchar(255) null,
-    created_at  datetime(6)  null,
     opentalk_id bigint       null,
     user_id     bigint       null,
-    image_url   varchar(255) null,
+    content     varchar(255) null,
     constraint FK1iwnhnomrpim1phe1x0qlnva7
         foreign key (opentalk_id) references opentalk (opentalk_id),
     constraint FK2op594yomeg261726h4dj75jq
         foreign key (user_id) references user (user_id)
 );
+create index idx_message_createdAt
+    on message (created_at);
+CREATE TABLE IF NOT EXISTS `user dibs_books`
+(
+    user_id       bigint       not null,
+    book_imageurl varchar(255) null,
+    bookname      varchar(255) null,
+    isbn          varchar(255) null,
+    constraint FKjhhvi9pyxkt4w4ysu9o0b858x
+        foreign key (user_id) references user (user_id)
+);
+
+CREATE TABLE IF NOT EXISTS user_libraries
+(
+    user_id bigint       not null,
+    code    varchar(255) null,
+    name    varchar(255) null,
+    constraint FKcgk06cv5efj863hr3ffsa45r4
+        foreign key (user_id) references user (user_id)
+);
+CREATE TABLE IF NOT EXISTS user_opentalk
+(
+    opentalk_id      bigint null,
+    user_id          bigint null,
+    user_opentalk_id bigint auto_increment
+        primary key,
+    constraint FK1klbjl6843fae6vli3yu88s0a
+        foreign key (opentalk_id) references opentalk (opentalk_id),
+    constraint FKhri45w7pin1p8n1drbpiy0bgh
+        foreign key (user_id) references user (user_id)
+);
+CREATE TABLE IF NOT EXISTS user_read_books
+(
+    user_id       bigint       not null,
+    book_imageurl varchar(255) null,
+    bookname      varchar(255) null,
+    isbn          varchar(255) null,
+    constraint FKks39a5vkr0flfyih9t7qpl88n
+        foreign key (user_id) references user (user_id)
+);
 
 
 
- INSERT IGNORE INTO book (book_id, isbn)
+    INSERT IGNORE INTO book (book_id, isbn)
  VALUES (1, '9788956055466'),
         (2, '9788994120966'),
         (3, '9788936433673'),
