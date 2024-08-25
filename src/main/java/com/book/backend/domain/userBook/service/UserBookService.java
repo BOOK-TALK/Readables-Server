@@ -105,4 +105,11 @@ public class UserBookService {
         User user = userService.loadLoggedinUser();
         return user.getDibsBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(isbn));
     }
+
+    // 읽은 책 여부 확인
+    public boolean isFavorite(String isbn) {
+        log.trace("UserBookService > isFavorite()");
+        User user = userService.loadLoggedinUser();
+        return user.getReadBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(isbn));
+    }
 }
