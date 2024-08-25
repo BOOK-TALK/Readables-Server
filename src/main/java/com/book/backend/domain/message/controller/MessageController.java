@@ -49,12 +49,14 @@ public class MessageController {
     }
 
     // 이미지 s3 에 저장 테스트
-    @PostMapping(value = "/api/message/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> saveImage(MessageImgRequsetDto dto) throws IOException {
-        messageService.saveImage(dto);
-        return responseTemplate.success("success", HttpStatus.OK);
-    }
+//    @PostMapping(value = "/api/message/image", consumes = "multipart/form-data")
+//    public ResponseEntity<?> saveImage(@RequestParam(value = "image") MultipartFile image) throws IOException {
+////        messageService.saveImage(dto);
+//        byte[] imageByte = image.getBytes();
+//        String originalFilename = image.getOriginalFilename();
+//
+//        return responseTemplate.success("success", HttpStatus.OK);
+//    }
 
 
     // 채팅 불러오기

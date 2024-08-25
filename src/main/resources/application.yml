@@ -5,6 +5,11 @@ server:
 spring:
   application:
     name: backend
+  servlet:
+    multipart:
+      enabled: true # multipart 활성화
+      max-file-size: 10MB # 각 파일 최대 크기
+      max-request-size: 50MB # 한 요청의 모든 데이터의 총 크기 제한
 
   datasource:
     url: ${DB_URL}
