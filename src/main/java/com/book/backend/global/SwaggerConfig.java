@@ -27,10 +27,11 @@ public class SwaggerConfig {
                 .addList("Bearer Token");
 
         Server server = new Server();
-        server.setUrl("localhost:8080");
+        server.setUrl("https://www.readables.site");
 
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
-                .addSecurityItem(securityRequirement);
+                .addSecurityItem(securityRequirement)
+                .addServersItem(server);
     }
 }
