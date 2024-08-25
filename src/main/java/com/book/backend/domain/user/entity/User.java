@@ -23,9 +23,6 @@ public class User {
     private Long userId;
 
     @Column(unique = true)
-    private String loginId;
-
-    @Column(unique = true)
     private String kakaoId;
 
     @Column(unique = true)
@@ -35,8 +32,6 @@ public class User {
 
     @Column(unique = true)
     private String nickname;
-
-    private String password;
 
     @Enumerated(EnumType.ORDINAL)
     private Gender gender;

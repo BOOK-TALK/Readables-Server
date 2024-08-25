@@ -1,13 +1,7 @@
 package com.book.backend.domain.auth.service;
 
 import com.book.backend.domain.auth.dto.JwtTokenDto;
-import com.book.backend.domain.auth.dto.LoginDto;
-import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
-import com.book.backend.domain.auth.dto.SignupDto;
-import com.book.backend.domain.auth.mapper.AuthMapper;
-import com.book.backend.domain.user.dto.UserDto;
 import com.book.backend.domain.user.entity.User;
-import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
@@ -19,16 +13,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -37,60 +27,9 @@ import java.time.LocalDateTime;
 public class AuthService {
     private final UserRepository userRepository;
     private final UserService userService;
-    private final AuthMapper authMapper;
-    private final UserMapper userMapper;
-    private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, String> redisTemplate;
-
-    @Transactional
-    public UserDto signup(SignupDto signupDto) {
-        log.trace("AuthService > signup()");
-
-        userService.validateNotDuplicatedUsername(signupDto.getLoginId());
-        userService.validateNotDuplicatedNickname(signupDto.getNickname());
-
-        User user = authMapper.convertToUser(signupDto);
-        user.setRegDate(LocalDateTime.now());
-
-        User savedUser = userRepository.save(user);
-
-        return userMapper.convertToUserDto(savedUser);
-    }
-
-    @Transactional
-    public LoginSuccessResponseDto login(LoginDto loginDto) {
-        log.trace("AuthService > login()");
-
-        Authentication authentication;
-        try {
-            // 사용자 인증 시도
-            authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginDto.getLoginId(), loginDto.getPassword()));
-
-            // 인증 성공 시 Security Context에 인증 정보 저장
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (AuthenticationException e) {
-            throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
-        }
-
-        // 인증 성공 후 유저 정보 로드
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getLoginId());
-        JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
-
-        User user = userRepository.findByLoginId(loginDto.getLoginId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        // Redis에 RefreshToken 저장
-        jwtUtil.storeRefreshTokenInRedis(authentication, jwtTokenDto.getRefreshToken());
-
-        return LoginSuccessResponseDto.builder()
-                .userId(user.getUserId())
-                .accessToken(jwtTokenDto.getAccessToken())
-                .refreshToken(jwtTokenDto.getRefreshToken())
-                .build();
-    }
 
     public void logout(HttpServletRequest request) {
         log.trace("AuthService > logout()");

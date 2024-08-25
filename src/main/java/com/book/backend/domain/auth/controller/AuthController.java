@@ -1,15 +1,11 @@
 package com.book.backend.domain.auth.controller;
 
 import com.book.backend.domain.auth.dto.JwtTokenDto;
-import com.book.backend.domain.auth.dto.LoginDto;
 import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
-import com.book.backend.domain.auth.dto.SignupDto;
 import com.book.backend.domain.auth.service.AppleService;
 import com.book.backend.domain.auth.service.AuthService;
 import com.book.backend.domain.auth.service.KakaoService;
-import com.book.backend.domain.user.dto.UserDto;
 import com.book.backend.global.ResponseTemplate;
-import com.book.backend.global.log.RequestLogger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,13 +13,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,28 +30,6 @@ public class AuthController {
     private final KakaoService kakaoService;
     private final AppleService appleService;
     private final ResponseTemplate responseTemplate;
-
-    @Operation(summary = "회원가입", description = "기본 회원가입을 진행합니다.",
-            responses = {@ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserDto.class)),
-                    description = UserDto.description)})
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupDto signupDto) {
-        RequestLogger.body(signupDto);
-
-        UserDto userDto = authService.signup(signupDto);
-        return responseTemplate.success(userDto, HttpStatus.CREATED);
-    }
-
-    @Operation(summary = "로그인", description = "기본 로그인을 진행합니다.",
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoginSuccessResponseDto.class)),
-                    description = LoginSuccessResponseDto.description)})
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
-        RequestLogger.body(loginDto);
-
-        LoginSuccessResponseDto loginSuccessResponseDto = authService.login(loginDto);
-        return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
-    }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다.",
             responses = {@ApiResponse(responseCode = "200", description = "로그아웃이 완료되었습니다.")})

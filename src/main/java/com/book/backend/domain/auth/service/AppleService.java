@@ -48,8 +48,6 @@ public class AppleService {
             User newUser = new User();
             newUser.setAppleId(providerId);
             newUser.setRegDate(LocalDateTime.now());
-            newUser.setPassword("unused");  // 애플 로그인 사용자는 패스워드 사용하지 않음
-            newUser.setLoginId(null);  // 애플 로그인 사용자는 loginId가 null
             newUser.setNickname("");  // 빈 문자열로 설정
             newUser.setGender(Gender.G0);
             user = newUser;
@@ -62,7 +60,7 @@ public class AppleService {
         JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
 
         // 사용자 인증 정보 생성 및 SecurityContext에 저장
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Redis에 RefreshToken 저장

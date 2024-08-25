@@ -20,17 +20,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // username이 아닌 loginId로 간주
         log.trace("CustomUserDetailsService > loadUserByUsername()");
 
-        User user = userRepository.findByLoginId(username)
-                .orElseGet(() -> userRepository.findByKakaoId(username)
-                        .orElseGet(() -> userRepository.findByAppleId(username)
-                                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))));
+        userRepository.findByKakaoId(username)
+                .orElseGet(() -> userRepository.findByAppleId(username)
+                        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(username)
-                .password(user.getPassword())
+                .password("unused")
                 .authorities("ROLE_USER")
                 .build();
     }
