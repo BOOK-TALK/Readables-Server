@@ -148,6 +148,7 @@ public class OpentalkService {
         // 즐찾 여부
         User user = userService.loadLoggedinUser();
         boolean isFavorite = userOpentalkRepository.findByUserAndOpentalk(user, opentalk) != null;
+        log.debug("즐찾여부 문제?", isFavorite);
 
         return OpentalkJoinResponseDto.builder()
                 .opentalkId(opentalk.getOpentalkId())

@@ -11,6 +11,7 @@ import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class MessageMapper {
     private final ModelMapper mapper;
     private final UserService userService;
@@ -27,6 +29,7 @@ public class MessageMapper {
 
     @Transactional
     public Message convertToMessage(MessageRequestDto dto) {
+        log.trace("MessageMapper > convertToMessage()");
         User user = userService.loadLoggedinUser();
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -44,6 +47,7 @@ public class MessageMapper {
     }
 
     public MessageResponseDto convertToMessageResponseDto(Message message) {
+        log.trace("MessageMapper > convertToMessageResponseDto()");
         User user = userRepository.findByLoginId(message.getUser().getLoginId()).orElseThrow();
         return MessageResponseDto.builder()
                 .nickname(user.getNickname())
