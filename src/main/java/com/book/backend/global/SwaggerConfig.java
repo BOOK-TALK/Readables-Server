@@ -29,13 +29,12 @@ public class SwaggerConfig {
         SecurityRequirement securityRequirement = new SecurityRequirement()
                 .addList("Bearer Token");
 
-        Server server = new Server();
         if(isLocal){
-            server.setUrl("localhost:8080");
             return new OpenAPI()
                     .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
                     .addSecurityItem(securityRequirement);
         }
+        Server server = new Server();
         server.setUrl("https://www.readables.site");
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
