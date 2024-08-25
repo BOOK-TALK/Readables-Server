@@ -46,9 +46,11 @@ public class DetailController {
 
         DetailRequestDto requestDto = DetailRequestDto.builder().isbn13(isbn).build();
         DetailResponseDto response = detailService.detail(requestDto);
-
         response.setLoanAvailableList(detailService.getLoanAvailable(isbn));
+
+        // 찜 여부, 읽은 책 여부
         response.setDibs(userBookService.isDibs(isbn));
+        response.setFavorite(userBookService.isFavorite(isbn));
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
