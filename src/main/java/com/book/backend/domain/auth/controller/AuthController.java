@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "유저 관리", description = "회원 탈퇴 / 회원가입 / JWT 토큰 재발급 / 로그아웃 / 로그인 / 카카오 로그인 / 애플 로그인")
+@Tag(name = "유저 관리", description = "회원 탈퇴 / JWT 토큰 재발급 / 로그아웃 / 카카오 로그인 / 애플 로그인")
 public class AuthController {
     private final AuthService authService;
     private final OAuthService OAuthService;
