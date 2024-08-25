@@ -26,6 +26,9 @@ public class UserBookService {
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
+        if(user.getReadBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(isbn))) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST);
+        }
         UserBookDto userBookDto = UserBookDto.builder()
                 .isbn(isbn)
                 .bookname(bookname)
@@ -65,6 +68,9 @@ public class UserBookService {
         User user = userService.loadLoggedinUser();
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+        if(user.getDibsBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(isbn))) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST);
         }
         UserBookDto userBookDto = UserBookDto.builder()
                 .isbn(isbn)

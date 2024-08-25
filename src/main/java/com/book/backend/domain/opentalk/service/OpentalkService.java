@@ -73,6 +73,9 @@ public class OpentalkService {
         }
         Opentalk opentalk = opentalkRepository.findById(opentalkId).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
 
+        if(userOpentalkRepository.findByUserIdAndOpentalkId(user, opentalk) != null) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST);
+        }
         UserOpentalk userOpentalk = new UserOpentalk();
         userOpentalk.setOpentalkId(opentalk);
         userOpentalk.setUserId(user);
@@ -148,7 +151,6 @@ public class OpentalkService {
         // 즐찾 여부
         User user = userService.loadLoggedinUser();
         boolean isFavorite = userOpentalkRepository.findByUserIdAndOpentalkId(user, opentalk) != null;
-        log.debug("즐찾여부 문제?", isFavorite);
 
         return OpentalkJoinResponseDto.builder()
                 .opentalkId(opentalk.getOpentalkId())
