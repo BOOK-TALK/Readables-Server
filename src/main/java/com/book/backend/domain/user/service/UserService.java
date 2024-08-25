@@ -42,26 +42,16 @@ public class UserService {
     public User findByUsername(String username) {
         log.trace("UserService > findByUsername()");
 
-        // TODO: 리팩토링 필요
         try {
-            return findByLoginId(username);
+            return findByKakaoId(username);
         } catch (IllegalArgumentException e1) {
             try {
-                return findByKakaoId(username);
+                return findByAppleId(username);
             } catch (IllegalArgumentException e2) {
-                try {
-                    return findByAppleId(username);
-                } catch (IllegalArgumentException e3) {
-                    return null;
-                }
+                return null;
             }
         }
-    }
 
-    private User findByLoginId(String loginId) {
-        log.trace("UserService > findByLoginId()");
-        return userRepository.findByLoginId(loginId)
-                .orElseThrow(IllegalArgumentException::new);
     }
 
     private User findByKakaoId(String kakaoId) {

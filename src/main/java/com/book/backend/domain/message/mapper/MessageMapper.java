@@ -48,7 +48,7 @@ public class MessageMapper {
 
     public MessageResponseDto convertToMessageResponseDto(Message message) {
         log.trace("MessageMapper > convertToMessageResponseDto()");
-        // FIXME : loginId 가 nullable 해서 중복으로 값을 찾아옴
+
         // user DB id 로 조회
         User user = userRepository.findById(message.getUser().getUserId()).orElseThrow();
 
