@@ -36,6 +36,11 @@ jobs:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         ACCESS_TOKEN_EXPIRE_TIME: ${{ secrets.ACCESS_TOKEN_EXPIRE_TIME }}
         REFRESH_TOKEN_EXPIRE_TIME: ${{ secrets.REFRESH_TOKEN_EXPIRE_TIME }}
+        REDIS_HOST: ${{ secrets.REDIS_HOST }}
+        AWS_S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+        AWS_S3_BUCKET_ACCESS_KEY: ${{ secrets.S3_BUCKET_ACCESS_KEY }}
+        AWS_S3_BUCKET_SECRET_KEY: ${{ secrets.S3_BUCKET_SECRET_KEY }}
+        IS_LOCAL: ${{ secrets.IS_LOCAL }}
         
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3

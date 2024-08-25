@@ -20,6 +20,7 @@ public class UserDto {
     private String password;
     private String gender;
     private LocalDate birthDate;
+    private String profileImageUrl;
 
     public static final String description =
             "userId : 유저 아이디 | " +
@@ -30,5 +31,6 @@ public class UserDto {
             "nickname : 닉네임 | " +
             "password : 암호화된 비밀번호 (일반 로그인 시 생성) | " +
             "gender : 성별 | " +
-            "birthDate : 생일";
+            "birthDate : 생일" +
+            "profileImageUrl : 프로필 이미지 URL (지금은 null)";
 }

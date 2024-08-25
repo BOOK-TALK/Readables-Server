@@ -49,7 +49,8 @@ public class UserController {
         MyPageDto responseDto = MyPageDto.builder()
                 .userDto(userDto)
                 .libraries(userService.getLibraries(user))
-                .dibs(userBookService.getDibsList())
+                .dibsBooks(userBookService.getDibsBooks())
+                .readBooks(userBookService.getReadBooks())
                 .build();
 
         return responseTemplate.success(responseDto, HttpStatus.OK);

@@ -5,6 +5,8 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -12,6 +14,8 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 @OpenAPIDefinition(info = @Info(title = "북토크 서버 API", description = "설명", version = "1.0")) // 상단 제목 커스텀
 @Configuration
 public class SwaggerConfig {
+    @Value("${isLocal}")
+    private boolean isLocal;
 
     @Bean
     public OpenAPI api() {
@@ -25,8 +29,16 @@ public class SwaggerConfig {
         SecurityRequirement securityRequirement = new SecurityRequirement()
                 .addList("Bearer Token");
 
+        if(isLocal){
+            return new OpenAPI()
+                    .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
+                    .addSecurityItem(securityRequirement);
+        }
+        Server server = new Server();
+        server.setUrl("https://www.readables.site");
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
-                .addSecurityItem(securityRequirement);
+                .addSecurityItem(securityRequirement)
+                .addServersItem(server);
     }
 }

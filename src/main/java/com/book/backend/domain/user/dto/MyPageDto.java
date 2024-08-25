@@ -11,11 +11,12 @@ import java.util.List;
 public class MyPageDto {
     private UserDto userDto;
     private List<LibraryDto> libraries;
-    private List<UserBookDto> dibs; // 찜한 책
-    // TODO : 읽은 책 list
+    private List<UserBookDto> dibsBooks; // 찜한 책
+    private List<UserBookDto> readBooks; // 읽은 책
 
     public static final String description =
             "userDto : 유저 정보 | " +
             "libraries : 도서관 목록 | " +
-            "dibs : 찜한 책 목록";
+            "dibsBooks : 찜한 책 목록 |" +
+            "readBooks : 읽은 책 목록";
 }

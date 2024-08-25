@@ -23,20 +23,25 @@ public enum ErrorCode {
     INVALID_LIB_CODE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 도서관 코드입니다. (6자리 숫자로 입력해주세요)"),
     INVALID_PAGE_NUM(HttpStatus.BAD_REQUEST, "400", "페이지 번호는 1 이상의 숫자로 입력해주세요."),
     LIST_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "400", "요청 리스트의 크기가 초과되었습니다."),
+    ALREADY_EXIST(HttpStatus.CONFLICT, "409", "이미 추가된 값입니다"),
 
     // user
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "401", "사용자 인증에 실패했습니다."),
     LOGIN_REQUIRED(HttpStatus.UNAUTHORIZED, "401", "로그인이 필요합니다."),
     JWT_NOT_FOUND(HttpStatus.UNAUTHORIZED, "401", "JWT 토큰이 입력되지 않았습니다."),
     JWT_EXPIRED(HttpStatus.UNAUTHORIZED, "401", "JWT 토큰이 만료되었습니다."),
+    JWT_IS_BLACKLISTED(HttpStatus.UNAUTHORIZED, "401", "더 이상 사용할 수 없는 토큰입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 사용자를 찾을 수 없습니다."),
     LOGIN_ID_DUPLICATED(HttpStatus.CONFLICT,"409", "사용자의 아이디가 중복됩니다."),
     USERNAME_DUPLICATED(HttpStatus.CONFLICT,"409", "사용자의 username이 중복됩니다."),
+    NICKNAME_DUPLICATED(HttpStatus.CONFLICT,"409", "사용자의 닉네임이 중복됩니다."),
     WRONG_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "401", "JWT 토큰이 잘못되었습니다."),
+    NOT_EXIST_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "404", "해당하는 Refresh token이 없습니다."),
 
     // opentalk, message
-    OPENTALK_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 오픈톡을 찾을 수 없습니다."),
+    OPENTALK_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 오픈톡을 찾을 수 없습니다.([오픈톡 참여하기]로 생성해주세요)"),
     MESSAGE_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "메시지 저장에 실패했습니다."),
+    USER_OPENTALK_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 오픈톡은 유저의 즐겨찾기 리스트에 없습니다."),
 
     // 외부 API 에러
     KAKAO_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "카카오 서버에 오류가 발생했습니다."),

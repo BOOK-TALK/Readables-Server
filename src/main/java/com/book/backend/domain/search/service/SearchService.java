@@ -82,7 +82,7 @@ public class SearchService {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
         for(SearchResponseDto dto : bookList){
-            if(user.getBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(dto.getIsbn13()))){
+            if(user.getDibsBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(dto.getIsbn13()))){
                 dto.setDibs(true);
             }
         }

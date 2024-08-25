@@ -30,7 +30,6 @@ public class AppleService {
     private final CustomUserDetailsService userDetailsService;
     private final OidcProviderFactory oidcProviderFactory;
     private final JwtUtil jwtUtil;
-    private final JwtRefreshTokenService jwtRefreshTokenService;
 
     // TODO: kakaoLogin과 중복되는 코드 리팩토링 필요
     @Transactional
@@ -51,7 +50,7 @@ public class AppleService {
             newUser.setRegDate(LocalDateTime.now());
             newUser.setPassword("unused");  // 애플 로그인 사용자는 패스워드 사용하지 않음
             newUser.setLoginId(null);  // 애플 로그인 사용자는 loginId가 null
-            newUser.setNickname("apple@" + providerId);  // 수정 필요
+            newUser.setNickname("");  // 빈 문자열로 설정
             newUser.setGender(Gender.G0);
             user = newUser;
         }
@@ -59,15 +58,15 @@ public class AppleService {
         userRepository.save(user);
 
         // UserDetailsService를 사용하여 UserDetails 객체 생성
-        UserDetails userDetails = userDetailsService.loadUserByAppleId(providerId);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(providerId);
         JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
-
-        // Refresh Token 갱신
-        jwtRefreshTokenService.updateRefreshToken(jwtTokenDto, user);
 
         // 사용자 인증 정보 생성 및 SecurityContext에 저장
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Redis에 RefreshToken 저장
+        jwtUtil.storeRefreshTokenInRedis(authentication, jwtTokenDto.getRefreshToken());
 
         return LoginSuccessResponseDto.builder()
                 .userId(user.getUserId())

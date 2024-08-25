@@ -1,5 +1,6 @@
-package com.book.backend.domain.auth.service;
+package com.book.backend.global;
 
+import com.book.backend.domain.auth.service.CustomUserDetailsService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
@@ -49,22 +50,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (authorization != null && authorization.startsWith("Bearer ")) {  // Bearer 토큰 파싱
                 token = authorization.substring(7);  // jwt token 파싱
+
+                // 블랙리스트에 있는 토큰인지 검증
+                if (jwtUtil.isBlacklisted(token)) {
+                    request.setAttribute("JWTException", new CustomException(ErrorCode.JWT_IS_BLACKLISTED));
+                    filterChain.doFilter(wrappedRequest, response);
+                    return;
+                }
+
                 username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
 
                 // 현재 SecurityContextHolder에 인증객체가 있는지 확인
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails;
-
-                    // TODO: 리팩토링 필요
-                    try {
-                        userDetails = userDetailsService.loadUserByUsername(username);
-                    } catch (CustomException e1) {
-                        try {
-                            userDetails = userDetailsService.loadUserByKakaoId(username);
-                        } catch (CustomException e2) {
-                            userDetails = userDetailsService.loadUserByAppleId(username);
-                        }
-                    }
+                    userDetails = userDetailsService.loadUserByUsername(username);
 
                     // 토큰 유효성 검증
                     if (jwtUtil.isValidToken(token, userDetails)) {

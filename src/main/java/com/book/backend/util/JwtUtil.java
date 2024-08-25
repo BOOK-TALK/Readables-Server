@@ -7,14 +7,18 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.PublicKey;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -26,6 +30,7 @@ public class JwtUtil {
     private Long accessTokenExpireTime;
     @Value("${jwt.refreshTokenExpireTime}")
     private Long refreshTokenExpireTime;
+    private final RedisTemplate<String, String> redisTemplate;
 
     // 토큰 생성
     public JwtTokenDto generateToken(UserDetails userDetails) {
@@ -56,7 +61,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // 토큰 유효 여부 확인
+    // 토큰 유효 여부 확인 (by userDetails)
     public Boolean isValidToken(String token, UserDetails userDetails) {
         log.info("isValidToken token = {}", token);
         String username = getUsernameFromToken(token);
@@ -101,4 +106,50 @@ public class JwtUtil {
         return getExpirationDate(token).before(new Date());
     }
 
+    // Redis에 RefreshToken 저장
+    public void storeRefreshTokenInRedis(Authentication authentication, String refreshToken) {
+        redisTemplate.opsForValue().set(
+                authentication.getName(),
+                refreshToken,
+                refreshTokenExpireTime,
+                TimeUnit.MILLISECONDS
+        );
+    }
+
+    // 블랙리스트에 토큰 저장
+    public void addTokenToBlacklist(String token) {
+        // 토큰의 만료 시간 계산
+        long expirationTime = getExpirationDate(token).getTime();
+        long currentTime = System.currentTimeMillis();
+        long ttl = expirationTime - currentTime;
+
+        log.trace(String.valueOf(ttl));
+
+        if (ttl > 0) {
+            // 블랙리스트에 저장
+            redisTemplate.opsForValue().set(
+                    token,
+                    "blacklisted",
+                    ttl,
+                    TimeUnit.MILLISECONDS
+            );
+        }
+    }
+
+    public boolean isBlacklisted(String token) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(token));
+    }
+
+    public String getAccessTokenByHttpRequest(HttpServletRequest request) {
+        String authorization = request.getHeader("Authorization");
+
+        String token = "";
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            token = authorization.substring(7);
+        } else {
+            throw new CustomException(ErrorCode.JWT_NOT_FOUND);
+        }
+
+        return token;
+    }
 }

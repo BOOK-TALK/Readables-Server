@@ -29,6 +29,11 @@ spring:
       mode: always
       data-locations: classpath:sql/data.sql, classpath:sql/dummy.sql
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+
 spring-doc:
   swagger-ui:
     tags-sorter: alpha # tag 순서 - 알파벳
@@ -53,6 +58,8 @@ jwt:
   secretKey: ${JWT_SECRET}
   accessTokenExpireTime: ${ACCESS_TOKEN_EXPIRE_TIME}
   refreshTokenExpireTime: ${REFRESH_TOKEN_EXPIRE_TIME}
+
+isLocal: ${IS_LOCAL}
 
 cloud:
   aws:

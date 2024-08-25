@@ -1,7 +1,5 @@
 package com.book.backend.domain.message.service;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.book.backend.domain.auth.service.CustomUserDetailsService;
 import com.book.backend.domain.message.dto.MessageImgRequsetDto;
 import com.book.backend.domain.message.dto.MessageRequestDto;
@@ -30,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,6 +43,23 @@ public class MessageService {
     private final UserRepository UserRepository;
     private final UserRepository userRepository;
     private final S3Config s3Client;
+
+    public MessageResponseDto saveHttpMessage(Long opentalkId, String text){
+        log.trace("MessageService > saveHttpMessage()");
+        MessageRequestDto messageRequestDto = MessageRequestDto.builder()
+                .jwtToken(null)
+                .opentalkId(opentalkId)
+                .content(text)
+                .build();
+        Message message = messageMapper.convertToMessage(messageRequestDto);
+        // message DB에 저장
+        try{
+            messageRepository.save(message);
+        } catch (Exception e){
+            throw new CustomException(ErrorCode.MESSAGE_SAVE_FAILED);
+        }
+        return messageMapper.convertToMessageResponseDto(message);
+    }
 
     @Transactional
     public MessageResponseDto saveMessage(MessageRequestDto messageRequestDto){
@@ -89,15 +103,7 @@ public class MessageService {
             // 현재 SecurityContextHolder에 인증객체가 있는지 확인
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails;
-                try {
-                    userDetails = userDetailsService.loadUserByUsername(username);
-                } catch (CustomException e1) {
-                    try {
-                        userDetails = userDetailsService.loadUserByKakaoId(username);
-                    } catch (CustomException e2) {
-                        userDetails = userDetailsService.loadUserByAppleId(username);
-                    }
-                }
+                userDetails = userDetailsService.loadUserByUsername(username);
 
                 // 토큰 유효성 검증
                 if (jwtUtil.isValidToken(token, userDetails)) {
@@ -113,10 +119,10 @@ public class MessageService {
         }
     }
 
-    public Page<Message> getMessage(String opentalkId, Pageable pageRequest){
+    public Page<Message> getMessage(Long opentalkId, Pageable pageRequest){
         log.trace("MessageService > getOpentalkMessage()");
         // 오픈톡 ID로 opentlak 객체 찾기
-        Opentalk opentalk = opentalkRepository.findByOpentalkId(Long.parseLong(opentalkId)).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
+        Opentalk opentalk = opentalkRepository.findByOpentalkId(opentalkId).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
         return messageRepository.findAllByOpentalk(opentalk, pageRequest);
     }
 

@@ -13,8 +13,12 @@ import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
+import io.jsonwebtoken.Claims;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,18 +37,19 @@ import java.time.LocalDateTime;
 public class AuthService {
     private final UserRepository userRepository;
     private final UserService userService;
-    private final JwtRefreshTokenService jwtRefreshTokenService;
     private final AuthMapper authMapper;
     private final UserMapper userMapper;
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public UserDto signup(SignupDto signupDto) {
         log.trace("AuthService > signup()");
 
-        validateNotDuplicatedUsername(signupDto.getLoginId());
+        userService.validateNotDuplicatedUsername(signupDto.getLoginId());
+        userService.validateNotDuplicatedNickname(signupDto.getNickname());
 
         User user = authMapper.convertToUser(signupDto);
         user.setRegDate(LocalDateTime.now());
@@ -58,9 +63,10 @@ public class AuthService {
     public LoginSuccessResponseDto login(LoginDto loginDto) {
         log.trace("AuthService > login()");
 
+        Authentication authentication;
         try {
             // 사용자 인증 시도
-            Authentication authentication = authenticationManager.authenticate(
+            authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDto.getLoginId(), loginDto.getPassword()));
 
             // 인증 성공 시 Security Context에 인증 정보 저장
@@ -76,8 +82,8 @@ public class AuthService {
         User user = userRepository.findByLoginId(loginDto.getLoginId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // RefreshToken 갱신
-        jwtRefreshTokenService.updateRefreshToken(jwtTokenDto, user);
+        // Redis에 RefreshToken 저장
+        jwtUtil.storeRefreshTokenInRedis(authentication, jwtTokenDto.getRefreshToken());
 
         return LoginSuccessResponseDto.builder()
                 .userId(user.getUserId())
@@ -86,33 +92,63 @@ public class AuthService {
                 .build();
     }
 
+    public void logout(HttpServletRequest request) {
+        log.trace("AuthService > logout()");
+
+        String accessToken = jwtUtil.getAccessTokenByHttpRequest(request);
+        String username = jwtUtil.getUsernameFromToken(accessToken);
+
+        jwtUtil.addTokenToBlacklist(accessToken);
+
+        // Redis에서 사용자의 Refresh Token 삭제
+        redisTemplate.delete(username);
+
+        SecurityContextHolder.clearContext();
+    }
+
     @Transactional
-    public void deleteAccountByLoginId(String loginId) {
-        log.trace("AuthService > deleteAccountByLoginId()");
+    public void deleteUser(HttpServletRequest request) {
+        log.trace("AuthService > deleteUser()");
 
-        User user = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        userRepository.delete(user);
-    }
+        String accessToken = jwtUtil.getAccessTokenByHttpRequest(request);
+        String username = jwtUtil.getUsernameFromToken(accessToken);
 
-//    private void validateNotDuplicatedLoginId(String loginId) {
-//        log.trace("AuthService > validateNotDuplicatedByLoginId()");
-//
-//        Optional<User> userOptional = userRepository.findByLoginId(loginId);
-//
-//        if (userOptional.isPresent()) {
-//            throw new CustomException(ErrorCode.LOGIN_ID_DUPLICATED);
-//        }
-//    }
+        jwtUtil.addTokenToBlacklist(accessToken);
 
-    private void validateNotDuplicatedUsername(String loginId) {
-        log.trace("AuthService > validateNotDuplicatedByUsername()");
+        // Redis에서 사용자의 Refresh Token 삭제
+        redisTemplate.delete(username);
 
-        User user = userService.findByUsername(loginId);
+        // 회원 엔티티 삭제
+        User user = userService.findByUsername(username);
         if (user != null) {
-            throw new CustomException(ErrorCode.USERNAME_DUPLICATED);
+            userRepository.delete(user);
+        } else {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
+
+        SecurityContextHolder.clearContext();
     }
+
+    public JwtTokenDto reissueToken(String refreshToken) {
+        // Refresh Token 검증
+        Claims claims = jwtUtil.getAllClaims(refreshToken);
+        String username = String.valueOf(claims.get("username"));
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        String redisRefreshToken = redisTemplate.opsForValue().get(username);
+
+        if (!redisRefreshToken.equals(refreshToken)) {
+            throw new CustomException(ErrorCode.NOT_EXIST_REFRESH_TOKEN);
+        }
+
+        // 토큰 재발행
+        JwtTokenDto tokenDto = jwtUtil.generateToken(userDetails);
+        jwtUtil.storeRefreshTokenInRedis(authentication, refreshToken);
+
+        return tokenDto;
+    }
+
 }
-
-
