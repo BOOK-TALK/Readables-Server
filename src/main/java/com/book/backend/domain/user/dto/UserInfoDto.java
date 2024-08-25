@@ -23,8 +23,11 @@ public class UserInfoDto {
     @Past(message = "현재 날짜보다 이전 날짜여야 합니다.")
     private LocalDate birthDate;
 
+    private String profileImageUrl; // TODO : 구현
+
     public static final String description =
             "nickname : 닉네임 | " +
             "gender : 성별 | " +
-            "birthDate : 생일";
+            "birthDate : 생일" +
+            "profileImageUrl : 프로필 이미지 URL (지금은 null)";
 }

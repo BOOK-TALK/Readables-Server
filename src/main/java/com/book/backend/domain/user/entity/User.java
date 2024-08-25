@@ -43,6 +43,8 @@ public class User {
 
     private LocalDate birthDate;
 
+    private String profileImageUrl;
+
     @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserOpentalk> openTalkIds;  // 즐찾 오픈톡
 

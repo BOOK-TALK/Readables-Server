@@ -92,6 +92,7 @@ public class UserService {
         user.setNickname(requestDto.getNickname());
         user.setGender(userMapper.convertStringToGender(requestDto.getGender()));
         user.setBirthDate(requestDto.getBirthDate());
+        user.setProfileImageUrl(requestDto.getProfileImageUrl());
         userRepository.save(user);
 
         return user;

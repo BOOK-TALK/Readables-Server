@@ -54,6 +54,7 @@ public class MessageMapper {
 
         return MessageResponseDto.builder()
                 .nickname(user.getNickname())
+                .profileImageUrl(user.getProfileImageUrl())
                 .content(message.getContent())
                 .createdAt(message.getCreatedAt())
                 .build();
