@@ -146,7 +146,7 @@ public class AuthService {
 
         // 토큰 재발행
         JwtTokenDto tokenDto = jwtUtil.generateToken(userDetails);
-        jwtUtil.storeRefreshTokenInRedis(authentication, refreshToken);
+        jwtUtil.storeRefreshTokenInRedis(authentication, tokenDto.getRefreshToken());
 
         return tokenDto;
     }
