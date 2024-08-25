@@ -58,7 +58,7 @@ public class OAuthService {
                 newUser.setAppleId(providerId);
             }
             newUser.setRegDate(LocalDateTime.now());
-            newUser.setNickname("");  // 빈 문자열로 설정
+            newUser.setNickname(null);  // null로 설정
             newUser.setGender(Gender.G0);
             user = newUser;
         }
