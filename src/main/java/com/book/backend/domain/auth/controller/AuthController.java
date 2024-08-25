@@ -2,9 +2,9 @@ package com.book.backend.domain.auth.controller;
 
 import com.book.backend.domain.auth.dto.JwtTokenDto;
 import com.book.backend.domain.auth.dto.LoginSuccessResponseDto;
-import com.book.backend.domain.auth.service.AppleService;
 import com.book.backend.domain.auth.service.AuthService;
-import com.book.backend.domain.auth.service.KakaoService;
+import com.book.backend.domain.auth.service.OAuthService;
+import com.book.backend.domain.oidc.Provider;
 import com.book.backend.global.ResponseTemplate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,10 +25,8 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Tag(name = "유저 관리", description = "회원 탈퇴 / 회원가입 / JWT 토큰 재발급 / 로그아웃 / 로그인 / 카카오 로그인 / 애플 로그인")
 public class AuthController {
-
     private final AuthService authService;
-    private final KakaoService kakaoService;
-    private final AppleService appleService;
+    private final OAuthService OAuthService;
     private final ResponseTemplate responseTemplate;
 
     @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다.",
@@ -57,7 +55,7 @@ public class AuthController {
                     description = LoginSuccessResponseDto.description)})
     @PostMapping("/kakaoLogin")
     public ResponseEntity<?> kakaoLogin(@RequestParam String idToken) {
-        LoginSuccessResponseDto loginSuccessResponseDto = kakaoService.kakaoLogin(idToken);
+        LoginSuccessResponseDto loginSuccessResponseDto = OAuthService.oAuthLogin(Provider.KAKAO, idToken);
 
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
     }
@@ -70,7 +68,7 @@ public class AuthController {
                     description = LoginSuccessResponseDto.description)})
     @PostMapping("/appleLogin")
     public ResponseEntity<?> appleLogin(@RequestParam String idToken) {
-        LoginSuccessResponseDto loginSuccessResponseDto = appleService.appleLogin(idToken);
+        LoginSuccessResponseDto loginSuccessResponseDto = OAuthService.oAuthLogin(Provider.APPLE, idToken);
 
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
     }

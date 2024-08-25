@@ -8,6 +8,8 @@ import com.book.backend.domain.user.entity.Gender;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.domain.user.service.UserService;
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,21 +26,25 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class AppleService {
+public class OAuthService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final CustomUserDetailsService userDetailsService;
-    private final OidcProviderFactory oidcProviderFactory;
     private final JwtUtil jwtUtil;
+    private final OidcProviderFactory oidcProviderFactory;
 
-    // TODO: kakaoLogin과 중복되는 코드 리팩토링 필요
+    // 카카오 로그인
     @Transactional
-    public LoginSuccessResponseDto appleLogin(String idToken) {
-        log.trace("AppleService > appleLogin()");
+    public LoginSuccessResponseDto oAuthLogin(Provider provider, String idToken) {
+        log.trace("OAuthService > oAuthLogin()");
 
-        String providerId = oidcProviderFactory.getProviderId(Provider.APPLE, idToken);
+        if (idToken == null || idToken.isEmpty()){
+            throw new CustomException(ErrorCode.ID_TOKEN_IS_NULL);
+        }
 
-        // appleId로 유저 조회
+        String providerId = oidcProviderFactory.getProviderId(provider, idToken);
+
+        // kakaoId로 유저 조회
         User user = userService.findByUsername(providerId);
         Boolean isNewUser = Boolean.FALSE;
 
@@ -46,7 +52,11 @@ public class AppleService {
         if (user == null) {
             isNewUser = Boolean.TRUE;
             User newUser = new User();
-            newUser.setAppleId(providerId);
+            if (provider == Provider.KAKAO) {  // 카카오 로그인인 경우
+                newUser.setKakaoId(providerId);
+            } else {  // 애플 로그인인 경우
+                newUser.setAppleId(providerId);
+            }
             newUser.setRegDate(LocalDateTime.now());
             newUser.setNickname("");  // 빈 문자열로 설정
             newUser.setGender(Gender.G0);
