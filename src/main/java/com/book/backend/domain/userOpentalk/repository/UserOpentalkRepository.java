@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface UserOpentalkRepository extends JpaRepository<UserOpentalk, Long> {
     List<UserOpentalk> findAllByUserId(User user);
-    UserOpentalk findByUserAndOpentalk(User user, Opentalk opentalk);
+    UserOpentalk findByUserIdAndOpentalkId(User user, Opentalk opentalk);
 }
