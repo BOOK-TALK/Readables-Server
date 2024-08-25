@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS user_read_books
 
 
 
-    INSERT IGNORE INTO book (book_id, isbn)
+INSERT IGNORE INTO book (book_id, isbn)
  VALUES (1, '9788956055466'),
         (2, '9788994120966'),
         (3, '9788936433673'),
@@ -113,12 +113,12 @@ CREATE TABLE IF NOT EXISTS user_read_books
         (9, 9),
         (10, 10);
 
- INSERT IGNORE INTO user (user_id, login_id, password, gender, birth_date, reg_date)
- values (1, 'user1', 'useruser1!', '1', '1990-01-01', '2024-06-10'),
-        (2, 'user2', 'useruser2!', '2', '2000-03-16', '2024-07-22'),
-        (3, 'user3', 'useruser3!', '1', '1995-05-20', '2024-08-15'),
-        (4, 'user4', 'useruser4!', '2', '1992-07-25', '2024-09-30'),
-        (5, 'user5', 'useruser5!', '1', '2003-09-30', '2024-10-10');
+ INSERT IGNORE INTO user (user_id, gender, birth_date, reg_date)
+ values (1, '1', '1990-01-01', '2024-06-10'),
+        (2, '2', '2000-03-16', '2024-07-22'),
+        (3, '1', '1995-05-20', '2024-08-15'),
+        (4, '2', '1992-07-25', '2024-09-30'),
+        (5, '1', '2003-09-30', '2024-10-10');
 
  # 즐찾 오픈톡
  INSERT IGNORE INTO user_opentalk(user_opentalk_id, user_id, opentalk_id)
