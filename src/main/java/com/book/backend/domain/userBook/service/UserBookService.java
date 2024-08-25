@@ -26,6 +26,9 @@ public class UserBookService {
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
+        if(user.getReadBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(isbn))) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST);
+        }
         UserBookDto userBookDto = UserBookDto.builder()
                 .isbn(isbn)
                 .bookname(bookname)
@@ -66,6 +69,9 @@ public class UserBookService {
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
+        if(user.getDibsBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(isbn))) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST);
+        }
         UserBookDto userBookDto = UserBookDto.builder()
                 .isbn(isbn)
                 .bookname(bookname)
@@ -104,5 +110,12 @@ public class UserBookService {
         log.trace("UserBookService > isDibs()");
         User user = userService.loadLoggedinUser();
         return user.getDibsBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(isbn));
+    }
+
+    // 읽은 책 여부 확인
+    public boolean isFavorite(String isbn) {
+        log.trace("UserBookService > isFavorite()");
+        User user = userService.loadLoggedinUser();
+        return user.getReadBooks().stream().anyMatch(userBookDto -> userBookDto.getIsbn().equals(isbn));
     }
 }
