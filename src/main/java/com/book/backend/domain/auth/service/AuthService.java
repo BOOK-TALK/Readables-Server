@@ -79,6 +79,10 @@ public class AuthService {
 
         String redisRefreshToken = redisTemplate.opsForValue().get(username);
 
+        log.trace("username: " + username);
+        log.trace("refreshToken:      " + refreshToken);
+        log.trace("redisRefreshToken: " + redisRefreshToken);
+
         if (!redisRefreshToken.equals(refreshToken)) {
             throw new CustomException(ErrorCode.NOT_EXIST_REFRESH_TOKEN);
         }
