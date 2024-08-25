@@ -91,7 +91,7 @@ public class OpentalkService {
         }
         Opentalk opentalk = opentalkRepository.findById(opentalkId).orElseThrow(() -> new CustomException(ErrorCode.OPENTALK_NOT_FOUND));
 
-        UserOpentalk userOpentalk = userOpentalkRepository.findByUserIdAndOpentalkId(user, opentalk);
+        UserOpentalk userOpentalk = userOpentalkRepository.findByUserAndOpentalk(user, opentalk);
         if(userOpentalk == null) {
             throw new CustomException(ErrorCode.USER_OPENTALK_NOT_FOUND);
         }
@@ -136,39 +136,42 @@ public class OpentalkService {
     @Transactional
     public OpentalkJoinResponseDto joinOpentalk(String isbn, int pageSize){
         log.trace("OpentalkService > joinOpentalk()");
-        Long opentalkId = checkExistOpentalk(isbn);
-        if(opentalkId == null){
-            opentalkId = createOpentalkIdByIsbn(isbn);
-            return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(null).isFavorite(false).build();
+        Opentalk opentalk = checkExistOpentalk(isbn);
+        if(opentalk == null){
+            opentalk = createOpentalkByIsbn(isbn);
+            return OpentalkJoinResponseDto.builder().opentalkId(opentalk.getOpentalkId()).messageResponseDto(null).isFavorite(false).build();
         }
         Pageable pageRequest = PageRequest.of(0, pageSize, Sort.by("createdAt").descending());
-        Page<Message> messagePage = messageService.getMessage(opentalkId, pageRequest);
+        Page<Message> messagePage = messageService.getMessage(opentalk.getOpentalkId(), pageRequest);
         List<MessageResponseDto> response = messageService.pageToDto(messagePage);
 
         // 즐찾 여부
-        UserOpentalk userOpentalk= userOpentalkRepository.findByUserIdAndOpentalkId(userService.loadLoggedinUser(), opentalkRepository.findById(opentalkId).get());
-        boolean isFavorite = userOpentalk != null;
+        User user = userService.loadLoggedinUser();
+        boolean isFavorite = userOpentalkRepository.findByUserAndOpentalk(user, opentalk) != null;
 
-        return OpentalkJoinResponseDto.builder().opentalkId(opentalkId).messageResponseDto(response).isFavorite(isFavorite).build();
+        return OpentalkJoinResponseDto.builder()
+                .opentalkId(opentalk.getOpentalkId())
+                .messageResponseDto(response)
+                .isFavorite(isFavorite)
+                .build();
     }
 
     @Transactional
-    public Long createOpentalkIdByIsbn(String isbn) {
-        log.trace("OpentalkService > createOpentalkIdByIsbn");// 새로운 오픈톡 생성
+    public Opentalk createOpentalkByIsbn(String isbn) {
+        log.trace("OpentalkService > createOpentalkByIsbn");// 새로운 오픈톡 생성
         Book newBook = new Book();
         newBook.setIsbn(isbn);
         Book book = bookRepository.save(newBook);
 
         Opentalk newOpentalk = new Opentalk();
         newOpentalk.setBook(book);
-        Opentalk opentalk = opentalkRepository.save(newOpentalk);
-        return opentalk.getOpentalkId();
+        return opentalkRepository.save(newOpentalk);
     }
 
-    public Long checkExistOpentalk(String isbn) {
+    public Opentalk checkExistOpentalk(String isbn) {
         log.trace("OpentalkService > checkExistOpentalk()");
         Book book = bookRepository.findByIsbn(isbn);
         if(book == null) return null;
-        return opentalkRepository.findByBook(book).getOpentalkId();
+        return opentalkRepository.findByBook(book);
     }
 }
