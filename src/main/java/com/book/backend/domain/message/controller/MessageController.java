@@ -40,7 +40,7 @@ public class MessageController {
     // 채팅 저장하기 (apic 으로 테스트)
     @MessageMapping("/message")
     public void chat(MessageRequestDto messageRequestDto) {
-//        RequestLogger.body(messageRequestDto); //FIXME: body
+        RequestLogger.body(messageRequestDto);
         MessageResponseDto response = messageService.saveMessage(messageRequestDto);
         sendingOperations.convertAndSend("/sub/message/" + messageRequestDto.getOpentalkId(), response); // 수신자들에게 전송
     }

@@ -63,7 +63,7 @@ public class UserController {
     @PutMapping("/info/edit")
     public ResponseEntity<?> editUserInfo(@Valid @RequestBody UserInfoDto requestDto) {
         log.trace("UserController > editUserInfo()");
-//        RequestLogger.body(requestDto); //FIXME : body
+        RequestLogger.body(requestDto);
 
         User user = userService.loadLoggedinUser();
         if (user == null) {
@@ -100,7 +100,7 @@ public class UserController {
     @PutMapping("/libraries/edit")
     public ResponseEntity<?> editUserLibraries(@RequestBody UserLibrariesRequestDto requestDto) {
         log.trace("UserController > editUserLibrary()");
-//        RequestLogger.body(requestDto);//FIXME : body
+        RequestLogger.body(requestDto);//FIXME : body
 
         User user = userService.loadLoggedinUser();
         if (user == null) {
