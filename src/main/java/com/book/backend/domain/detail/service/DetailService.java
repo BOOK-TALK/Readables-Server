@@ -71,7 +71,7 @@ public class DetailService {
                             .build();
                     loanAvailableList.add(dto);
                 } catch (Exception e) {
-                    throw new RuntimeException(new CustomException(ErrorCode.LIBCODE_EXIST_ERROR));
+                    throw new RuntimeException(new CustomException(ErrorCode.LIBCODE_ERROR));
                 }
             });
         }

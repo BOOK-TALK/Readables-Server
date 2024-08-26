@@ -46,7 +46,7 @@ public enum ErrorCode {
     // 외부 API 에러
     KAKAO_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "카카오 서버에 오류가 발생했습니다."),
     API_CALL_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "429", "OPEN API 일일 호출 횟수를 초과했습니다. (일 최대 500건)"),
-    LIBCODE_EXIST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "대출 가능 여부 조회 중 오류가 발생했습니다."),
+    LIBCODE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "존재하는 도서관 코드인지 확인해주세요."),
 
     // OAuth2
     HEADER_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "Header 파싱 중 에러가 발생했습니다."),
