@@ -60,8 +60,8 @@ public class BookController {
         HashSet<String> duplicateCheckSet = new HashSet<>();
         LinkedList<RecommendListResponseDto> duplicateRemovedList = bookService.duplicateChecker(response, duplicateCheckSet);
         bookService.ensureRecommendationsCount(duplicateRemovedList, duplicateCheckSet);
-
-        return responseTemplate.success(duplicateRemovedList, HttpStatus.OK);
+        response = RandomPicker.randomPick(duplicateRemovedList, 10); // 10개 랜덤 추출
+        return responseTemplate.success(response, HttpStatus.OK);
     }
 
     // 대출급상승(12) API
