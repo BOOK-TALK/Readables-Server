@@ -266,7 +266,6 @@ public class ResponseParser {
                 .class_nm(book.getAsString("class_nm"))
                 .loanCnt(book.getAsString("loanCnt")).build();
 
-        // TODO : null 이면 빈 list 로 보내도 되는지 여쭤보기
         List<Top3LoanUserDto> top3LoanUserDtoList = new LinkedList<>();
         if(!loanGrps.isEmpty()){
             for (Object loanGrp : loanGrps) {
@@ -283,59 +282,66 @@ public class ResponseParser {
         }
 
         LinkedList<String> keywordList = new LinkedList<>();
-        for(int i=0; i<10; i++) { //10개만 추출
-            JSONObject o = (JSONObject) ((JSONObject) keywords.get(i)).get("keyword");
-            keywordList.add(o.getAsString("word"));
+        if(!keywords.isEmpty()){
+            for(int i=0; i<10; i++) { //10개만 추출
+                JSONObject o = (JSONObject) ((JSONObject) keywords.get(i)).get("keyword");
+                keywordList.add(o.getAsString("word"));
+            }
         }
 
         HashSet<String> duplicateCheckSet = new HashSet<>(); // 중복 체크
         LinkedList<CoLoanBooksDto> coLoanBooksList = new LinkedList<>();
-        for (Object coLoanBook : coLoanBooks) {
-            JSONObject o = (JSONObject) ((JSONObject) coLoanBook).get("book");
-            String duplicateCheckKey = o.getAsString("bookname") + o.getAsString("authors");
-            if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
-                coLoanBooksList.add(CoLoanBooksDto.builder()
-                        .bookname(o.getAsString("bookname"))
-                        .authors(o.getAsString("authors"))
-                        .publisher(o.getAsString("publisher"))
-                        .publication_year(o.getAsString("publication_year"))
-                        .isbn13(o.getAsString("isbn13"))
-                        .vol(o.getAsString("vol"))
-                        .loanCnt(o.getAsString("loanCnt"))
-                        .build());
+        if(!coLoanBooks.isEmpty()){
+            for (Object coLoanBook : coLoanBooks) {
+                JSONObject o = (JSONObject) ((JSONObject) coLoanBook).get("book");
+                String duplicateCheckKey = o.getAsString("bookname") + o.getAsString("authors");
+                if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
+                    coLoanBooksList.add(CoLoanBooksDto.builder()
+                            .bookname(o.getAsString("bookname"))
+                            .authors(o.getAsString("authors"))
+                            .publisher(o.getAsString("publisher"))
+                            .publication_year(o.getAsString("publication_year"))
+                            .isbn13(o.getAsString("isbn13"))
+                            .vol(o.getAsString("vol"))
+                            .loanCnt(o.getAsString("loanCnt"))
+                            .build());
+                }
             }
         }
 
         LinkedList<RecommendDto> recommendBooksList = new LinkedList<>();
         duplicateCheckSet = new HashSet<>(); // 중복 체크
-
-        for(Object maniaRecBook : maniaRecBooks) {
-            JSONObject o = (JSONObject) ((JSONObject) maniaRecBook).get("book");
-            String duplicateCheckKey = o.getAsString("bookname") + o.getAsString("authors");
-            if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
-                recommendBooksList.add(RecommendDto.builder()
-                        .bookname(o.getAsString("bookname"))
-                        .authors(o.getAsString("authors"))
-                        .publisher(o.getAsString("publisher"))
-                        .publication_year(o.getAsString("publication_year"))
-                        .isbn13(o.getAsString("isbn13"))
-                        .vol(o.getAsString("vol"))
-                        .build());
+        if(!maniaRecBooks.isEmpty()){
+            for(Object maniaRecBook : maniaRecBooks) {
+                JSONObject o = (JSONObject) ((JSONObject) maniaRecBook).get("book");
+                String duplicateCheckKey = o.getAsString("bookname") + o.getAsString("authors");
+                if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
+                    recommendBooksList.add(RecommendDto.builder()
+                            .bookname(o.getAsString("bookname"))
+                            .authors(o.getAsString("authors"))
+                            .publisher(o.getAsString("publisher"))
+                            .publication_year(o.getAsString("publication_year"))
+                            .isbn13(o.getAsString("isbn13"))
+                            .vol(o.getAsString("vol"))
+                            .build());
+                }
             }
         }
 
-        for(Object readerRecBook : readerRecBooks) {
-            JSONObject o = (JSONObject) ((JSONObject) readerRecBook).get("book");
-            String duplicateCheckKey = o.getAsString("bookname") + o.getAsString("authors");
-            if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
-                recommendBooksList.add(RecommendDto.builder()
-                        .bookname(o.getAsString("bookname"))
-                        .authors(o.getAsString("authors"))
-                        .publisher(o.getAsString("publisher"))
-                        .publication_year(o.getAsString("publication_year"))
-                        .isbn13(o.getAsString("isbn13"))
-                        .vol(o.getAsString("vol"))
-                        .build());
+        if(!readerRecBooks.isEmpty()){
+            for(Object readerRecBook : readerRecBooks) {
+                JSONObject o = (JSONObject) ((JSONObject) readerRecBook).get("book");
+                String duplicateCheckKey = o.getAsString("bookname") + o.getAsString("authors");
+                if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
+                    recommendBooksList.add(RecommendDto.builder()
+                            .bookname(o.getAsString("bookname"))
+                            .authors(o.getAsString("authors"))
+                            .publisher(o.getAsString("publisher"))
+                            .publication_year(o.getAsString("publication_year"))
+                            .isbn13(o.getAsString("isbn13"))
+                            .vol(o.getAsString("vol"))
+                            .build());
+                }
             }
         }
 

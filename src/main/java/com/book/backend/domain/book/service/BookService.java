@@ -46,12 +46,12 @@ public class BookService {
         return responseList;
     }
 
-    /* 추천 책 수가 5보다 작으면 추천된 isbn 으로 recommend() 다시 호출 */
+    /* 추천 책 수가 10보다 작으면 추천된 isbn 으로 recommend() 다시 호출 */
     public void ensureRecommendationsCount(LinkedList<RecommendListResponseDto> list, HashSet<String> set) throws Exception {
         log.trace("BookService > ensureRecommendationsCount()");
         LinkedList<RecommendListResponseDto> originalList = new LinkedList<>(list);
         Iterator<RecommendListResponseDto> iterator = originalList.iterator();
-        while (originalList.size() < 5 && iterator.hasNext()) {
+        while (originalList.size() < 10 && iterator.hasNext()) {
             RecommendListRequestDto newRequestDto =  RecommendListRequestDto.builder().isbn13(iterator.next().getIsbn13()).build(); // 추천된 다른 책의 isbn13
             LinkedList<RecommendListResponseDto> newRecommendList = recommend(newRequestDto);
             // 기존에 추가된 책인지 확인
@@ -91,9 +91,10 @@ public class BookService {
     public LinkedList<LoanItemSrchResponseDto> loanItemSrch(LoanItemSrchRequestDto requestDto) throws Exception{
         log.trace("BookService > customHotTrend()");
         String subUrl = "loanItemSrch";
-        requestDto.setPageSize("10"); // 10개만 출력하도록 제한
+        requestDto.setPageSize("25");
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
         ResponseParser responseParser = new ResponseParser();
-        return responseParser.loanItemSrch(jsonResponse);
+        LinkedList<LoanItemSrchResponseDto> responseList = responseParser.loanItemSrch(jsonResponse);
+        return responseParser.customPageFilter(responseList, "1", "10");
     }
 }

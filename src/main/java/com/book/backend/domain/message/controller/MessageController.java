@@ -40,7 +40,7 @@ public class MessageController {
     // 채팅 저장하기 (apic 으로 테스트)
     @MessageMapping("/message")
     public void chat(MessageRequestDto messageRequestDto) {
-        RequestLogger.param(new String[]{"messageRequestDto"}, messageRequestDto);
+        RequestLogger.body(messageRequestDto);
         MessageResponseDto response = messageService.saveMessage(messageRequestDto);
         sendingOperations.convertAndSend("/sub/message/" + messageRequestDto.getOpentalkId(), response); // 수신자들에게 전송
     }
@@ -53,7 +53,7 @@ public class MessageController {
                     description = MessageResponseDto.description)})
     @GetMapping("/api/message/get")
     public ResponseEntity<?> getChat(@RequestParam Long opentalkId, int pageNo, int pageSize) {
-        RequestLogger.param(new String[]{"opentalkId, pageNo, pageSize"}, opentalkId, pageNo, pageSize);
+        RequestLogger.param(new String[]{"opentalkId", "pageNo", "pageSize"}, opentalkId, pageNo, pageSize);
 
         Pageable pageRequest = PageRequest.of(pageNo, pageSize, Sort.by("createdAt").descending());
         Page<Message> MessagePage = messageService.getMessage(opentalkId, pageRequest);
@@ -69,7 +69,7 @@ public class MessageController {
                     description = MessageResponseDto.description)})
     @PostMapping("/api/message/save")
     public ResponseEntity<?> httpChat(@RequestParam Long opentalkId, String text) {
-        RequestLogger.param(new String[]{"opentalkId, text"}, opentalkId, text);
+        RequestLogger.param(new String[]{"opentalkId", "text"}, opentalkId, text);
         MessageResponseDto response = messageService.saveHttpMessage(opentalkId, text);
         return responseTemplate.success(response, HttpStatus.OK);
     }
