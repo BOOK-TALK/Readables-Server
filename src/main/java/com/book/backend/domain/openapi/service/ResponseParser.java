@@ -27,27 +27,29 @@ public class ResponseParser {
         LinkedList<RecommendListResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
 
-        if(!docs.isEmpty()){
-            for (Object o : docs) {
-                JSONObject docsElement  = (JSONObject) o;
-                JSONObject book = (JSONObject) docsElement.get("book");
+        if (docs == null) {
+            return responseList;
+        }
 
-                // 중복 추천 체크 (open api 가 중복되는 책을 추천함;;)
-                String duplicateCheckKey = book.getAsString("bookname") + book.getAsString("authors");
+        for (Object o : docs) {
+            JSONObject docsElement  = (JSONObject) o;
+            JSONObject book = (JSONObject) docsElement.get("book");
 
-                if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
-                    responseList.add(RecommendListResponseDto.builder()
-                            .bookname(book.getAsString("bookname"))
-                            .authors(book.getAsString("authors"))
-                            .publisher(book.getAsString("publisher"))
-                            .publication_year(book.getAsString("publication_year"))
-                            .isbn13(book.getAsString("isbn13"))
-                            .vol(book.getAsString("vol"))
-                            .class_no(book.getAsString("class_no"))
-                            .class_nm(book.getAsString("class_nm"))
-                            .bookImageURL(book.getAsString("bookImageURL"))
-                            .build());
-                }
+            // 중복 체크
+            String duplicateCheckKey = book.getAsString("bookname") + book.getAsString("authors");
+
+            if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
+                responseList.add(RecommendListResponseDto.builder()
+                        .bookname(book.getAsString("bookname"))
+                        .authors(book.getAsString("authors"))
+                        .publisher(book.getAsString("publisher"))
+                        .publication_year(book.getAsString("publication_year"))
+                        .isbn13(book.getAsString("isbn13"))
+                        .vol(book.getAsString("vol"))
+                        .class_no(book.getAsString("class_no"))
+                        .class_nm(book.getAsString("class_nm"))
+                        .bookImageURL(book.getAsString("bookImageURL"))
+                        .build());
             }
         }
         return responseList;
@@ -58,16 +60,24 @@ public class ResponseParser {
         
         JSONArray results = (JSONArray) jsonResponse.get("results");
         LinkedList<HotTrendResponseDto> responseList = new LinkedList<>();
+        HashSet<String> duplicateCheckSet = new HashSet<>();
 
-        if(!results.isEmpty()){
-            for (Object o : results) {
-                JSONObject resultsElement = (JSONObject) o;
-                JSONObject result = (JSONObject) resultsElement.get("result");
-                JSONArray docs = (JSONArray) result.get("docs");
-                for (Object value : docs) {
-                    JSONObject docsElement = (JSONObject) value;
-                    JSONObject doc = (JSONObject) docsElement.get("doc");
+        if (results == null) {
+            return responseList;
+        }
 
+        for (Object o : results) {
+            JSONObject resultsElement = (JSONObject) o;
+            JSONObject result = (JSONObject) resultsElement.get("result");
+            JSONArray docs = (JSONArray) result.get("docs");
+            for (Object value : docs) {
+                JSONObject docsElement = (JSONObject) value;
+                JSONObject doc = (JSONObject) docsElement.get("doc");
+
+                // 중복 체크
+                String duplicateCheckKey = doc.getAsString("bookname") + doc.getAsString("authors");
+
+                if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
                     responseList.add(HotTrendResponseDto.builder()
                             .no(doc.getAsString("no"))
                             .difference(doc.getAsString("difference"))
@@ -97,29 +107,34 @@ public class ResponseParser {
         LinkedList<LoanItemSrchResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
 
-        if(!docs.isEmpty()){
-            for (Object o : docs) {
-                JSONObject docsElement = (JSONObject) o;
-                JSONObject doc = (JSONObject) docsElement.get("doc");
+        if (docs == null) {
+            return responseList;
+        }
 
-                String duplicateCheckKey = doc.getAsString("bookname") + doc.getAsString("authors");
-                if (duplicateCheckSet.add(duplicateCheckKey)) {
-                    responseList.add(LoanItemSrchResponseDto.builder()
-                            .no(doc.getAsString("no"))
-                            .ranking(doc.getAsString("ranking"))
-                            .bookname(doc.getAsString("bookname"))
-                            .authors(doc.getAsString("authors"))
-                            .publisher(doc.getAsString("publisher"))
-                            .publication_year(doc.getAsString("publication_year"))
-                            .isbn13(doc.getAsString("isbn13"))
-                            .addition_symbol(doc.getAsString("addition_symbol"))
-                            .class_no(doc.getAsString("class_no"))
-                            .class_nm(doc.getAsString("class_nm"))
-                            .loan_count(doc.getAsString("loan_count"))
-                            .bookImageURL(doc.getAsString("bookImageURL"))
-                            .bookDtlUrl(doc.getAsString("bookDtlUrl"))
-                            .build());
-                }
+        for (Object o : docs) {
+
+            JSONObject docsElement = (JSONObject) o;
+            JSONObject doc = (JSONObject) docsElement.get("doc");
+
+            // 중복 체크
+            String duplicateCheckKey = doc.getAsString("bookname") + doc.getAsString("authors");
+
+            if (duplicateCheckSet.add(duplicateCheckKey)) {
+                responseList.add(LoanItemSrchResponseDto.builder()
+                        .no(doc.getAsString("no"))
+                        .ranking(doc.getAsString("ranking"))
+                        .bookname(doc.getAsString("bookname"))
+                        .authors(doc.getAsString("authors"))
+                        .publisher(doc.getAsString("publisher"))
+                        .publication_year(doc.getAsString("publication_year"))
+                        .isbn13(doc.getAsString("isbn13"))
+                        .addition_symbol(doc.getAsString("addition_symbol"))
+                        .class_no(doc.getAsString("class_no"))
+                        .class_nm(doc.getAsString("class_nm"))
+                        .loan_count(doc.getAsString("loan_count"))
+                        .bookImageURL(doc.getAsString("bookImageURL"))
+                        .bookDtlUrl(doc.getAsString("bookDtlUrl"))
+                        .build());
             }
         }
         return responseList;
@@ -131,19 +146,20 @@ public class ResponseParser {
         JSONArray keywords = (JSONArray) jsonResponse.get("keywords");
         LinkedList<MonthlyKeywordsResponseDto> responseList = new LinkedList<>();
 
-        if(!keywords.isEmpty()){
-            for (Object o : keywords) {
-                JSONObject keywordsElement = (JSONObject) o;
-                JSONObject keyword = (JSONObject) keywordsElement.get("keyword");
-
-                responseList.add(MonthlyKeywordsResponseDto.builder()
-                        .keyword(keyword.getAsString("word"))
-                        .weight(keyword.getAsString("weight"))
-                        .build());
-            }
-            return RandomPicker.randomPick(responseList, 10);
+        if (keywords == null) {
+            return responseList;
         }
-        return responseList;
+
+        for (Object o : keywords) {
+            JSONObject keywordsElement = (JSONObject) o;
+            JSONObject keyword = (JSONObject) keywordsElement.get("keyword");
+
+            responseList.add(MonthlyKeywordsResponseDto.builder()
+                    .keyword(keyword.getAsString("word"))
+                    .weight(keyword.getAsString("weight"))
+                    .build());
+        }
+        return RandomPicker.randomPick(responseList, 10);
     }
 
     public LinkedList<LoanItemSrchResponseDto> loanItemSrch(JSONObject jsonResponse) {
@@ -154,11 +170,18 @@ public class ResponseParser {
         LinkedList<LoanItemSrchResponseDto> responseList = new LinkedList<>();
         HashSet<String> duplicateCheckSet = new HashSet<>();
 
-        if(!docs.isEmpty()){
-            for (Object o : docs) {
-                JSONObject docsElement = (JSONObject) o;
-                JSONObject doc = (JSONObject) docsElement.get("doc");
+        if (docs == null) {
+            return responseList;
+        }
 
+        for (Object o : docs) {
+            JSONObject docsElement = (JSONObject) o;
+            JSONObject doc = (JSONObject) docsElement.get("doc");
+
+            // 중복 체크
+            String duplicateCheckKey = doc.getAsString("bookname") + doc.getAsString("authors");
+
+            if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
                 responseList.add(LoanItemSrchResponseDto.builder()
                         .no(doc.getAsString("no"))
                         .ranking(doc.getAsString("ranking"))
@@ -184,12 +207,20 @@ public class ResponseParser {
 
         JSONArray docs = (JSONArray) jsonResponse.get("docs");
         LinkedList<SearchResponseDto> responseList = new LinkedList<>();
+        HashSet<String> duplicateCheckSet = new HashSet<>();
 
-        if(!docs.isEmpty()){
-            for (Object o : docs) {
-                JSONObject docsElement = (JSONObject) o;
-                JSONObject doc = (JSONObject) docsElement.get("doc");
+        if (docs == null) {
+            return responseList;
+        }
 
+        for (Object o : docs) {
+            JSONObject docsElement = (JSONObject) o;
+            JSONObject doc = (JSONObject) docsElement.get("doc");
+
+            // 중복 체크
+            String duplicateCheckKey = doc.getAsString("bookname") + doc.getAsString("authors");
+
+            if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
                 responseList.add(SearchResponseDto.builder()
                         .bookname(doc.getAsString("bookname"))
                         .authors(doc.getAsString("authors"))
@@ -206,7 +237,6 @@ public class ResponseParser {
         return responseList;
     }
 
-
     public boolean loanAvailable(JSONObject jsonResponse) {
         log.trace("ResponseParser > loanAvailable()");
 
@@ -214,18 +244,15 @@ public class ResponseParser {
         return result.getAsString("loanAvailable").equals("Y");
     }
 
-
     public DetailResponseDto detail(JSONObject jsonResponse){
         log.trace("ResponseParser > detail()");
         JSONObject book = (JSONObject) jsonResponse.get("book");
-        JSONArray loanHistory = (JSONArray) jsonResponse.get("loanHistory");
         JSONArray loanGrps = (JSONArray) jsonResponse.get("loanGrps");
         JSONArray keywords = (JSONArray) jsonResponse.get("keywords");
         JSONArray coLoanBooks = (JSONArray) jsonResponse.get("coLoanBooks");
         JSONArray maniaRecBooks = (JSONArray) jsonResponse.get("maniaRecBooks");
         JSONArray readerRecBooks = (JSONArray) jsonResponse.get("readerRecBooks");
 
-        LinkedList<DetailResponseDto> responseList = new LinkedList<>();
         BookInfoDto bookInfoDto = BookInfoDto.builder()
                 .bookname(book.getAsString("bookname"))
                 .authors(book.getAsString("authors"))
@@ -239,7 +266,6 @@ public class ResponseParser {
                 .class_nm(book.getAsString("class_nm"))
                 .loanCnt(book.getAsString("loanCnt")).build();
 
-        // TODO : null 이면 빈 list 로 보내도 되는지 여쭤보기
         List<Top3LoanUserDto> top3LoanUserDtoList = new LinkedList<>();
         if(!loanGrps.isEmpty()){
             for (Object loanGrp : loanGrps) {
@@ -263,25 +289,28 @@ public class ResponseParser {
             }
         }
 
+        HashSet<String> duplicateCheckSet = new HashSet<>(); // 중복 체크
         LinkedList<CoLoanBooksDto> coLoanBooksList = new LinkedList<>();
         if(!coLoanBooks.isEmpty()){
             for (Object coLoanBook : coLoanBooks) {
                 JSONObject o = (JSONObject) ((JSONObject) coLoanBook).get("book");
-                coLoanBooksList.add(CoLoanBooksDto.builder()
-                        .bookname(o.getAsString("bookname"))
-                        .authors(o.getAsString("authors"))
-                        .publisher(o.getAsString("publisher"))
-                        .publication_year(o.getAsString("publication_year"))
-                        .isbn13(o.getAsString("isbn13"))
-                        .vol(o.getAsString("vol"))
-                        .loanCnt(o.getAsString("loanCnt"))
-                        .build());
+                String duplicateCheckKey = o.getAsString("bookname") + o.getAsString("authors");
+                if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
+                    coLoanBooksList.add(CoLoanBooksDto.builder()
+                            .bookname(o.getAsString("bookname"))
+                            .authors(o.getAsString("authors"))
+                            .publisher(o.getAsString("publisher"))
+                            .publication_year(o.getAsString("publication_year"))
+                            .isbn13(o.getAsString("isbn13"))
+                            .vol(o.getAsString("vol"))
+                            .loanCnt(o.getAsString("loanCnt"))
+                            .build());
+                }
             }
         }
 
         LinkedList<RecommendDto> recommendBooksList = new LinkedList<>();
-        HashSet<String> duplicateCheckSet = new HashSet<>(); // 중복 체크
-
+        duplicateCheckSet = new HashSet<>(); // 중복 체크
         if(!maniaRecBooks.isEmpty()){
             for(Object maniaRecBook : maniaRecBooks) {
                 JSONObject o = (JSONObject) ((JSONObject) maniaRecBook).get("book");
@@ -299,8 +328,8 @@ public class ResponseParser {
             }
         }
 
-        if(!readerRecBooks.isEmpty()) {
-            for (Object readerRecBook : readerRecBooks) {
+        if(!readerRecBooks.isEmpty()){
+            for(Object readerRecBook : readerRecBooks) {
                 JSONObject o = (JSONObject) ((JSONObject) readerRecBook).get("book");
                 String duplicateCheckKey = o.getAsString("bookname") + o.getAsString("authors");
                 if (duplicateCheckSet.add(duplicateCheckKey)) { // 중복 확인
@@ -315,6 +344,7 @@ public class ResponseParser {
                 }
             }
         }
+
         return DetailResponseDto.builder()
                 .bookInfoDto(bookInfoDto)
                 .top3LoanUserDtoList(top3LoanUserDtoList)
@@ -330,25 +360,28 @@ public class ResponseParser {
         JSONArray libs = (JSONArray) jsonResponse.get("libs");
 
         LinkedList<LibSrchResponseDto> responseList = new LinkedList<>();
-        if(!libs.isEmpty()){
-            for (Object o : libs) {
-                JSONObject libsElement = (JSONObject) o;
-                JSONObject lib = (JSONObject) libsElement.get("lib");
 
-                responseList.add(LibSrchResponseDto.builder()
-                        .libCode(lib.getAsString("libCode"))
-                        .libName(lib.getAsString("libName"))
-                        .address(lib.getAsString("address"))
-                        .tel(lib.getAsString("tel"))
-                        .fax(lib.getAsString("fax"))
-                        .latitude(lib.getAsString("latitude"))
-                        .longitude(lib.getAsString("longitude"))
-                        .homepage(lib.getAsString("homepage"))
-                        .closed(lib.getAsString("closed"))
-                        .operatingTime(lib.getAsString("operatingTime"))
-                        .BookCount(lib.getAsString("BookCount"))
-                        .build());
-            }
+        if (libs == null) {
+            return responseList;
+        }
+
+        for (Object o : libs) {
+            JSONObject libsElement = (JSONObject) o;
+            JSONObject lib = (JSONObject) libsElement.get("lib");
+
+            responseList.add(LibSrchResponseDto.builder()
+                    .libCode(lib.getAsString("libCode"))
+                    .libName(lib.getAsString("libName"))
+                    .address(lib.getAsString("address"))
+                    .tel(lib.getAsString("tel"))
+                    .fax(lib.getAsString("fax"))
+                    .latitude(lib.getAsString("latitude"))
+                    .longitude(lib.getAsString("longitude"))
+                    .homepage(lib.getAsString("homepage"))
+                    .closed(lib.getAsString("closed"))
+                    .operatingTime(lib.getAsString("operatingTime"))
+                    .BookCount(lib.getAsString("BookCount"))
+                    .build());
         }
         return responseList;
     }
