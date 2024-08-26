@@ -47,7 +47,7 @@ public class OpentalkService {
     private final MessageService messageService;
 
     /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
-    public List<Long> hotOpentalk() {
+    public List<Long> getHotOpentalkIds() {
         log.trace("OpentalkService > hotOpentalk()");
         List<Message> recent200Messages = messageRepository.findTop200ByOrderByCreatedAtDesc();
 
@@ -81,7 +81,7 @@ public class OpentalkService {
         userOpentalk.setUserId(user);
 
         userOpentalkRepository.save(userOpentalk);
-        return favoriteOpentalk();
+        return getFavoriteOpentalkIds();
     }
 
     // 오픈톡 즐찾 삭제
@@ -99,11 +99,11 @@ public class OpentalkService {
             throw new CustomException(ErrorCode.USER_OPENTALK_NOT_FOUND);
         }
         userOpentalkRepository.delete(userOpentalk);
-        return favoriteOpentalk();
+        return getFavoriteOpentalkIds();
     }
 
     /* 해당 user의 즐찾 opentalk list 반환*/
-    public List<Long> favoriteOpentalk() {
+    public List<Long> getFavoriteOpentalkIds() {
         log.trace("OpentalkService > favoriteOpentalk()");
         User user = userService.loadLoggedinUser();
         if (user == null) {
