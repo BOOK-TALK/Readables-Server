@@ -3,6 +3,7 @@ package com.book.backend.domain.book.controller;
 import com.book.backend.domain.book.service.BookService;
 
 import com.book.backend.domain.openapi.dto.response.LoanItemSrchResponseDto;
+import com.book.backend.domain.openapi.service.RandomPicker;
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.openapi.dto.request.LoanItemSrchRequestDto;
 
@@ -74,7 +75,7 @@ public class BookController {
         HotTrendRequestDto requestDto = HotTrendRequestDto.builder().searchDt(yesterday.toString()).build();
 
         LinkedList<HotTrendResponseDto> response = bookService.hotTrend(requestDto);
-
+        response = RandomPicker.randomPick(response, 10); // 10개 랜덤 추출
         return responseTemplate.success(response, HttpStatus.OK);
     }
 
