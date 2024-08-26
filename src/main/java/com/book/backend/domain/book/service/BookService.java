@@ -91,9 +91,10 @@ public class BookService {
     public LinkedList<LoanItemSrchResponseDto> loanItemSrch(LoanItemSrchRequestDto requestDto) throws Exception{
         log.trace("BookService > customHotTrend()");
         String subUrl = "loanItemSrch";
-        requestDto.setPageSize("10"); // 10개만 출력하도록 제한
+        requestDto.setPageSize("25");
         JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
         ResponseParser responseParser = new ResponseParser();
-        return responseParser.loanItemSrch(jsonResponse);
+        LinkedList<LoanItemSrchResponseDto> responseList = responseParser.loanItemSrch(jsonResponse);
+        return responseParser.customPageFilter(responseList, "1", "10");
     }
 }
