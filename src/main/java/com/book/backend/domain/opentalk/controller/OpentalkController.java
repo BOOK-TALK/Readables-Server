@@ -48,7 +48,7 @@ public class OpentalkController {
                     description = OpentalkJoinResponseDto.description)})
     @PostMapping("/join")
     public ResponseEntity<?> joinOpentalk(@RequestParam String isbn, int pageSize) {
-        RequestLogger.param(new String[]{"isbn, pageSize"}, isbn, pageSize);
+        RequestLogger.param(new String[]{"isbn", "pageSize"}, isbn, pageSize);
         OpentalkJoinResponseDto response = opentalkService.joinOpentalk(isbn, pageSize);
 
         return responseTemplate.success(response, HttpStatus.OK);

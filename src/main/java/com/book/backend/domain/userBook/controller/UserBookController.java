@@ -33,7 +33,7 @@ public class UserBookController {
                     description = UserBookDto.description)})
     @PostMapping("/read")
     public ResponseEntity<?> setReadBooks(String isbn, String bookname, String bookImgUrl) {
-        RequestLogger.param(new String[]{"isbn, bookname, bookImgUrl"}, isbn, bookname, bookImgUrl);
+        RequestLogger.param(new String[]{"isbn", "bookname", "bookImgUrl"}, isbn, bookname, bookImgUrl);
         requestValidate.isValidIsbn(isbn);
         List<UserBookDto> response = userBookService.setReadBooks(isbn, bookname, bookImgUrl);
         return responseTemplate.success(response, HttpStatus.OK);

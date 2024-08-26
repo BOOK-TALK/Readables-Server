@@ -9,6 +9,7 @@ import com.book.backend.domain.userBook.service.UserBookService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.global.ResponseTemplate;
+import com.book.backend.global.log.RequestLogger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -62,6 +63,7 @@ public class UserController {
     @PutMapping("/info/edit")
     public ResponseEntity<?> editUserInfo(@Valid @RequestBody UserInfoDto requestDto) {
         log.trace("UserController > editUserInfo()");
+//        RequestLogger.body(requestDto); //FIXME : body
 
         User user = userService.loadLoggedinUser();
         if (user == null) {
@@ -98,6 +100,7 @@ public class UserController {
     @PutMapping("/libraries/edit")
     public ResponseEntity<?> editUserLibraries(@RequestBody UserLibrariesRequestDto requestDto) {
         log.trace("UserController > editUserLibrary()");
+//        RequestLogger.body(requestDto);//FIXME : body
 
         User user = userService.loadLoggedinUser();
         if (user == null) {
