@@ -24,8 +24,21 @@ public class GoalService {
     private final UserService userService;
     private final GoalMapper goalMapper;
 
+    public GoalDto getGoal(String goalId) throws Exception {
+        log.trace("GoalService > getGoal()");
+
+        User user = validateAndGetLoggedInUser();
+        Goal goal = validateAndGetGoal(goalId);
+        validateUserMatchesGoal(user, goal);
+
+        // 목표 조회
+        return goalMapper.convertToGoalDto(goal);
+    }
+
     @Transactional
     public GoalDto createGoal(String isbn, String totalPage) throws Exception {
+        log.trace("GoalService > createGoal()");
+
         User user = validateAndGetLoggedInUser();
         validateIsExistGoal(user, isbn);
 

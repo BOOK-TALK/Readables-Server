@@ -21,6 +21,15 @@ public class GoalController {
     private final RequestValidate requestValidate;
     private final ResponseTemplate responseTemplate;
 
+    @GetMapping("/get")
+    public ResponseEntity<?> getGoal(@RequestParam String goalId) throws Exception {
+        log.trace("GoalController > getGoal()");
+
+        GoalDto goalDto = goalService.getGoal(goalId);
+
+        return responseTemplate.success(goalDto, HttpStatus.OK);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> createGoal(@RequestParam String isbn,
                                         @RequestParam String totalPage) throws Exception {
