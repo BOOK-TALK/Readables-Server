@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/goal")
@@ -26,12 +23,21 @@ public class GoalController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createGoal(@RequestParam String isbn,
-                                           @RequestParam String totalPage) throws Exception {
+                                        @RequestParam String totalPage) throws Exception {
         log.trace("GoalController > createGoal()");
         requestValidate.isValidIsbn(isbn);
         requestValidate.isValidBookPageNum(totalPage);
 
         GoalDto goalDto = goalService.createGoal(isbn, totalPage);
+
+        return responseTemplate.success(goalDto, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/finish")
+    public ResponseEntity<?> finishGoal(@RequestParam String goalId) throws Exception {
+        log.trace("GoalController > finishGoal()");
+
+        GoalDto goalDto = goalService.finishGoal(goalId);
 
         return responseTemplate.success(goalDto, HttpStatus.OK);
     }

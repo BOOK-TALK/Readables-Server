@@ -34,10 +34,9 @@ public class GoalService {
 
     @Transactional
     public GoalDto createGoal(String isbn, String totalPage) throws Exception {
-        User user = userService.loadLoggedinUser();
-        if (user == null) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
+        User user = validateAndGetLoggedInUser();
+
+        // TODO: 이미 해당 책에 대한 목표가 생성되어 있는 경우 예외처리
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -54,5 +53,39 @@ public class GoalService {
         goalRepository.save(goal);
 
         return goalMapper.convertToGoalDto(goal);
+    }
+
+    @Transactional
+    public GoalDto finishGoal(String goalId) throws Exception {
+        User user = validateAndGetLoggedInUser();
+        Goal goal = validateAndGetGoal(goalId);
+        validateUserMatchesGoal(user, goal);
+
+        goal.setIsFinished(true);
+        goalRepository.save(goal);
+
+        return goalMapper.convertToGoalDto(goal);
+    }
+
+    // 유저 검증 및 로그인된 유저 로드
+    private User validateAndGetLoggedInUser() {
+        User user = userService.loadLoggedinUser();
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+        return user;
+    }
+
+    // 목표 검증 및 로드
+    private Goal validateAndGetGoal(String goalId) {
+        return goalRepository.findById(Long.valueOf(goalId))
+                .orElseThrow(() -> new CustomException(ErrorCode.GOAL_NOT_FOUND));
+    }
+
+    // 해당 유저의 목표인지 검증
+    private void validateUserMatchesGoal(User user, Goal goal) {
+        if (user != goal.getUser()) {
+            throw new CustomException(ErrorCode.CANNOT_ACCESS_GOAL);
+        }
     }
 }
