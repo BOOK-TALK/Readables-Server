@@ -9,6 +9,8 @@ import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
 import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
+import com.book.backend.domain.user.dto.UserSummaryDto;
+import com.book.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.modelmapper.ModelMapper;
@@ -25,6 +27,14 @@ public class GoalMapper {
     public GoalDto convertToGoalDto(Goal goal) throws Exception {
         GoalDto goalDto = mapper.map(goal, GoalDto.class);
         goalDto.setBookSummary(getBookSummaryDto(goal.getIsbn()));
+        User user = goal.getUser();
+
+        UserSummaryDto userSummaryDto = UserSummaryDto.builder()
+                .userId(user.getUserId())
+                .nickname(user.getNickname())
+                .build();
+
+        goalDto.setUserSummary(userSummaryDto);
         return goalDto;
     }
 
