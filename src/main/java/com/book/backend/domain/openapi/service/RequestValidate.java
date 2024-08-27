@@ -159,7 +159,7 @@ public class RequestValidate {
         log.trace("RequestValidate > isValidType()");
         // text, img, goal 중 하나인지 확인
         if(!(type.equals("text") || type.equals("image") || type.equals("goal"))){
-            throw new CustomException(ErrorCode.INVALID_TYPE);
+            throw new CustomException(ErrorCode.INVALID_MESSAGE_TYPE);
         }
     }
 }
