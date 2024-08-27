@@ -4,7 +4,7 @@ import lombok.*;
 
 @Getter
 @Builder
-@AllArgsConstructor
+@Setter
 public class MessageRequestDto {
     private String type; //text, img
     private String jwtToken;
