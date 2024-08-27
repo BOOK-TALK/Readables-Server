@@ -22,6 +22,7 @@ public enum ErrorCode {
     INVALID_REGION_DETAIL_CODE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 세부지역 코드입니다."),
     INVALID_LIB_CODE(HttpStatus.BAD_REQUEST, "400", "올바르지 않은 도서관 코드입니다. (6자리 숫자로 입력해주세요)"),
     INVALID_PAGE_NUM(HttpStatus.BAD_REQUEST, "400", "페이지 번호는 1 이상의 숫자로 입력해주세요."),
+    INVALID_BOOK_PAGE_NUM(HttpStatus.BAD_REQUEST, "400", "책 페이지 수는 1 이상의 숫자로 입력해주세요."),
     LIST_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "400", "요청 리스트의 크기가 초과되었습니다."),
     ALREADY_EXIST(HttpStatus.CONFLICT, "409", "이미 추가된 값입니다"),
 

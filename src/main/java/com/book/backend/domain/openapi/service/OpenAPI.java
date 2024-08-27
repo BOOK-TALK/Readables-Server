@@ -65,6 +65,7 @@ public class OpenAPI {
         if(response.get("error") != null){
             throw new CustomException(ErrorCode.API_CALL_LIMIT_EXCEEDED);
         }
+        log.trace(String.valueOf(response));
         return response;
     }
 }

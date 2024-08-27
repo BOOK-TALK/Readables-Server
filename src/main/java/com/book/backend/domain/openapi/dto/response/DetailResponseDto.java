@@ -1,5 +1,6 @@
 package com.book.backend.domain.openapi.dto.response;
 
+import com.book.backend.domain.book.dto.BookInfoDto;
 import com.book.backend.domain.detail.dto.*;
 
 import java.util.LinkedList;

@@ -1,6 +1,6 @@
 package com.book.backend.domain.openapi.service;
 
-import com.book.backend.domain.detail.dto.BookInfoDto;
+import com.book.backend.domain.book.dto.BookInfoDto;
 import com.book.backend.domain.detail.dto.CoLoanBooksDto;
 import com.book.backend.domain.detail.dto.Top3LoanUserDto;
 import com.book.backend.domain.detail.dto.RecommendDto;
@@ -246,25 +246,13 @@ public class ResponseParser {
 
     public DetailResponseDto detail(JSONObject jsonResponse){
         log.trace("ResponseParser > detail()");
-        JSONObject book = (JSONObject) jsonResponse.get("book");
+        BookInfoDto bookInfoDto = getBookInfo(jsonResponse);
+
         JSONArray loanGrps = (JSONArray) jsonResponse.get("loanGrps");
         JSONArray keywords = (JSONArray) jsonResponse.get("keywords");
         JSONArray coLoanBooks = (JSONArray) jsonResponse.get("coLoanBooks");
         JSONArray maniaRecBooks = (JSONArray) jsonResponse.get("maniaRecBooks");
         JSONArray readerRecBooks = (JSONArray) jsonResponse.get("readerRecBooks");
-
-        BookInfoDto bookInfoDto = BookInfoDto.builder()
-                .bookname(book.getAsString("bookname"))
-                .authors(book.getAsString("authors"))
-                .publisher(book.getAsString("publisher"))
-                .bookImageURL(book.getAsString("bookImageURL"))
-                .description(book.getAsString("description"))
-                .publication_year(book.getAsString("publication_year"))
-                .isbn13(book.getAsString("isbn13"))
-                .vol(book.getAsString("vol"))
-                .class_no(book.getAsString("class_no"))
-                .class_nm(book.getAsString("class_nm"))
-                .loanCnt(book.getAsString("loanCnt")).build();
 
         List<Top3LoanUserDto> top3LoanUserDtoList = new LinkedList<>();
         if(!loanGrps.isEmpty()){
@@ -352,6 +340,23 @@ public class ResponseParser {
                 .coLoanBooksDtoList(coLoanBooksList)
                 .recommendResponseDtoList(recommendBooksList)
                 .build();
+    }
+
+    public BookInfoDto getBookInfo(JSONObject jsonResponse) {
+        JSONObject book = (JSONObject) jsonResponse.get("book");
+
+        return BookInfoDto.builder()
+                .bookname(book.getAsString("bookname"))
+                .authors(book.getAsString("authors"))
+                .publisher(book.getAsString("publisher"))
+                .bookImageURL(book.getAsString("bookImageURL"))
+                .description(book.getAsString("description"))
+                .publication_year(book.getAsString("publication_year"))
+                .isbn13(book.getAsString("isbn13"))
+                .vol(book.getAsString("vol"))
+                .class_no(book.getAsString("class_no"))
+                .class_nm(book.getAsString("class_nm"))
+                .loanCnt(book.getAsString("loanCnt")).build();
     }
 
     public LinkedList<LibSrchResponseDto> libSrch(JSONObject jsonResponse) {

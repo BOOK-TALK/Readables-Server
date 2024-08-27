@@ -1,6 +1,5 @@
 package com.book.backend.domain.detail.service;
 
-import com.book.backend.domain.book.entity.Book;
 import com.book.backend.domain.book.repository.BookRepository;
 import com.book.backend.domain.detail.dto.LoanAvailableDto;
 import com.book.backend.domain.openapi.dto.request.BookExistRequestDto;
@@ -14,7 +13,6 @@ import com.book.backend.domain.openapi.service.ResponseParser;
 import java.util.List;
 import java.util.LinkedList;
 
-import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
 import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
