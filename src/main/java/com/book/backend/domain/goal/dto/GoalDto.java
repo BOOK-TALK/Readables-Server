@@ -1,8 +1,6 @@
 package com.book.backend.domain.goal.dto;
 
 import com.book.backend.domain.book.dto.BookSummaryDto;
-import com.book.backend.domain.user.dto.UserDto;
-import com.book.backend.domain.user.dto.UserSummaryDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GoalDto {
     private Long goalId;
-    private UserSummaryDto userSummary;
+    private String userNickname;
     private BookSummaryDto bookSummary;
     private String recentPage;
     private String totalPage;
