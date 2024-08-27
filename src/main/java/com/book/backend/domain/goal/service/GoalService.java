@@ -27,9 +27,7 @@ public class GoalService {
     public GoalDto getGoal(Long goalId) throws Exception {
         log.trace("GoalService > getGoal()");
 
-        User user = validateAndGetLoggedInUser();
         Goal goal = validateAndGetGoal(goalId);
-        validateUserMatchesGoal(user, goal);
 
         // 목표 조회
         return goalMapper.convertToGoalDto(goal);
