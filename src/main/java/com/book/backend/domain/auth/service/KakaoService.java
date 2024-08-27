@@ -105,7 +105,7 @@ public class KakaoService {
         KakaoTokenResponseDto tokenResponseDto = getAccessToken(authorizationCode);
         String accessToken = tokenResponseDto.getAccessToken();
 
-        log.trace(tokenResponseDto.getIdToken());
+        log.trace("idToken: " + tokenResponseDto.getIdToken());
 
         KakaoUserInfoDto userInfoDto = getUserInfo(accessToken);
         String kakaoId = String.valueOf(userInfoDto.getId());
