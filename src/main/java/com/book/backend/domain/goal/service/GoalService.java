@@ -1,23 +1,15 @@
 package com.book.backend.domain.goal.service;
 
-import com.book.backend.domain.book.dto.BookInfoDto;
-import com.book.backend.domain.book.dto.BookSummaryDto;
-import com.book.backend.domain.book.mapper.BookMapper;
 import com.book.backend.domain.goal.dto.GoalDto;
 import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.goal.mapper.GoalMapper;
 import com.book.backend.domain.goal.repository.GoalRepository;
-import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
-import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
-import com.book.backend.domain.openapi.service.OpenAPI;
-import com.book.backend.domain.openapi.service.ResponseParser;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +27,11 @@ public class GoalService {
     @Transactional
     public GoalDto createGoal(String isbn, String totalPage) throws Exception {
         User user = validateAndGetLoggedInUser();
-
-        // TODO: 이미 해당 책에 대한 목표가 생성되어 있는 경우 예외처리
+        validateIsExistGoal(user, isbn);
 
         LocalDateTime now = LocalDateTime.now();
 
+        // 목표 생성
         Goal goal = Goal.builder()
                 .isbn(isbn)
                 .user(user)
@@ -61,6 +53,7 @@ public class GoalService {
         Goal goal = validateAndGetGoal(goalId);
         validateUserMatchesGoal(user, goal);
 
+        // 목표 완료 처리
         goal.setIsFinished(true);
         goalRepository.save(goal);
 
@@ -86,6 +79,13 @@ public class GoalService {
     private void validateUserMatchesGoal(User user, Goal goal) {
         if (user != goal.getUser()) {
             throw new CustomException(ErrorCode.CANNOT_ACCESS_GOAL);
+        }
+    }
+
+    // 해당 책에 대한 목표가 이미 존재하는지 검증
+    private void validateIsExistGoal(User user, String isbn) {
+        if (goalRepository.findByUserAndIsbn(user, isbn).isPresent()) {
+            throw new CustomException(ErrorCode.GOAL_IS_ALREADY_EXIST);
         }
     }
 }
