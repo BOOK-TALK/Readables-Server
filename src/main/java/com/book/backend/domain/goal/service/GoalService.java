@@ -27,9 +27,9 @@ public class GoalService {
     public GoalDto getGoal(Long goalId) throws Exception {
         log.trace("GoalService > getGoal()");
 
+        // 목표 조회
         Goal goal = validateAndGetGoal(goalId);
 
-        // 목표 조회
         return goalMapper.convertToGoalDto(goal);
     }
 
@@ -66,11 +66,23 @@ public class GoalService {
         Goal goal = validateAndGetGoal(goalId);
         validateUserMatchesGoal(user, goal);
 
-        // 목표 완료 처리
+        // 목표 완료
         goal.setIsFinished(true);
         goalRepository.save(goal);
 
         return goalMapper.convertToGoalDto(goal);
+    }
+
+    @Transactional
+    public void deleteGoal(Long goalId) {
+        log.trace("GoalService > deleteGoal()");
+
+        User user = validateAndGetLoggedInUser();
+        Goal goal = validateAndGetGoal(goalId);
+        validateUserMatchesGoal(user, goal);
+
+        // 목표 삭제
+        goalRepository.delete(goal);
     }
 
     // 유저 검증 및 로그인된 유저 로드

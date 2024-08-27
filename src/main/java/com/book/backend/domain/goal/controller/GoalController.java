@@ -50,4 +50,13 @@ public class GoalController {
 
         return responseTemplate.success(goalDto, HttpStatus.OK);
     }
+
+    @DeleteMapping("delete")
+    public ResponseEntity<?> deleteGoal(@RequestParam Long goalId) {
+        log.trace("GoalController > deleteGoal()");
+
+        goalService.deleteGoal(goalId);
+
+        return responseTemplate.success("목표가 성공적으로 삭제되었습니다.", HttpStatus.OK);
+    }
 }
