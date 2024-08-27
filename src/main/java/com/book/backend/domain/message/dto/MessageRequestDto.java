@@ -6,7 +6,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 public class MessageRequestDto {
-//    private String type; //text, img
+    private String type; //text, img
     private String jwtToken;
     private Long opentalkId;
     private String content;

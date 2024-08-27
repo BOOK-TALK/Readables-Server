@@ -9,6 +9,7 @@ import java.util.Date;
 public class MessageResponseDto {
     private String nickname; //작성자
     private String profileImageUrl;
+    private String type;
     private String content;
     private Date createdAt;
 

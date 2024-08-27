@@ -35,12 +35,13 @@ public class MessageService {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
-    public MessageResponseDto saveHttpMessage(Long opentalkId, String text){
+    public MessageResponseDto saveHttpMessage(Long opentalkId, String type, String content){
         log.trace("MessageService > saveHttpMessage()");
         MessageRequestDto messageRequestDto = MessageRequestDto.builder()
                 .jwtToken(null)
                 .opentalkId(opentalkId)
-                .content(text)
+                .type(type)
+                .content(content)
                 .build();
         Message message = messageMapper.convertToMessage(messageRequestDto);
         // message DB에 저장
