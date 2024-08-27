@@ -1,5 +1,7 @@
 package com.book.backend.domain.message.controller;
 
+import com.book.backend.domain.goal.dto.GoalDto;
+import com.book.backend.domain.goal.service.GoalService;
 import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.message.entity.Message;
@@ -38,6 +40,7 @@ public class MessageController {
     private final ResponseTemplate responseTemplate;
     private final SimpMessageSendingOperations sendingOperations;
     private final RequestValidate requestValidate;
+    private final GoalService goalService;
 
     // HTTP 단방향 채팅 저장
     @Operation(summary="메세지 저장 (HTTP)", description="임시 채팅 저장 API 입니다. opentalkId, type, text 를 입력으로 받아 저장 결과를 반환합니다.",
@@ -49,6 +52,17 @@ public class MessageController {
         requestValidate.isValidType(type);
 
         MessageResponseDto response = messageService.saveHttpMessage(opentalkId, type, content);
+        return responseTemplate.success(response, HttpStatus.OK);
+    }
+
+//    @Operation(summary="다른 사람 목표 상세", description="목표 ID 로 목표 상세를 조회합니다.",
+//            parameters = {@Parameter(name = "goalId", description = "목표 DB ID")},
+//            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
+//                    description = GoalDto.description)
+//    })
+    @PostMapping("/api/message/othersGoal")
+    public ResponseEntity<?> getOthersGoal(Long goalId) throws Exception {
+        GoalDto response = goalService.getGoal(goalId);
         return responseTemplate.success(response, HttpStatus.OK);
     }
 
