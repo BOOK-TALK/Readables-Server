@@ -24,7 +24,7 @@ public class GoalService {
     private final UserService userService;
     private final GoalMapper goalMapper;
 
-    public GoalDto getGoal(String goalId) throws Exception {
+    public GoalDto getGoal(Long goalId) throws Exception {
         log.trace("GoalService > getGoal()");
 
         User user = validateAndGetLoggedInUser();
@@ -61,7 +61,7 @@ public class GoalService {
     }
 
     @Transactional
-    public GoalDto finishGoal(String goalId) throws Exception {
+    public GoalDto finishGoal(Long goalId) throws Exception {
         log.trace("GoalService > finishGoal()");
 
         User user = validateAndGetLoggedInUser();
@@ -87,10 +87,10 @@ public class GoalService {
     }
 
     // 목표 검증 및 로드
-    private Goal validateAndGetGoal(String goalId) {
+    private Goal validateAndGetGoal(Long goalId) {
         log.trace("GoalService > validateAndGetLoggedInUser()");
 
-        return goalRepository.findById(Long.valueOf(goalId))
+        return goalRepository.findById(goalId)
                 .orElseThrow(() -> new CustomException(ErrorCode.GOAL_NOT_FOUND));
     }
 

@@ -22,7 +22,7 @@ public class GoalController {
     private final ResponseTemplate responseTemplate;
 
     @GetMapping("/get")
-    public ResponseEntity<?> getGoal(@RequestParam String goalId) throws Exception {
+    public ResponseEntity<?> getGoal(@RequestParam Long goalId) throws Exception {
         log.trace("GoalController > getGoal()");
 
         GoalDto goalDto = goalService.getGoal(goalId);
@@ -43,7 +43,7 @@ public class GoalController {
     }
 
     @PutMapping("/finish")
-    public ResponseEntity<?> finishGoal(@RequestParam String goalId) throws Exception {
+    public ResponseEntity<?> finishGoal(@RequestParam Long goalId) throws Exception {
         log.trace("GoalController > finishGoal()");
 
         GoalDto goalDto = goalService.finishGoal(goalId);
