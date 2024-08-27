@@ -36,10 +36,6 @@ services:
       - ./mysql/data:/var/lib/mysql # mysql-container 가 생성한 데이터를 이 폴더 하위에 저장
       - ./mysql:/etc/mysql/conf.d # 서버 /home/ubuntu/git/mysql/conf.d 에 설정된 my.cnf 설정을 컨테이너 내부에서 사용
       - ./src/main/resources/sql:/docker-entrypoint-initdb.d
-    command: # 한글 인코딩
-#      - --skip-character-set-client-handshake #서버 시스템 인코딩 방식과 상관없이 character-set-server 에 지정된 문자를 기본으로
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
 
   redis-service:
     container_name: redis-container
