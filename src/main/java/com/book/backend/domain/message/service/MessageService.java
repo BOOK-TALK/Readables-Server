@@ -41,8 +41,9 @@ public class MessageService {
                 .jwtToken(null)
                 .opentalkId(opentalkId)
                 .type(type)
-                .content(content)
                 .build();
+        if(content != null) messageRequestDto.setContent(content);
+
         Message message = messageMapper.convertToMessage(messageRequestDto);
         // message DB에 저장
         try{
