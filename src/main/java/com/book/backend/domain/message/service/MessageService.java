@@ -1,13 +1,19 @@
 package com.book.backend.domain.message.service;
 
 import com.book.backend.domain.auth.service.CustomUserDetailsService;
+import com.book.backend.domain.goal.entity.Goal;
+import com.book.backend.domain.goal.repository.GoalRepository;
+import com.book.backend.domain.goal.service.GoalService;
 import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
 import com.book.backend.domain.message.entity.Message;
 import com.book.backend.domain.message.mapper.MessageMapper;
 import com.book.backend.domain.message.repository.MessageRepository;
+import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
+import com.book.backend.domain.user.entity.User;
+import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
@@ -31,16 +37,44 @@ import java.util.List;
 public class MessageService {
     private final MessageRepository messageRepository;
     private final OpentalkRepository opentalkRepository;
+    private final GoalRepository goalRepository;
     private final MessageMapper messageMapper;
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
+    private final RequestValidate requestValidate;
+    private final UserService userService;
 
-    public MessageResponseDto saveHttpMessage(Long opentalkId, String text){
+    public MessageResponseDto saveHttpMessage(Long opentalkId, String type, String content){
         log.trace("MessageService > saveHttpMessage()");
+        if(type.equals("goal")){
+            if(content == null) throw new CustomException(ErrorCode.INVALID_ISBN);
+            requestValidate.isValidIsbn(content);
+        }
         MessageRequestDto messageRequestDto = MessageRequestDto.builder()
-                .jwtToken(null)
                 .opentalkId(opentalkId)
-                .content(text)
+                .type(type)
+                .build();
+        if(content != null) messageRequestDto.setContent(content);
+
+        Message message = messageMapper.convertToMessage(messageRequestDto);
+        // message DB에 저장
+        try{
+            messageRepository.save(message);
+        } catch (Exception e){
+            throw new CustomException(ErrorCode.MESSAGE_SAVE_FAILED);
+        }
+        return messageMapper.convertToMessageResponseDto(message);
+    }
+
+    public MessageResponseDto shareGoal(Long opentalkId, String isbn){
+        log.trace("MessageService > shareGoal()");
+        User user = userService.loadLoggedinUser();
+        Goal goal = goalRepository.findByUserAndIsbn(user, isbn).orElseThrow(() -> new CustomException(ErrorCode.GOAL_NOT_FOUND));
+
+        MessageRequestDto messageRequestDto = MessageRequestDto.builder()
+                .opentalkId(opentalkId)
+                .type("goal")
+                .content(String.valueOf(goal.getGoalId()))
                 .build();
         Message message = messageMapper.convertToMessage(messageRequestDto);
         // message DB에 저장
