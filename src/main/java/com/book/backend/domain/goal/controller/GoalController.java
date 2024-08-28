@@ -1,6 +1,7 @@
 package com.book.backend.domain.goal.controller;
 
 import com.book.backend.domain.goal.dto.GoalDto;
+import com.book.backend.domain.goal.dto.RecordIntervalDto;
 import com.book.backend.domain.goal.service.GoalService;
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.global.ResponseTemplate;
@@ -46,13 +47,25 @@ public class GoalController {
     @Operation(summary = "유저 목표 조회", description = "유저가 생성한 모든 목표를 반환합니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
                     description = GoalDto.description)})
-    @GetMapping("/user/get")
+    @GetMapping("/get/user")
     public ResponseEntity<?> getUserGoals() throws Exception {
         log.trace("GoalController > getUserGoals()");
 
         List<GoalDto> goalDtos = goalService.getUserGoals();
 
         return responseTemplate.success(goalDtos, HttpStatus.OK);
+    }
+
+    @Operation(summary = "유저 전체 목표에 대한 일주일 기록 조회", description = "유저의 모든 목표에 대한 일주일 기록을 조회합니다.",
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
+                    description = RecordIntervalDto.description)})
+    @GetMapping("/get/total")
+    public ResponseEntity<?> getTotalAWeekRecords() {
+        log.trace("GoalController > getTotalAWeekRecords()");
+
+        List<RecordIntervalDto> totalAWeekRecords = goalService.getTotalAWeekRecords();
+
+        return responseTemplate.success(totalAWeekRecords, HttpStatus.OK);
     }
 
     @Operation(summary = "목표 생성", description = "책 isbn 번호와 총 페이지 수를 입력받아 해당 책에 대한 목표를 생성합니다. " +
