@@ -46,7 +46,7 @@ public class OpentalkService {
     private final OpentalkResponseParser opentalkResponseParser;
     private final MessageService messageService;
 
-    /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
+    /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 3 id 반환*/
     public List<Long> getHotOpentalkIds() {
         log.trace("OpentalkService > hotOpentalk()");
         List<Message> recent200Messages = messageRepository.findTop200ByOrderByCreatedAtDesc();
@@ -55,10 +55,10 @@ public class OpentalkService {
         Map<Long, Long> opentalkIdCountMap = recent200Messages.stream().collect(
                 Collectors.groupingBy(message -> message.getOpentalk().getOpentalkId(), Collectors.counting())
         );
-        // value 순으로 정렬해서 top 5 id 반환
+        // value 순으로 정렬해서 top 3 id 반환
         return opentalkIdCountMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .limit(5)
+                .limit(3)
                 .map(Map.Entry::getKey)
                 .toList();
     }
