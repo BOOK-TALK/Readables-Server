@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,7 +69,7 @@ public class GoalMapper {
 
     // 일주일 기록으로 변경
     public List<RecordIntervalDto> convertAWeekRecords(List<RecordDto> records) {
-        log.trace("GoalMapper > convertAWeekRecords");
+        log.trace("GoalMapper > convertAWeekRecords()");
 
         Map<LocalDate, RecordDto> recordsMap = mapRecordsByDate(records);
         return generateAWeekDaysRecords(recordsMap);
@@ -93,6 +94,11 @@ public class GoalMapper {
 
     private Map<LocalDate, RecordDto> mapRecordsByDate(List<RecordDto> records) {
         log.trace("GoalMapper > mapRecordsByDate()");
+
+        // records가 null이면 빈 리스트로 대체
+        if (records == null) {
+            records = new LinkedList<>();
+        }
 
         // 기존 레코드를 날짜별로 매핑
         return records.stream()
