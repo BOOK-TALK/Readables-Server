@@ -69,6 +69,8 @@ public class GoalService {
 
         // 목표 완료
         goal.setIsFinished(true);
+        goal.setUpdatedAt(LocalDateTime.now());
+
         goalRepository.save(goal);
 
         return goalMapper.convertToGoalDto(goal);
