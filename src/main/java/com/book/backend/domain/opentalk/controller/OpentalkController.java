@@ -30,7 +30,7 @@ public class OpentalkController {
     private final ResponseTemplate responseTemplate;
 
     // 현재 핫한 오픈톡
-    @Operation(summary="현재 핫한 오픈톡", description="현재 핫한 오픈톡 top 3의 ID List를 반환합니다.",
+    @Operation(summary="현재 핫한 오픈톡", description="현재 핫한 오픈톡 top 5의 ID List를 반환합니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkDto.class)),
                     description = OpentalkDto.description)})
     @GetMapping("/hot")
@@ -43,7 +43,7 @@ public class OpentalkController {
     }
 
     // [오픈톡 참여하기]
-    @Operation(summary="오픈톡 참여하기", description="isbn에 해당하는 오픈톡 DB ID, 즐찾여부 반환 & pageSize 만큼의 채팅 내역 반환",
+    @Operation(summary="오픈톡 참여하기", description="isbn에 해당하는 오픈톡 DB ID, 즐찾여부 반환 & pageSize 만큼의 채팅 내역 반환 (bookname, bookImageURL은 새 오픈톡 생성시 필요한 값입니다.)",
             parameters = {@Parameter(name = "isbn", description = "책 ISBN"), @Parameter(name = "bookname", description = "책 이름"), @Parameter(name = "bookImageURL", description = "책 이미지 url"), @Parameter(name = "pageSize", description = "채팅 개수")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkJoinResponseDto.class)),
                     description = OpentalkJoinResponseDto.description)})
