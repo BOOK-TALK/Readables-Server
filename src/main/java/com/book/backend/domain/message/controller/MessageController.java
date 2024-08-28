@@ -43,14 +43,27 @@ public class MessageController {
 
     // HTTP 단방향 채팅 저장
     @Operation(summary="메세지 저장 (HTTP)", description="임시 채팅 저장 API 입니다. opentalkId, type, text 를 입력으로 받아 저장 결과를 반환합니다.",
-            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "type", description = "메세지 타입 (text, img, goal)"), @Parameter(name = "content", description = "메세지 내용(goal 인 경우 null)")},
+            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "type", description = "메세지 타입 (text, img)"), @Parameter(name = "content", description = "메세지 내용(goal 인 경우 null)")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
                     description = MessageResponseDto.description)})
     @PostMapping("/api/message/save")
-    public ResponseEntity<?> httpChat(@RequestParam Long opentalkId, String type, @RequestParam(required = false) String content){
+    public ResponseEntity<?> httpChat(@RequestParam Long opentalkId, String type, String content){
         requestValidate.isValidType(type);
 
         MessageResponseDto response = messageService.saveHttpMessage(opentalkId, type, content);
+        return responseTemplate.success(response, HttpStatus.OK);
+    }
+
+    // 목표 공유하기
+    @Operation(summary="목표 공유하기", description="opentalkId, isbn 을 입력으로 받아 해당 목표가 있는지 확인 후 채팅방에 전송합니다.",
+            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "isbn", description = "책 ISBN")},
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
+                    description = MessageResponseDto.description)})
+    @PostMapping("/api/message/goal")
+    public ResponseEntity<?> shareGoal(@RequestParam Long opentalkId, String isbn){
+        requestValidate.isValidIsbn(isbn);
+
+        MessageResponseDto response = messageService.shareGoal(opentalkId, isbn);
         return responseTemplate.success(response, HttpStatus.OK);
     }
 
