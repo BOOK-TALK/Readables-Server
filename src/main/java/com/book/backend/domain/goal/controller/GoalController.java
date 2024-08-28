@@ -44,14 +44,19 @@ public class GoalController {
         return responseTemplate.success(goalDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "유저 목표 조회", description = "유저가 생성한 모든 목표를 반환합니다.",
+    @Operation(summary = "유저 목표 조회", description = "유저가 생성한 모든 목표를 반환합니다. 완료 여부 입력 시 해당하는 목표를 반환합니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
                     description = GoalDto.description)})
     @GetMapping("/get/total")
-    public ResponseEntity<?> getUserGoals() throws Exception {
+    public ResponseEntity<?> getUserGoals(@RequestParam(required = false) Boolean isFalsed) throws Exception {
         log.trace("GoalController > getUserGoals()");
 
-        List<GoalDto> goalDtos = goalService.getUserGoals();
+        List<GoalDto> goalDtos;
+        if (isFalsed != null) {
+            goalDtos = goalService.getUserGoalsByFinished(isFalsed);
+        } else {
+            goalDtos = goalService.getUserGoals();
+        }
 
         return responseTemplate.success(goalDtos, HttpStatus.OK);
     }

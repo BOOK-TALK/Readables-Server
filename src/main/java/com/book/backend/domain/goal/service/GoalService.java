@@ -60,7 +60,7 @@ public class GoalService {
 
         // 유저 검증
         User user = goalRequestValidate.validateAndGetLoggedInUser();
-        List<RecordIntervalDto> totalAWeekRecords = initializesAWeekRecords();
+        List<RecordIntervalDto> totalAWeekRecords = goalMapper.initializesAWeekRecords();
 
         List<Goal> goals = user.getGoals();
         for (Goal goal : goals) {
@@ -87,6 +87,26 @@ public class GoalService {
         }
 
         return totalAWeekRecords;
+    }
+
+    public List<GoalDto> getUserGoalsByFinished(Boolean isFinished) throws Exception {
+        log.trace("GoalService > getUserGoalsByFinished()");
+
+        // 유저 검증
+        User user = goalRequestValidate.validateAndGetLoggedInUser();
+
+        List<Goal> goals = user.getGoals();
+        List<GoalDto> goalDtos = new LinkedList<>();
+
+        // GoalDto로 변경
+        for (Goal goal : goals) {
+            if (isFinished == goal.getIsFinished()) {
+                GoalDto dto = goalMapper.convertToGoalDto(goal);
+                goalDtos.add(dto);
+            }
+        }
+
+        return goalDtos;
     }
 
     @Transactional
@@ -148,21 +168,6 @@ public class GoalService {
 
         // 목표 삭제
         goalRepository.delete(goal);
-    }
-
-    public List<RecordIntervalDto> initializesAWeekRecords() {
-        log.trace("GoalService > initializesAWeekRecords()");
-
-        List<RecordIntervalDto> aWeekRecords = new LinkedList<>();
-        LocalDate today = LocalDate.now();
-        for (int i = 6; i >= 0; i--) {
-            RecordIntervalDto dto = RecordIntervalDto.builder()
-                    .date(today.minusDays(i))
-                    .pageInterval(null)
-                    .build();
-            aWeekRecords.add(dto);
-        }
-        return aWeekRecords;
     }
 
 }

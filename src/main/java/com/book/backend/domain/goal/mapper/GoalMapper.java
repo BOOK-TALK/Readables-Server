@@ -135,4 +135,19 @@ public class GoalMapper {
                 .toList();
     }
 
+    public List<RecordIntervalDto> initializesAWeekRecords() {
+        log.trace("GoalService > initializesAWeekRecords()");
+
+        List<RecordIntervalDto> aWeekRecords = new LinkedList<>();
+        LocalDate today = LocalDate.now();
+        for (int i = 6; i >= 0; i--) {
+            RecordIntervalDto dto = RecordIntervalDto.builder()
+                    .date(today.minusDays(i))
+                    .pageInterval(null)
+                    .build();
+            aWeekRecords.add(dto);
+        }
+        return aWeekRecords;
+    }
+
 }
