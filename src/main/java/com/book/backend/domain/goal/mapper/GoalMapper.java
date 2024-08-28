@@ -37,10 +37,15 @@ public class GoalMapper {
         goalDto.setBookSummary(getBookSummaryDto(goal.getIsbn()));
         User user = goal.getUser();
 
+        // 유저 닉네임
         goalDto.setUserNickname(user.getNickname());
 
-        List<RecordIntervalDto> aWeekRecords = getAWeekRecords(goal.getRecords());
+        // 일주일 기록
+        List<RecordIntervalDto> aWeekRecords = convertAWeekRecords(goal.getRecords());
         goalDto.setAWeekRecords(aWeekRecords);
+
+        // 최근 페이지 업데이트
+        goalDto.setRecentPage(getMostRecentPage(goal.getRecords()));
 
         return goalDto;
     }
@@ -55,9 +60,25 @@ public class GoalMapper {
         return bookMapper.convertToBookSummaryDto(bookInfo);
     }
 
-    public List<RecordIntervalDto> getAWeekRecords(List<RecordDto> records) {
+    // 일주일 기록으로 변경
+    public List<RecordIntervalDto> convertAWeekRecords(List<RecordDto> records) {
         Map<LocalDate, RecordDto> recordsMap = mapRecordsByDate(records);
         return generateAWeekDaysRecords(recordsMap);
+    }
+
+    // 마지막으로 읽은 페이지 반환
+    public Integer getMostRecentPage(List<RecordDto> records) {
+        if (records == null || records.isEmpty()) {
+            return 0; // 레코드가 없는 경우 0을 반환
+        }
+
+        // 가장 최근 날짜의 레코드 찾기
+        RecordDto mostRecentRecord = records.stream()
+                .max(Comparator.comparing(RecordDto::getDate))
+                .orElse(null);
+
+        // 가장 최근 레코드의 recentPage 반환
+        return mostRecentRecord.getRecentPage();
     }
 
     private Map<LocalDate, RecordDto> mapRecordsByDate(List<RecordDto> records) {
