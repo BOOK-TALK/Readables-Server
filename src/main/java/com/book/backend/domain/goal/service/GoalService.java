@@ -37,7 +37,7 @@ public class GoalService {
         return goalMapper.convertToGoalDto(goal);
     }
 
-    public List<GoalDto> getUserGoals() throws Exception {
+    public List<GoalDto> getUserGoals(Boolean isFinished) throws Exception {
         log.trace("GoalService > getUserGoals()");
 
         // 유저 검증
@@ -48,8 +48,10 @@ public class GoalService {
 
         // GoalDto로 변경
         for (Goal goal : goals) {
-            GoalDto dto = goalMapper.convertToGoalDto(goal);
-            goalDtos.add(dto);
+            if (isFinished == null || isFinished.equals(goal.getIsFinished())) {
+                GoalDto dto = goalMapper.convertToGoalDto(goal);
+                goalDtos.add(dto);
+            }
         }
 
         return goalDtos;
@@ -87,26 +89,6 @@ public class GoalService {
         }
 
         return totalAWeekRecords;
-    }
-
-    public List<GoalDto> getUserGoalsByFinished(Boolean isFinished) throws Exception {
-        log.trace("GoalService > getUserGoalsByFinished()");
-
-        // 유저 검증
-        User user = goalRequestValidate.validateAndGetLoggedInUser();
-
-        List<Goal> goals = user.getGoals();
-        List<GoalDto> goalDtos = new LinkedList<>();
-
-        // GoalDto로 변경
-        for (Goal goal : goals) {
-            if (isFinished == goal.getIsFinished()) {
-                GoalDto dto = goalMapper.convertToGoalDto(goal);
-                goalDtos.add(dto);
-            }
-        }
-
-        return goalDtos;
     }
 
     @Transactional

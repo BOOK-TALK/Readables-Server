@@ -51,12 +51,7 @@ public class GoalController {
     public ResponseEntity<?> getUserGoals(@RequestParam(required = false) Boolean isFalsed) throws Exception {
         log.trace("GoalController > getUserGoals()");
 
-        List<GoalDto> goalDtos;
-        if (isFalsed != null) {
-            goalDtos = goalService.getUserGoalsByFinished(isFalsed);
-        } else {
-            goalDtos = goalService.getUserGoals();
-        }
+        List<GoalDto> goalDtos = goalService.getUserGoals(isFalsed);
 
         return responseTemplate.success(goalDtos, HttpStatus.OK);
     }
