@@ -124,11 +124,15 @@ public class OpentalkService {
         List<OpentalkDto> opentalkDtoList = new LinkedList<>();
 
         for(Long id : opentalkId) {
-            OpentalkDto opentalkDto = OpentalkDto.builder().id(id).build();
+            // bookrepository 에서 opentalkid 로 찾기
             Optional<Opentalk> opentalk = opentalkRepository.findByOpentalkId(id);
-            String isbn = opentalk.get().getBook().getIsbn();
-            DetailResponseDto detailResponseDto = detailService.detail(DetailRequestDto.builder().isbn13(isbn).build()); // 정보 가져오기
-            opentalkResponseParser.setSimpleBookInfo(opentalkDto, detailResponseDto); // detailResponseDto 에서 title 이랑 imageUrl 만 추출하기
+            Book book = opentalk.get().getBook();
+            OpentalkDto opentalkDto = OpentalkDto.builder()
+                    .id(id)
+                    .isbn13(book.getIsbn())
+                    .bookName(book.getBookname())
+                    .bookImageURL(book.getBookImageURL())
+                    .build();
             opentalkDtoList.add(opentalkDto);
         }
         return opentalkDtoList;
