@@ -26,8 +26,6 @@ public class Goal {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Integer recentPage;
-
     private Integer totalPage;
 
     private LocalDateTime createdAt;

@@ -20,7 +20,7 @@ public class GoalDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isFinished;
-    private List<RecordDto> aWeekRecords;
+    private List<RecordIntervalDto> aWeekRecords;
 
     public static final String description =
             "goalId : 목표 아이디 | " +

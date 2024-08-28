@@ -47,7 +47,6 @@ public class GoalService {
         Goal goal = Goal.builder()
                 .isbn(isbn)
                 .user(user)
-                .recentPage(null)
                 .totalPage(totalPage)
                 .createdAt(now)
                 .updatedAt(now)
