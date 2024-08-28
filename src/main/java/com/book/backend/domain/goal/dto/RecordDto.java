@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class RecordsDto {
+public class RecordDto {
     private LocalDate date;
-    private Integer pageCount;
+    private Integer recentPage;
 }

@@ -15,12 +15,12 @@ public class GoalDto {
     private Long goalId;
     private String userNickname;
     private BookSummaryDto bookSummary;
-    private String recentPage;
-    private String totalPage;
+    private Integer recentPage;
+    private Integer totalPage;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isFinished;
-    private List<RecordsDto> AWeekRecords;
+    private List<RecordDto> aWeekRecords;
 
     public static final String description =
             "goalId : 목표 아이디 | " +

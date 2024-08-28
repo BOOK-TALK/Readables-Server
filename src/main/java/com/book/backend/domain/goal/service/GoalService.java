@@ -34,9 +34,10 @@ public class GoalService {
     }
 
     @Transactional
-    public GoalDto createGoal(String isbn, String totalPage) throws Exception {
+    public GoalDto createGoal(String isbn, Integer totalPage) throws Exception {
         log.trace("GoalService > createGoal()");
 
+        // 유저, 목표 검증
         User user = goalRequestValidate.validateAndGetLoggedInUser();
         goalRequestValidate.validateIsExistGoal(user, isbn);
 
@@ -62,6 +63,7 @@ public class GoalService {
     public GoalDto finishGoal(Long goalId) throws Exception {
         log.trace("GoalService > finishGoal()");
 
+        // 유저, 목표 검증
         User user = goalRequestValidate.validateAndGetLoggedInUser();
         Goal goal = goalRequestValidate.validateAndGetGoal(goalId);
         goalRequestValidate.validateUserMatchesGoal(user, goal);
@@ -77,6 +79,7 @@ public class GoalService {
     public void deleteGoal(Long goalId) {
         log.trace("GoalService > deleteGoal()");
 
+        // 유저, 목표 검증
         User user = goalRequestValidate.validateAndGetLoggedInUser();
         Goal goal = goalRequestValidate.validateAndGetGoal(goalId);
         goalRequestValidate.validateUserMatchesGoal(user, goal);

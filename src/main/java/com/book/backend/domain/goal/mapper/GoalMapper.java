@@ -4,6 +4,7 @@ import com.book.backend.domain.book.dto.BookInfoDto;
 import com.book.backend.domain.book.dto.BookSummaryDto;
 import com.book.backend.domain.book.mapper.BookMapper;
 import com.book.backend.domain.goal.dto.GoalDto;
+import com.book.backend.domain.goal.dto.RecordDto;
 import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
 import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
@@ -14,6 +15,13 @@ import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 @RequiredArgsConstructor
@@ -41,4 +49,19 @@ public class GoalMapper {
 
         return bookMapper.convertToBookSummaryDto(bookInfo);
     }
+
+//    private List<RecordDto> getAWeekRecords(List<RecordDto> records) {
+//        LocalDate today = LocalDate.now();
+//
+//        List<RecordDto> filteredAndSortedRecords = records.stream()
+//                .filter(record -> !record.getDate().isBefore(today.minusDays(6)))
+//                .sorted(Comparator.comparing(RecordDto::getDate))
+//                .toList();
+//
+//        List<RecordDto> aWeekRecords = new LinkedList<>();
+//        IntStream.rangeClosed(0, 6).forEach(i -> {
+//            LocalDate date =
+//        });
+//    }
+
 }
