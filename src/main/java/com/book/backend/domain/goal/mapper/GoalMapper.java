@@ -96,11 +96,12 @@ public class GoalMapper {
         return IntStream.rangeClosed(0, 6)
                 .mapToObj(today::minusDays)
                 .map(date -> {
-                    // RecordMap에서 해당 날짜의 RecordDto를 가져오거나, 없으면 새로운 RecordDto 생성
-                    RecordDto record = recordsMap.getOrDefault(date, new RecordDto(date, 0));
-
                     // 이전 날짜의 RecordDto 가져오기
                     RecordDto previousRecord = recordsMap.get(date.minusDays(1));
+
+                    // RecordMap에서 해당 날짜의 RecordDto를 가져오거나, 없으면 새로운 RecordDto 생성
+                    RecordDto record = recordsMap.getOrDefault(date,
+                            new RecordDto(date, (previousRecord != null) ? previousRecord.getRecentPage() : 0));
 
                     // 페이지 간격 계산
                     int pageInterval = (previousRecord != null)
@@ -111,7 +112,7 @@ public class GoalMapper {
                     return new RecordIntervalDto(date, pageInterval);
                 })
                 .sorted(Comparator.comparing(RecordIntervalDto::getDate))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }
