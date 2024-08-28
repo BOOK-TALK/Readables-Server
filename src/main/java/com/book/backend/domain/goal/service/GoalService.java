@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,22 @@ public class GoalService {
         Goal goal = goalRequestValidate.validateAndGetGoal(goalId);
 
         return goalMapper.convertToGoalDto(goal);
+    }
+
+    public List<GoalDto> getUserGoals() throws Exception {
+        // 유저 검증
+        User user = goalRequestValidate.validateAndGetLoggedInUser();
+
+        List<Goal> goals = user.getGoals();
+        List<GoalDto> goalDtos = new LinkedList<>();
+
+        // GoalDto로 변경
+        for (Goal goal : goals) {
+            GoalDto dto = goalMapper.convertToGoalDto(goal);
+            goalDtos.add(dto);
+        }
+
+        return goalDtos;
     }
 
     @Transactional

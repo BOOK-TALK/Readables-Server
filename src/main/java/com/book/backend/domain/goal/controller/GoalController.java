@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/goal")
 @RequiredArgsConstructor
@@ -39,6 +41,18 @@ public class GoalController {
         GoalDto goalDto = goalService.getGoal(goalId);
 
         return responseTemplate.success(goalDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "유저 목표 조회", description = "유저가 생성한 모든 목표를 반환합니다.",
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
+                    description = GoalDto.description)})
+    @GetMapping("/user/get")
+    public ResponseEntity<?> getUserGoals() throws Exception {
+        log.trace("GoalController > getUserGoals()");
+
+        List<GoalDto> goalDtos = goalService.getUserGoals();
+
+        return responseTemplate.success(goalDtos, HttpStatus.OK);
     }
 
     @Operation(summary = "목표 생성", description = "책 isbn 번호와 총 페이지 수를 입력받아 해당 책에 대한 목표를 생성합니다. " +
