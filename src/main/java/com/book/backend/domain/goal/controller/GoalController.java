@@ -56,7 +56,7 @@ public class GoalController {
         return responseTemplate.success(goalDtos, HttpStatus.OK);
     }
 
-    @Operation(summary = "유저 전체 목표에 대한 일주일 기록 조회", description = "유저의 모든 목표에 대한 일주일 기록을 조회합니다.",
+    @Operation(summary = "전체 목표에 대한 합산 일주일 기록 조회", description = "유저의 모든 목표에 대해 합산된 일주일 기록을 반환합니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
                     description = RecordIntervalDto.description)})
     @GetMapping("/get/totalAWeek")
