@@ -55,17 +55,6 @@ public class MessageController {
         return responseTemplate.success(response, HttpStatus.OK);
     }
 
-//    @Operation(summary="다른 사람 목표 상세", description="목표 ID 로 목표 상세를 조회합니다.",
-//            parameters = {@Parameter(name = "goalId", description = "목표 DB ID")},
-//            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
-//                    description = GoalDto.description)
-//    })
-    @PostMapping("/api/message/othersGoal")
-    public ResponseEntity<?> getOthersGoal(Long goalId) throws Exception {
-        GoalDto response = goalService.getGoal(goalId);
-        return responseTemplate.success(response, HttpStatus.OK);
-    }
-
     // 채팅 불러오기
     @Operation(summary="메세지 불러오기 (특정 오픈톡)", description="오픈톡 ID 를 입력으로 받아 pageSize개 데이터를 반환합니다. (pageNo로 페이지네이션)",
             parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "pageNo", description = "페이지 번호(0부터)"), @Parameter(name = "pageSize", description = "페이지 당 개수")},
