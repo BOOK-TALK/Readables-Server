@@ -13,6 +13,7 @@ import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
 import com.book.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import java.util.stream.IntStream;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class GoalMapper {
     private final ModelMapper mapper;
     private final OpenAPI openAPI;
@@ -33,6 +35,8 @@ public class GoalMapper {
     private final BookMapper bookMapper;
 
     public GoalDto convertToGoalDto(Goal goal) throws Exception {
+        log.trace("GoalMapper > convertToGoalDto()");
+
         GoalDto goalDto = mapper.map(goal, GoalDto.class);
         goalDto.setBookSummary(getBookSummaryDto(goal.getIsbn()));
         User user = goal.getUser();
@@ -51,6 +55,8 @@ public class GoalMapper {
     }
 
     private BookSummaryDto getBookSummaryDto(String isbn) throws Exception {
+        log.trace("GoalMapper > getBookSummaryDto()");
+
         String subUrl = "usageAnalysisList";
         DetailRequestDto requestDto = new DetailRequestDto(isbn);
 
@@ -62,12 +68,16 @@ public class GoalMapper {
 
     // 일주일 기록으로 변경
     public List<RecordIntervalDto> convertAWeekRecords(List<RecordDto> records) {
+        log.trace("GoalMapper > convertAWeekRecords");
+
         Map<LocalDate, RecordDto> recordsMap = mapRecordsByDate(records);
         return generateAWeekDaysRecords(recordsMap);
     }
 
     // 마지막으로 읽은 페이지 반환
     public Integer getMostRecentPage(List<RecordDto> records) {
+        log.trace("GoalMapper > getMostRecentPage()");
+
         if (records == null || records.isEmpty()) {
             return 0; // 레코드가 없는 경우 0을 반환
         }
@@ -82,6 +92,8 @@ public class GoalMapper {
     }
 
     private Map<LocalDate, RecordDto> mapRecordsByDate(List<RecordDto> records) {
+        log.trace("GoalMapper > mapRecordsByDate()");
+
         // 기존 레코드를 날짜별로 매핑
         return records.stream()
                 .collect(Collectors.toMap(RecordDto::getDate,
@@ -90,6 +102,8 @@ public class GoalMapper {
     }
 
     private List<RecordIntervalDto> generateAWeekDaysRecords(Map<LocalDate, RecordDto> recordsMap) {
+        log.trace("GoalMapper > generateAWeekDaysRecords()");
+
         LocalDate today = LocalDate.now();
 
         // 최근 7일 동안의 날짜를 생성하고 해당 날짜에 대응하는 RecordDto를 추출

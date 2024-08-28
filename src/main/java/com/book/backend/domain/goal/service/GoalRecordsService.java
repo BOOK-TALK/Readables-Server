@@ -30,6 +30,8 @@ public class GoalRecordsService {
 
     @Transactional
     public GoalDto addRecord(Long goalId, Integer recentPage) throws Exception {
+        log.trace("GoalRecordsService > addRecord()");
+
         // 유저, 목표 검증
         User user = goalRequestValidate.validateAndGetLoggedInUser();
         Goal goal = goalRequestValidate.validateAndGetGoal(goalId);
@@ -72,6 +74,8 @@ public class GoalRecordsService {
     }
 
     private RecordDto getMostRecentRecord(Goal goal) {
+        log.trace("GoalRecordsService > getMostRecentRecord()");
+
         Optional<RecordDto> mostRecentRecordOptional = goal.getRecords().stream()
                 .max(Comparator.comparing(RecordDto::getDate));
         return mostRecentRecordOptional.orElse(null);

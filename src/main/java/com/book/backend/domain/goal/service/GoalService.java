@@ -36,6 +36,8 @@ public class GoalService {
     }
 
     public List<GoalDto> getUserGoals() throws Exception {
+        log.trace("GoalService > getUserGoals()");
+
         // 유저 검증
         User user = goalRequestValidate.validateAndGetLoggedInUser();
 
@@ -52,6 +54,8 @@ public class GoalService {
     }
 
     public List<RecordIntervalDto> getTotalAWeekRecords() {
+        log.trace("GoalService > getTotalAWeekRecords()");
+
         // 유저 검증
         User user = goalRequestValidate.validateAndGetLoggedInUser();
         List<RecordIntervalDto> totalAWeekRecords = initializesAWeekRecords();
@@ -140,6 +144,8 @@ public class GoalService {
     }
 
     public List<RecordIntervalDto> initializesAWeekRecords() {
+        log.trace("GoalService > initializesAWeekRecords()");
+
         List<RecordIntervalDto> aWeekRecords = new LinkedList<>();
         LocalDate today = LocalDate.now();
         for (int i = 6; i >= 0; i--) {
