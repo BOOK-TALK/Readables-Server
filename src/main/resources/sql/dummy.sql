@@ -17,6 +17,16 @@ CREATE TABLE IF NOT EXISTS user
         unique (apple_id),
     check (`gender` between 0 and 2)
 );
+
+CREATE TABLE IF NOT EXISTS book
+(
+    book_id       bigint auto_increment
+        primary key,
+    book_imageurl varchar(255) null,
+    bookname      varchar(255) null,
+    isbn          varchar(255) null
+);
+
 CREATE TABLE IF NOT EXISTS opentalk
 (
     book_id     bigint not null,
@@ -40,8 +50,6 @@ CREATE TABLE IF NOT EXISTS message
     constraint FK2op594yomeg261726h4dj75jq
         foreign key (user_id) references user (user_id)
 );
-create index idx_message_createdAt
-    on message (created_at);
 CREATE TABLE IF NOT EXISTS `user dibs_books`
 (
     user_id       bigint       not null,
@@ -51,7 +59,6 @@ CREATE TABLE IF NOT EXISTS `user dibs_books`
     constraint FKjhhvi9pyxkt4w4ysu9o0b858x
         foreign key (user_id) references user (user_id)
 );
-
 CREATE TABLE IF NOT EXISTS user_libraries
 (
     user_id bigint       not null,
