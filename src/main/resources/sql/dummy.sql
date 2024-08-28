@@ -17,12 +17,6 @@ CREATE TABLE IF NOT EXISTS user
         unique (apple_id),
     check (`gender` between 0 and 2)
 );
-CREATE TABLE IF NOT EXISTS book
-(
-    book_id bigint auto_increment
-    primary key,
-    isbn    varchar(255) null
-);
 CREATE TABLE IF NOT EXISTS opentalk
 (
     book_id     bigint not null,
@@ -88,18 +82,17 @@ CREATE TABLE IF NOT EXISTS user_read_books
 );
 
 
-
-INSERT IGNORE INTO book (book_id, isbn)
- VALUES (1, '9788956055466'),
-        (2, '9788994120966'),
-        (3, '9788936433673'),
-        (4, '9788956604992'),
-        (5, '9788936434267'),
-        (6, '9788965700609'),
-        (7, '9788995151204'),
-        (8, '9788954622035'),
-        (9, '9788936433871'),
-        (10, '9791195522125');
+INSERT IGNORE INTO book (book_id, isbn, bookname, book_imageurl)
+ VALUES (1, '9788956055466','책은 도끼다 :박웅현 인문학 강독회', 'https://bookthumb-phinf.pstatic.net/cover/067/378/06737822.jpg?type=m1&udate=20171111'),
+        (2, '9788994120966', '지적 대화를 위한 넓고 얕은 지식', 'https://bookthumb-phinf.pstatic.net/cover/084/030/08403038.jpg?type=m1&udate=20171223'),
+        (3, '9788936433673', '엄마를 부탁해 :신경숙 장편소설', 'http://image.aladin.co.kr/product/272/78/cover/8936433679_2.jpg'),
+        (4, '9788956604992', '7년의 밤 :정유정 장편소설', 'http://image.aladin.co.kr/product/14712/55/cover/k202532053_1.jpg'),
+        (5, '9788936434267', '아몬드손원평 장편소설', 'http://image.aladin.co.kr/product/16839/4/cover/k492534773_1.jpg'),
+        (6, '9788965700609', '멈추면, 비로소 보이는 것들 :혜민 스님과 함께하는 내 마음 다시보기', 'https://bookthumb-phinf.pstatic.net/cover/068/064/06806489.jpg?type=m1&udate=20140911'),
+        (7, '9788995151204', '난장이가 쏘아올린 작은 공:조세희 소설집', 'https://bookthumb-phinf.pstatic.net/cover/001/067/00106772.jpg?type=m1&udate=20130115'),
+        (8, '9788954622035', '살인자의 기억법 :김영하 장편소설', 'https://bookthumb-phinf.pstatic.net/cover/072/622/07262295.jpg?type=m1&udate=20180314'),
+        (9, '9788936433871', '두근두근 내 인생 :김애란 장편소설', 'http://image.aladin.co.kr/product/1190/50/cover/8936433873_2.jpg'),
+        (10, '9791195522125', '언어의 온도 :말과 글에는 나름의 따뜻함과 차가움이 있다', 'http://image.aladin.co.kr/product/14842/6/cover/k742532452_1.jpg');
 
  INSERT IGNORE INTO opentalk (opentalk_id, book_id)
  VALUES (1, 1),
