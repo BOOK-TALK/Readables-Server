@@ -1,6 +1,5 @@
 package com.book.backend.domain.message.controller;
 
-import com.book.backend.domain.goal.dto.GoalDto;
 import com.book.backend.domain.goal.service.GoalService;
 import com.book.backend.domain.message.dto.MessageRequestDto;
 import com.book.backend.domain.message.dto.MessageResponseDto;
