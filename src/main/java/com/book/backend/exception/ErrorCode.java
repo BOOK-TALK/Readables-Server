@@ -41,6 +41,7 @@ public enum ErrorCode {
     // goal
     INVALID_BOOK_PAGE_NUM(HttpStatus.BAD_REQUEST, "400", "책 페이지 수는 1 이상의 숫자로 입력해주세요."),
     INVALID_RECENT_PAGE(HttpStatus.BAD_REQUEST, "400", "마지막 기록보다 이전 페이지를 입력할 수 없습니다."),
+    EXCEED_TOTAL_PAGE(HttpStatus.BAD_REQUEST, "400", "총 페이지를 초과하여 기록할 수 없습니다."),
     GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 목표를 찾을 수 없습니다."),
     CANNOT_ACCESS_GOAL(HttpStatus.FORBIDDEN, "403", "해당 목표에 접근할 권한이 없습니다."),
     GOAL_IS_ALREADY_EXIST(HttpStatus.CONFLICT, "409", "해당 책에 대한 목표가 이미 존재합니다."),

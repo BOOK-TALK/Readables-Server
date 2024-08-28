@@ -37,6 +37,13 @@ public class GoalRecordsService {
         Goal goal = goalRequestValidate.validateAndGetGoal(goalId);
         goalRequestValidate.validateUserMatchesGoal(user, goal);
 
+        if (goal.getIsFinished()) {
+            throw new CustomException(ErrorCode.GOAL_IS_ALREADY_FINISHED);
+        }
+        if (recentPage > goal.getTotalPage()) {
+            throw new CustomException(ErrorCode.EXCEED_TOTAL_PAGE);
+        }
+
         List<RecordDto> records = goal.getRecords();
 
         // 가장 최근 기록 로드
