@@ -63,7 +63,6 @@ public class GoalRecordsService {
             if (recentPage <= mostRecentRecord.getRecentPage()) {
                 throw new CustomException(ErrorCode.INVALID_RECENT_PAGE);
             }
-
             RecordDto newRecord = RecordDto.builder()
                     .date(LocalDate.now())
                     .recentPage(recentPage)
@@ -72,6 +71,9 @@ public class GoalRecordsService {
         }
         // 가장 최근 기록이 오늘이면
         else {
+            if (recentPage <= mostRecentRecord.getRecentPage()) {
+                throw new CustomException(ErrorCode.INVALID_RECENT_PAGE);
+            }
             mostRecentRecord.setRecentPage(recentPage);
         }
 
