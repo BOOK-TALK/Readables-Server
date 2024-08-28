@@ -137,13 +137,14 @@ public class OpentalkService {
 
     // 오픈톡 참여하기
     @Transactional
-    public OpentalkJoinResponseDto joinOpentalk(String isbn, int pageSize){
+    public OpentalkJoinResponseDto joinOpentalk(String isbn, String bookname, String bookImageURL, int pageSize){
         log.trace("OpentalkService > joinOpentalk()");
         Opentalk opentalk = checkExistOpentalk(isbn);
         if(opentalk == null){
-            opentalk = createOpentalkByIsbn(isbn);
+            opentalk = createOpentalkByIsbn(isbn, bookname, bookImageURL);
             return OpentalkJoinResponseDto.builder().opentalkId(opentalk.getOpentalkId()).messageResponseDto(null).isFavorite(false).build();
         }
+        // 오픈톡이 존재하는 경우
         Pageable pageRequest = PageRequest.of(0, pageSize, Sort.by("createdAt").descending());
         Page<Message> messagePage = messageService.getMessage(opentalk.getOpentalkId(), pageRequest);
         List<MessageResponseDto> response = messageService.pageToDto(messagePage);
@@ -159,16 +160,19 @@ public class OpentalkService {
                 .build();
     }
 
-    @Transactional
-    public Opentalk createOpentalkByIsbn(String isbn) {
-        log.trace("OpentalkService > createOpentalkByIsbn");// 새로운 오픈톡 생성
-        Book newBook = new Book();
-        newBook.setIsbn(isbn);
-        Book book = bookRepository.save(newBook);
 
-        Opentalk newOpentalk = new Opentalk();
-        newOpentalk.setBook(book);
-        return opentalkRepository.save(newOpentalk);
+    @Transactional
+    public Opentalk createOpentalkByIsbn(String isbn, String bookname, String bookImageURL) {
+        log.trace("OpentalkService > createOpentalkByIsbn");
+        Book book = new Book();
+        book.setIsbn(isbn);
+        book.setBookname(bookname);
+        book.setBookImageURL(bookImageURL);
+        bookRepository.save(book);
+
+        Opentalk opentalk = new Opentalk();
+        opentalk.setBook(book);
+        return opentalkRepository.save(opentalk);
     }
 
     public Opentalk checkExistOpentalk(String isbn) {

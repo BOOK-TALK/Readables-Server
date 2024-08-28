@@ -17,6 +17,10 @@ public class Book {
 
     private String isbn;
 
+    private String bookname;
+
+    private String bookImageURL;
+
     @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Opentalk opentalk;
 }

@@ -2,6 +2,7 @@ package com.book.backend.domain.opentalk.controller;
 
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
 import com.book.backend.domain.opentalk.dto.OpentalkJoinResponseDto;
+import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.service.OpentalkService;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
@@ -42,15 +43,14 @@ public class OpentalkController {
     }
 
     // [오픈톡 참여하기]
-    @Operation(summary="오픈톡 참여하기", description="isbn, pageSize를 입력으로 받아 오픈톡 ID, 즐찾여부, 채팅 내역 반환",
-            parameters = {@Parameter(name = "isbn", description = "책 ISBN"), @Parameter(name = "pageSize", description = "페이지 당 개수")},
+    @Operation(summary="오픈톡 참여하기", description="isbn에 해당하는 오픈톡 DB ID, 즐찾여부 반환 & pageSize 만큼의 채팅 내역 반환",
+            parameters = {@Parameter(name = "isbn", description = "책 ISBN"), @Parameter(name = "bookname", description = "책 이름"), @Parameter(name = "bookImageURL", description = "책 이미지 url"), @Parameter(name = "pageSize", description = "채팅 개수")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkJoinResponseDto.class)),
                     description = OpentalkJoinResponseDto.description)})
     @PostMapping("/join")
-    public ResponseEntity<?> joinOpentalk(@RequestParam String isbn, int pageSize) {
-        RequestLogger.param(new String[]{"isbn", "pageSize"}, isbn, pageSize);
-        OpentalkJoinResponseDto response = opentalkService.joinOpentalk(isbn, pageSize);
-
+    public ResponseEntity<?> joinOpentalk(@RequestParam String isbn, String bookname, String bookImageURL, int pageSize) {
+        RequestLogger.param(new String[]{"isbn", "bookname", "bookImageURL",  "pageSize"}, isbn, bookname, bookImageURL, pageSize);
+        OpentalkJoinResponseDto response = opentalkService.joinOpentalk(isbn, bookname, bookImageURL, pageSize);
         return responseTemplate.success(response, HttpStatus.OK);
     }
 
