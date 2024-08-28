@@ -1,8 +1,6 @@
 package com.book.backend.domain.goal.service;
 
 import com.book.backend.domain.goal.dto.GoalDto;
-import com.book.backend.domain.goal.dto.RecordDto;
-import com.book.backend.domain.goal.dto.RecordIntervalDto;
 import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.goal.mapper.GoalMapper;
 import com.book.backend.domain.goal.repository.GoalRepository;
@@ -14,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,40 +52,6 @@ public class GoalService {
         }
 
         return goalDtos;
-    }
-
-    public List<RecordIntervalDto> getTotalAWeekRecords() {
-        log.trace("GoalService > getTotalAWeekRecords()");
-
-        // 유저 검증
-        User user = goalRequestValidate.validateAndGetLoggedInUser();
-        List<RecordIntervalDto> totalAWeekRecords = goalMapper.initializesAWeekRecords();
-
-        List<Goal> goals = user.getGoals();
-        for (Goal goal : goals) {
-            List<RecordDto> records = goal.getRecords();
-            List<RecordIntervalDto> aWeekRecords = goalMapper.convertAWeekRecords(records);
-
-            // 날짜별로 합산 처리
-            for (RecordIntervalDto record : aWeekRecords) {
-                LocalDate recordDate = record.getDate();
-                // userAWeekRecords에서 동일한 날짜를 찾아 pageInterval 합산
-                for (RecordIntervalDto totalRecord : totalAWeekRecords) {
-                    if (totalRecord.getDate().equals(recordDate)) {
-                        // 기존 값에 새로운 값 합산, null이면 0으로 처리
-                        Integer existingInterval = totalRecord.getPageInterval();
-                        Integer newInterval = record.getPageInterval();
-                        totalRecord.setPageInterval(
-                                (existingInterval == null ? 0 : existingInterval)
-                                + (newInterval == null ? 0 : newInterval)
-                        );
-                        break;  // 해당 날짜에 대한 처리 완료 후 반복 중단
-                    }
-                }
-            }
-        }
-
-        return totalAWeekRecords;
     }
 
     @Transactional
