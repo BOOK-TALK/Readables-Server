@@ -34,7 +34,7 @@ public class GoalService {
     }
 
     @Transactional
-    public GoalDto createGoal(String isbn, String totalPage) throws Exception {
+    public GoalDto createGoal(String isbn, Integer totalPage) throws Exception {
         log.trace("GoalService > createGoal()");
 
         User user = goalRequestValidate.validateAndGetLoggedInUser();

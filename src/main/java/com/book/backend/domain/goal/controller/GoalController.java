@@ -51,7 +51,7 @@ public class GoalController {
                     description = GoalDto.description)})
     @PostMapping("/create")
     public ResponseEntity<?> createGoal(@RequestParam String isbn,
-                                        @RequestParam String totalPage) throws Exception {
+                                        @RequestParam Integer totalPage) throws Exception {
         log.trace("GoalController > createGoal()");
         requestValidate.isValidIsbn(isbn);
         requestValidate.isValidBookPageNum(totalPage);
