@@ -113,12 +113,12 @@ INSERT IGNORE INTO book (book_id, isbn)
         (9, 9),
         (10, 10);
 
- INSERT IGNORE INTO user (user_id, gender, birth_date, reg_date)
- values (1, '1', '1990-01-01', '2024-06-10'),
-        (2, '2', '2000-03-16', '2024-07-22'),
-        (3, '1', '1995-05-20', '2024-08-15'),
-        (4, '2', '1992-07-25', '2024-09-30'),
-        (5, '1', '2003-09-30', '2024-10-10');
+ INSERT IGNORE INTO user (user_id, nickname, gender, birth_date, reg_date)
+ values (1, '유저0' ,'1', '1990-01-01', '2024-06-10'),
+        (2, 'najin21', '2', '2000-03-16', '2024-07-22'),
+        (3, '스릴98','1', '1995-05-20', '2024-08-15'),
+        (4, 'navia', '2', '1992-07-25', '2024-09-30'),
+        (5, '애벌레42', '1', '2003-09-30', '2024-10-10');
 
  # 즐찾 오픈톡
  INSERT IGNORE INTO user_opentalk(user_opentalk_id, user_id, opentalk_id)

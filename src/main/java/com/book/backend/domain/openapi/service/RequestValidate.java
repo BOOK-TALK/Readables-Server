@@ -146,11 +146,11 @@ public class RequestValidate {
         }
     }
 
-    public void isValidBookPageNum(String page) {
+    public void isValidBookPageNum(int page) {
         log.trace("RequestValidate > isValidBookPageNum()");
 
         // 1 이상의 숫자인지 확인
-        if (Integer.parseInt(page) < 1) {
+        if (page < 1) {
             throw new CustomException(ErrorCode.INVALID_PAGE_NUM);
         }
     }
