@@ -29,7 +29,7 @@ public class OpentalkController {
     private final ResponseTemplate responseTemplate;
 
     // 현재 핫한 오픈톡
-    @Operation(summary="현재 핫한 오픈톡", description="현재 핫한 오픈톡 top 5의 ID List를 반환합니다.",
+    @Operation(summary="현재 핫한 오픈톡", description="현재 핫한 오픈톡 top 3의 ID List를 반환합니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkDto.class)),
                     description = OpentalkDto.description)})
     @GetMapping("/hot")
