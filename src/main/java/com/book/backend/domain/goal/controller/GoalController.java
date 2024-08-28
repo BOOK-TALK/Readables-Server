@@ -47,7 +47,7 @@ public class GoalController {
     @Operation(summary = "유저 목표 조회", description = "유저가 생성한 모든 목표를 반환합니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
                     description = GoalDto.description)})
-    @GetMapping("/get/user")
+    @GetMapping("/get/total")
     public ResponseEntity<?> getUserGoals() throws Exception {
         log.trace("GoalController > getUserGoals()");
 
@@ -59,7 +59,7 @@ public class GoalController {
     @Operation(summary = "유저 전체 목표에 대한 일주일 기록 조회", description = "유저의 모든 목표에 대한 일주일 기록을 조회합니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
                     description = RecordIntervalDto.description)})
-    @GetMapping("/get/total")
+    @GetMapping("/get/totalAWeek")
     public ResponseEntity<?> getTotalAWeekRecords() {
         log.trace("GoalController > getTotalAWeekRecords()");
 

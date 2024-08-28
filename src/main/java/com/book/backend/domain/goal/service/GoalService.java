@@ -7,6 +7,8 @@ import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.goal.mapper.GoalMapper;
 import com.book.backend.domain.goal.repository.GoalRepository;
 import com.book.backend.domain.user.entity.User;
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -120,6 +122,11 @@ public class GoalService {
         User user = goalRequestValidate.validateAndGetLoggedInUser();
         Goal goal = goalRequestValidate.validateAndGetGoal(goalId);
         goalRequestValidate.validateUserMatchesGoal(user, goal);
+
+        // 이미 종료되어 있다면 에러 발생
+        if (goal.getIsFinished()) {
+            throw new CustomException(ErrorCode.GOAL_IS_ALREADY_FINISHED);
+        }
 
         // 목표 완료
         goal.setIsFinished(true);

@@ -44,6 +44,7 @@ public enum ErrorCode {
     GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 목표를 찾을 수 없습니다."),
     CANNOT_ACCESS_GOAL(HttpStatus.FORBIDDEN, "403", "해당 목표에 접근할 권한이 없습니다."),
     GOAL_IS_ALREADY_EXIST(HttpStatus.CONFLICT, "409", "해당 책에 대한 목표가 이미 존재합니다."),
+    GOAL_IS_ALREADY_FINISHED(HttpStatus.BAD_REQUEST, "400", "이미 완료된 목표입니다."),
 
     // opentalk, message
     OPENTALK_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 오픈톡을 찾을 수 없습니다.([오픈톡 참여하기]로 생성해주세요)"),
