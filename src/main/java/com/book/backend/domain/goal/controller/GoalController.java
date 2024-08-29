@@ -66,7 +66,7 @@ public class GoalController {
     }
 
     @Operation(summary = "전체 목표에 대한 합산 일주일 기록 조회", description = "유저의 모든 목표에 대해 합산된 일주일 기록을 반환합니다.",
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RecordIntervalDto.class)),
                     description = RecordIntervalDto.description)})
     @GetMapping("/get/totalAWeek")
     public ResponseEntity<?> getTotalAWeekRecords() {
