@@ -1,4 +1,4 @@
-package com.book.backend.domain.goal.dto;
+package com.book.backend.domain.record.dto;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;

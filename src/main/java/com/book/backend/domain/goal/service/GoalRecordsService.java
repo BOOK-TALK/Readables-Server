@@ -1,11 +1,14 @@
 package com.book.backend.domain.goal.service;
 
 import com.book.backend.domain.goal.dto.GoalDto;
-import com.book.backend.domain.goal.dto.RecordDto;
 import com.book.backend.domain.goal.dto.RecordIntervalDto;
 import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.goal.mapper.GoalMapper;
 import com.book.backend.domain.goal.repository.GoalRepository;
+import com.book.backend.domain.record.dto.RecordDto;
+import com.book.backend.domain.record.entity.Record;
+import com.book.backend.domain.record.mapper.RecordMapper;
+import com.book.backend.domain.record.repository.RecordRepository;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
@@ -28,6 +31,8 @@ public class GoalRecordsService {
     private final GoalRepository goalRepository;
     private final GoalRequestValidate goalRequestValidate;
     private final GoalMapper goalMapper;
+    private final RecordRepository recordRepository;
+    private final RecordMapper recordMapper;
 
     @Transactional
     public GoalDto addRecord(Long goalId, Integer recentPage) throws Exception {
@@ -45,36 +50,39 @@ public class GoalRecordsService {
             throw new CustomException(ErrorCode.EXCEED_TOTAL_PAGE);
         }
 
-        List<RecordDto> records = goal.getRecords();
-
         // 가장 최근 기록 로드
         RecordDto mostRecentRecord = getMostRecentRecord(goal);
 
         // 가장 최근 기록이 없다면
         if (mostRecentRecord == null) {
-            RecordDto newRecord = RecordDto.builder()
-                    .date(LocalDate.now())
+            Record record = Record.builder()
+                    .date(LocalDateTime.now())
                     .recentPage(recentPage)
+                    .goal(goal)
                     .build();
-            records.add(newRecord);
+            recordRepository.save(record);
         }
         // 가장 최근 기록이 오늘이 아니면
         else if (mostRecentRecord.getDate().isBefore(LocalDate.now())) {
             if (recentPage <= mostRecentRecord.getRecentPage()) {
                 throw new CustomException(ErrorCode.INVALID_RECENT_PAGE);
             }
-            RecordDto newRecord = RecordDto.builder()
-                    .date(LocalDate.now())
+            Record record = Record.builder()
+                    .date(LocalDateTime.now())
                     .recentPage(recentPage)
+                    .goal(goal)
                     .build();
-            records.add(newRecord);
+            recordRepository.save(record);
         }
         // 가장 최근 기록이 오늘이면
         else {
             if (recentPage <= mostRecentRecord.getRecentPage()) {
                 throw new CustomException(ErrorCode.INVALID_RECENT_PAGE);
             }
-            mostRecentRecord.setRecentPage(recentPage);
+            // Record date 값이 오늘인 것을 찾아서 recentPage 업데이트
+            Record record = recordRepository.findByGoalAndDate(goal, LocalDateTime.now());
+            record.setRecentPage(recentPage);
+            recordRepository.save(record);
         }
 
         goal.setUpdatedAt(LocalDateTime.now());
@@ -92,8 +100,9 @@ public class GoalRecordsService {
 
         List<Goal> goals = user.getGoals();
         for (Goal goal : goals) {
-            List<RecordDto> records = goal.getRecords();
-            List<RecordIntervalDto> aWeekRecords = goalMapper.convertAWeekRecords(records);
+            List<Record> records = recordRepository.findAllByGoal(goal);
+            List<RecordDto> recordDtos = recordMapper.convertToRecordsDto(records);
+            List<RecordIntervalDto> aWeekRecords = goalMapper.convertAWeekRecords(recordDtos);
 
             // 날짜별로 합산 처리
             for (RecordIntervalDto record : aWeekRecords) {
@@ -119,8 +128,10 @@ public class GoalRecordsService {
 
     private RecordDto getMostRecentRecord(Goal goal) {
         log.trace("GoalRecordsService > getMostRecentRecord()");
+        List<Record> records = recordRepository.findAllByGoal(goal);
+        List<RecordDto> recordDtos = recordMapper.convertToRecordsDto(records);
 
-        Optional<RecordDto> mostRecentRecordOptional = goal.getRecords().stream()
+        Optional<RecordDto> mostRecentRecordOptional = recordDtos.stream()
                 .max(Comparator.comparing(RecordDto::getDate));
         return mostRecentRecordOptional.orElse(null);
     }

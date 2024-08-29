@@ -4,6 +4,10 @@ import com.book.backend.domain.goal.dto.*;
 import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.goal.mapper.GoalMapper;
 import com.book.backend.domain.goal.repository.GoalRepository;
+import com.book.backend.domain.record.dto.RecordDto;
+import com.book.backend.domain.record.entity.Record;
+import com.book.backend.domain.record.mapper.RecordMapper;
+import com.book.backend.domain.record.repository.RecordRepository;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
@@ -15,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,8 @@ public class GoalService {
     private final GoalRepository goalRepository;
     private final GoalRequestValidate goalRequestValidate;
     private final GoalMapper goalMapper;
+    private final RecordRepository recordRepository;
+    private final RecordMapper recordMapper;
 
     public GoalDto getGoal(Long goalId) throws Exception {
         log.trace("GoalService > getGoal()");
@@ -68,8 +73,9 @@ public class GoalService {
         List<UserProgressDto> userProgressDtos = new LinkedList<>();
 
         for (Goal goal : goals) {
-            List<RecordDto> records = goal.getRecords();
-            Integer mostRecentPage = goalMapper.getMostRecentPage(records);
+            List<Record> records = recordRepository.findAllByGoal(goal);
+            List<RecordDto> recordDtos = recordMapper.convertToRecordsDto(records);
+            Integer mostRecentPage = goalMapper.getMostRecentPage(recordDtos);
 
             double progressRate = goalMapper.getFormattedProgressRate((double) goal.getTotalPage(), (double) mostRecentPage);
 
@@ -97,9 +103,11 @@ public class GoalService {
                     .progressRate(null)
                     .build();
         }
+        List<Record> records = recordRepository.findAllByGoal(goal);
+        List<RecordDto> recordDtos = recordMapper.convertToRecordsDto(records);
 
         double progressRate = goalMapper.getFormattedProgressRate((double) goal.getTotalPage(),
-                (double) goalMapper.getMostRecentPage(goal.getRecords()));
+                (double) goalMapper.getMostRecentPage(recordDtos));
 
         if (goal.getIsFinished() == Boolean.TRUE) {
             return MyProgressDto.builder()
@@ -171,6 +179,8 @@ public class GoalService {
         Goal goal = goalRequestValidate.validateAndGetGoal(goalId);
         goalRequestValidate.validateUserMatchesGoal(user, goal);
 
+        // record 테이블에 goal id 를 갖는 모든 데이터 삭제
+        recordRepository.deleteAllByGoal(goal);
         // 목표 삭제
         goalRepository.delete(goal);
     }
