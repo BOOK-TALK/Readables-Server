@@ -7,7 +7,6 @@ import com.book.backend.domain.goal.service.GoalRecordsService;
 import com.book.backend.domain.goal.service.GoalService;
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.global.ResponseTemplate;
-import io.lettuce.core.dynamic.annotation.Param;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

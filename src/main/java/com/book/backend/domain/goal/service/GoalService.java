@@ -80,6 +80,7 @@ public class GoalService {
             UserProgressDto userProgressDto = UserProgressDto.builder()
                     .nickname(goal.getUser().getNickname())
                     .progressRate(formattedProgressRate)
+                    .profileImageUrl(goal.getUser().getProfileImageUrl())
                     .build();
             userProgressDtos.add(userProgressDto);
         }
