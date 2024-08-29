@@ -48,7 +48,8 @@ public class GoalController {
         return responseTemplate.success(goalDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "유저 목표 조회", description = "유저가 생성한 모든 목표를 반환합니다. 완료 여부 입력 시 해당하는 목표를 반환합니다.",
+    @Operation(summary = "전체 목표 조회", description = "유저가 생성한 모든 목표를 반환합니다. " +
+            "완료 여부 미입력 시 모든 목표가 반환되며, 입력 시 완료 여부에 해당하는 목표를 반환합니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
                     description = GoalDto.description)})
     @GetMapping("/get/total")
