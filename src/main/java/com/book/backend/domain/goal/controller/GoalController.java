@@ -146,8 +146,9 @@ public class GoalController {
     }
 
     @Operation(summary = "목표 진행한 사용자 조회",
-            description = "책 isbn을 입력받아 해당 책에 대한 목표를 진행한 사용자 목록을 반환합니다. " +
-                    "완료 여부 미입력 시 모든 사용자 목록이 반환되며, 입력 시 완료 여부에 해당하는 사용자 목록을 반환합니다.",
+            description = "책 isbn을 입력받아 해당 책에 대한 목표를 진행한 사용자(닉네임 + 완독율) 목록을 반환합니다. " +
+                    "완료 여부 미입력 시 모든 사용자 목록이 반환되며, 입력 시 완료 여부에 해당하는 사용자 목록을 반환합니다. " +
+                    "완독율은 소수점 아래 둘째 자리까지 반환됩니다.",
             parameters = {
                     @Parameter(name = "isbn", description = "책 isbn"),
                     @Parameter(name = "isFinished", description = "완료 여부")

@@ -74,9 +74,12 @@ public class GoalService {
             List<RecordDto> records = goal.getRecords();
             Integer mostRecentPage = goalMapper.getMostRecentPage(records);
 
+            double progressRate = 100 * (double) mostRecentPage / goal.getTotalPage();
+            double formattedProgressRate = Double.parseDouble(String.format("%.2f", progressRate));
+
             UserProgressDto userProgressDto = UserProgressDto.builder()
                     .nickname(goal.getUser().getNickname())
-                    .progressRate((double) mostRecentPage / goal.getTotalPage())
+                    .progressRate(formattedProgressRate)
                     .build();
             userProgressDtos.add(userProgressDto);
         }
