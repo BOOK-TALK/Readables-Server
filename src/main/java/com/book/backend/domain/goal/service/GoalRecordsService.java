@@ -50,37 +50,39 @@ public class GoalRecordsService {
             throw new CustomException(ErrorCode.EXCEED_TOTAL_PAGE);
         }
 
-        List<Record> records = recordRepository.findAllByGoal(goal);
-        List<RecordDto> recordDtos = recordMapper.convertToRecordsDto(records);
-
         // 가장 최근 기록 로드
         RecordDto mostRecentRecord = getMostRecentRecord(goal);
 
         // 가장 최근 기록이 없다면
         if (mostRecentRecord == null) {
-            RecordDto newRecord = RecordDto.builder()
-                    .date(LocalDate.now())
+            Record record = Record.builder()
+                    .date(LocalDateTime.now())
                     .recentPage(recentPage)
+                    .goal(goal)
                     .build();
-            recordDtos.add(newRecord);
+            recordRepository.save(record);
         }
         // 가장 최근 기록이 오늘이 아니면
         else if (mostRecentRecord.getDate().isBefore(LocalDate.now())) {
             if (recentPage <= mostRecentRecord.getRecentPage()) {
                 throw new CustomException(ErrorCode.INVALID_RECENT_PAGE);
             }
-            RecordDto newRecord = RecordDto.builder()
-                    .date(LocalDate.now())
+            Record record = Record.builder()
+                    .date(LocalDateTime.now())
                     .recentPage(recentPage)
+                    .goal(goal)
                     .build();
-            recordDtos.add(newRecord);
+            recordRepository.save(record);
         }
         // 가장 최근 기록이 오늘이면
         else {
             if (recentPage <= mostRecentRecord.getRecentPage()) {
                 throw new CustomException(ErrorCode.INVALID_RECENT_PAGE);
             }
-            mostRecentRecord.setRecentPage(recentPage);
+            // Record date 값이 오늘인 것을 찾아서 recentPage 업데이트
+            Record record = recordRepository.findByGoalAndDate(goal, LocalDateTime.now());
+            record.setRecentPage(recentPage);
+            recordRepository.save(record);
         }
 
         goal.setUpdatedAt(LocalDateTime.now());

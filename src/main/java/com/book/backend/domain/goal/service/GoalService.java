@@ -179,6 +179,8 @@ public class GoalService {
         Goal goal = goalRequestValidate.validateAndGetGoal(goalId);
         goalRequestValidate.validateUserMatchesGoal(user, goal);
 
+        // record 테이블에 goal id 를 갖는 모든 데이터 삭제
+        recordRepository.deleteAllByGoal(goal);
         // 목표 삭제
         goalRepository.delete(goal);
     }
