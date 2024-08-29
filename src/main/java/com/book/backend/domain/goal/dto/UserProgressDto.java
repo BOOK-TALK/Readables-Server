@@ -13,6 +13,6 @@ public class UserProgressDto {
 
     public static final String description =
             "nickname : 유저 닉네임 | " +
-            "progressRate : 목표 진행도 (완독율)";
+            "progressRate : 목표 진행률";
 
 }
