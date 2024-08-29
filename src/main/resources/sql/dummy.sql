@@ -46,8 +46,6 @@ CREATE TABLE IF NOT EXISTS message
     constraint FK2op594yomeg261726h4dj75jq
         foreign key (user_id) references user (user_id)
 );
-create index idx_message_createdAt
-    on message (created_at);
 CREATE TABLE IF NOT EXISTS `user dibs_books`
 (
     user_id       bigint       not null,
@@ -57,7 +55,6 @@ CREATE TABLE IF NOT EXISTS `user dibs_books`
     constraint FKjhhvi9pyxkt4w4ysu9o0b858x
         foreign key (user_id) references user (user_id)
 );
-
 CREATE TABLE IF NOT EXISTS user_libraries
 (
     user_id bigint       not null,
@@ -86,9 +83,32 @@ CREATE TABLE IF NOT EXISTS user_read_books
     constraint FKks39a5vkr0flfyih9t7qpl88n
         foreign key (user_id) references user (user_id)
 );
+CREATE TABLE IF NOT EXISTS goal
+(
+    goal_id     bigint auto_increment
+        primary key,
+    created_at  datetime(6)  null,
+    is_finished bit          null,
+    isbn        varchar(255) null,
+    recent_page int          null,
+    total_page  int          null,
+    updated_at  datetime(6)  null,
+    user_id     bigint       null,
+    constraint FKcvxyydpkwvqex9uqphgc7a204
+        foreign key (user_id) references user (user_id)
+);
+CREATE TABLE IF NOT EXISTS record
+(
+    record_id   bigint auto_increment
+        primary key,
+    date        datetime(6) null,
+    recent_page int         null,
+    goal_id     bigint      null,
+    constraint FKnf7wid5lp179vslfjl7rgvv6s
+        foreign key (goal_id) references goal (goal_id)
+);
 
-
-
+#------- dummy data -------
 INSERT IGNORE INTO book (book_id, isbn)
  VALUES (1, '9788956055466'),
         (2, '9788994120966'),
@@ -113,12 +133,12 @@ INSERT IGNORE INTO book (book_id, isbn)
         (9, 9),
         (10, 10);
 
- INSERT IGNORE INTO user (user_id, nickname, gender, birth_date, reg_date)
- values (1, '유저0' ,'1', '1990-01-01', '2024-06-10'),
-        (2, 'najin21', '2', '2000-03-16', '2024-07-22'),
-        (3, '스릴98','1', '1995-05-20', '2024-08-15'),
-        (4, 'navia', '2', '1992-07-25', '2024-09-30'),
-        (5, '애벌레42', '1', '2003-09-30', '2024-10-10');
+INSERT IGNORE INTO user (user_id, nickname, gender, birth_date, reg_date)
+values (1, '유저0' ,'1', '1990-01-01', '2024-06-10'),
+       (2, 'najin21', '2', '2000-03-16', '2024-07-22'),
+       (3, '스릴98','1', '1995-05-20', '2024-08-15'),
+       (4, 'navia', '2', '1992-07-25', '2024-09-30'),
+       (5, '애벌레42', '1', '2003-09-30', '2024-10-10');
 
  # 즐찾 오픈톡
  INSERT IGNORE INTO user_opentalk(user_opentalk_id, user_id, opentalk_id)
@@ -239,3 +259,29 @@ INSERT IGNORE INTO book (book_id, isbn)
         (108, 10, 2, '이렇게 책에 대해 이야기 나누는 시간이 정말 좋아요.', '2024-06-10 07:58:00'),
         (109, 8, 3, '저도요, 서로에게 많은 도움이 되는 것 같아요.', '2024-06-10 07:59:00'),
         (109, 8, 2, '오늘 하루도 화이팅입니다!', '2024-06-10 07:59:00');
+
+INSERT IGNORE INTO goal (goal_id, isbn, user_id, total_page, created_at, updated_at, is_finished)
+VALUES (1, '9788936434267', 4, 100, '2024-06-7 12:34:00', '2024-06-11 23:11:00', 0),
+       (2, '9788936434267', 1, 100, '2024-06-9 14:11:04', '2024-06-12 13:12:10', 0),
+       (3, '9788936434267', 2, 100, '2024-06-10 09:53:17', '2024-06-11 19:40:10', 0),
+       (4, '9788936434267', 3, 100, '2024-06-10 11:15:30', '2024-06-11 21:10:07', 0);
+
+INSERT IGNORE INTO record (record_id, goal_id, date, recent_page)
+VALUES (1, 1, '2024-06-7', 14),
+       (2, 2, '2024-06-9', 10),
+       (3, 3, '2024-06-10', 5),
+       (4, 4, '2024-06-10', 11),
+       (5, 1, '2024-06-11', 28),
+       (6, 3, '2024-06-11', 14),
+       (7, 4, '2024-06-11', 41),
+       (8, 1, '2024-06-12', 30),
+       (9, 2, '2024-06-12', 42),
+       (10, 3, '2024-06-12', 17);
+
+# INSERT IGNORE INTO goal (isbn, user_id, total_page, created_at, updated_at, is_finished)
+# VALUES ('978-3-16-148410-0', 1, 300, '2024-08-01 00:00:00', '2024-08-01 00:00:00', false);
+#
+# INSERT IGNORE INTO goal_a_week_records(goal_id, date, recent_page)
+# VALUES (1, '2024-08-07', 30),
+#        (1, '2024-08-14', 60),
+#        (1, '2024-08-21', 90);

@@ -1,12 +1,15 @@
 package com.book.backend.domain.goal.service;
 
 import com.book.backend.domain.goal.dto.GoalDto;
-import com.book.backend.domain.goal.dto.RecordDto;
 import com.book.backend.domain.goal.dto.RecordIntervalDto;
 import com.book.backend.domain.goal.dto.UserProgressDto;
 import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.goal.mapper.GoalMapper;
 import com.book.backend.domain.goal.repository.GoalRepository;
+import com.book.backend.domain.record.dto.RecordDto;
+import com.book.backend.domain.record.entity.Record;
+import com.book.backend.domain.record.mapper.RecordMapper;
+import com.book.backend.domain.record.repository.RecordRepository;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
@@ -28,6 +31,8 @@ public class GoalService {
     private final GoalRepository goalRepository;
     private final GoalRequestValidate goalRequestValidate;
     private final GoalMapper goalMapper;
+    private final RecordRepository recordRepository;
+    private final RecordMapper recordMapper;
 
     public GoalDto getGoal(Long goalId) throws Exception {
         log.trace("GoalService > getGoal()");
@@ -71,8 +76,9 @@ public class GoalService {
         List<UserProgressDto> userProgressDtos = new LinkedList<>();
 
         for (Goal goal : goals) {
-            List<RecordDto> records = goal.getRecords();
-            Integer mostRecentPage = goalMapper.getMostRecentPage(records);
+            List<Record> records = recordRepository.findAllByGoal(goal);
+            List<RecordDto> recordDtos = recordMapper.convertToRecordsDto(records);
+            Integer mostRecentPage = goalMapper.getMostRecentPage(recordDtos);
 
             double progressRate = 100 * (double) mostRecentPage / goal.getTotalPage();
             double formattedProgressRate = Double.parseDouble(String.format("%.2f", progressRate));

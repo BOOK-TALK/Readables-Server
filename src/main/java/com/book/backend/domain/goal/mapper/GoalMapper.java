@@ -4,13 +4,16 @@ import com.book.backend.domain.book.dto.BookInfoDto;
 import com.book.backend.domain.book.dto.BookSummaryDto;
 import com.book.backend.domain.book.mapper.BookMapper;
 import com.book.backend.domain.goal.dto.GoalDto;
-import com.book.backend.domain.goal.dto.RecordDto;
 import com.book.backend.domain.goal.dto.RecordIntervalDto;
 import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.openapi.dto.request.DetailRequestDto;
 import com.book.backend.domain.openapi.dto.response.SearchResponseDto;
 import com.book.backend.domain.openapi.service.OpenAPI;
 import com.book.backend.domain.openapi.service.ResponseParser;
+import com.book.backend.domain.record.dto.RecordDto;
+import com.book.backend.domain.record.entity.Record;
+import com.book.backend.domain.record.mapper.RecordMapper;
+import com.book.backend.domain.record.repository.RecordRepository;
 import com.book.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +37,8 @@ public class GoalMapper {
     private final OpenAPI openAPI;
     private final ResponseParser responseParser;
     private final BookMapper bookMapper;
+    private final RecordRepository recordRepository;
+    private final RecordMapper recordMapper;
 
     public GoalDto convertToGoalDto(Goal goal) throws Exception {
         log.trace("GoalMapper > convertToGoalDto()");
@@ -46,11 +51,13 @@ public class GoalMapper {
         goalDto.setUserNickname(user.getNickname());
 
         // 일주일 기록
-        List<RecordIntervalDto> aWeekRecords = convertAWeekRecords(goal.getRecords());
+        List<Record> records = recordRepository.findAllByGoal(goal);
+        List<RecordDto> recordDtos = recordMapper.convertToRecordsDto(records);
+        List<RecordIntervalDto> aWeekRecords = convertAWeekRecords(recordDtos);
         goalDto.setAWeekRecords(aWeekRecords);
 
         // 최근 페이지 업데이트
-        goalDto.setRecentPage(getMostRecentPage(goal.getRecords()));
+        goalDto.setRecentPage(getMostRecentPage(recordDtos));
 
         return goalDto;
     }
