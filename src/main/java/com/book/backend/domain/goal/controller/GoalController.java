@@ -1,13 +1,13 @@
 package com.book.backend.domain.goal.controller;
 
 import com.book.backend.domain.goal.dto.GoalDto;
+import com.book.backend.domain.goal.dto.MyProgressDto;
 import com.book.backend.domain.goal.dto.RecordIntervalDto;
 import com.book.backend.domain.goal.dto.UserProgressDto;
 import com.book.backend.domain.goal.service.GoalRecordsService;
 import com.book.backend.domain.goal.service.GoalService;
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.global.ResponseTemplate;
-import io.lettuce.core.dynamic.annotation.Param;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "목표", description = "목표 삭제 / 목표 조회 / 특정 책의 전체 유저 진행률 조회 / 진행중 목표 & 완료한 목표 / " +
-        "전체 목표에 대한 합산 일주일 기록 조회 / 목표 생성 / 기록 추가 / 목표 완료")
+        "전체 목표에 대한 합산 일주일 기록 조회 / 나의 진행도 조회 / 목표 생성 / 기록 추가 / 목표 완료")
 public class GoalController {
     private final GoalService goalService;
     private final GoalRecordsService goalRecordsService;
@@ -49,7 +49,7 @@ public class GoalController {
         return responseTemplate.success(goalDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "진행중 목표 & 완료한 목표", description = "isFinished 값으로 null 을 주면 모든 목표 list를, false를 주면 진행중 목표 list를, true를 주면 완료한 목표 list를 반환합니다..",
+    @Operation(summary = "진행중 목표 & 완료한 목표 조회", description = "isFinished 값으로 null 을 주면 모든 목표 list를, false를 주면 진행중 목표 list를, true를 주면 완료한 목표 list를 반환합니다..",
             parameters = {
                     @Parameter(name = "isFinished", description = "완료 여부")
             },
@@ -62,6 +62,21 @@ public class GoalController {
         List<GoalDto> goalDtos = goalService.getUserGoals(isFinished);
 
         return responseTemplate.success(goalDtos, HttpStatus.OK);
+    }
+
+    @Operation(summary = "나의 진행도 조회", description = "책 isbn 값을 입력받아 해당 책에 대한 목표 진행도를 반환합니다.",
+            parameters = {
+                    @Parameter(name = "isbn", description = "책 isbn 번호")
+            },
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MyProgressDto.class)),
+                    description = MyProgressDto.description)})
+    @GetMapping("/get/myProgress")
+    public ResponseEntity<?> getMyProgress(@RequestParam(required = true) String isbn) {
+        log.trace("GoalController > getMyProgress()");
+
+        MyProgressDto myProgressDtos = goalService.getMyProgress(isbn);
+
+        return responseTemplate.success(myProgressDtos, HttpStatus.OK);
     }
 
     @Operation(summary = "전체 목표에 대한 합산 일주일 기록 조회", description = "유저의 모든 목표에 대해 합산된 일주일 기록을 반환합니다.",

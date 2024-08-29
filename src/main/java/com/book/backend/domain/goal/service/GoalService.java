@@ -1,9 +1,6 @@
 package com.book.backend.domain.goal.service;
 
-import com.book.backend.domain.goal.dto.GoalDto;
-import com.book.backend.domain.goal.dto.RecordDto;
-import com.book.backend.domain.goal.dto.RecordIntervalDto;
-import com.book.backend.domain.goal.dto.UserProgressDto;
+import com.book.backend.domain.goal.dto.*;
 import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.goal.mapper.GoalMapper;
 import com.book.backend.domain.goal.repository.GoalRepository;
@@ -74,17 +71,45 @@ public class GoalService {
             List<RecordDto> records = goal.getRecords();
             Integer mostRecentPage = goalMapper.getMostRecentPage(records);
 
-            double progressRate = 100 * (double) mostRecentPage / goal.getTotalPage();
-            double formattedProgressRate = Double.parseDouble(String.format("%.2f", progressRate));
+            double progressRate = goalMapper.getFormattedProgressRate((double) goal.getTotalPage(), (double) mostRecentPage);
 
             UserProgressDto userProgressDto = UserProgressDto.builder()
                     .nickname(goal.getUser().getNickname())
-                    .progressRate(formattedProgressRate)
+                    .progressRate(progressRate)
+                    .profileImageUrl(goal.getUser().getProfileImageUrl())
                     .build();
             userProgressDtos.add(userProgressDto);
         }
 
         return userProgressDtos;
+    }
+
+    public MyProgressDto getMyProgress(String isbn) {
+        User user = goalRequestValidate.validateAndGetLoggedInUser();
+        Goal goal = goalRepository.findByUserAndIsbn(user, isbn)
+                .orElse(null);
+
+        if (goal == null) {
+            return MyProgressDto.builder()
+                    .isInProgress(false)
+                    .progressRate(null)
+                    .build();
+        }
+
+        double progressRate = goalMapper.getFormattedProgressRate((double) goal.getTotalPage(),
+                (double) goalMapper.getMostRecentPage(goal.getRecords()));
+
+        if (goal.getIsFinished() == Boolean.TRUE) {
+            return MyProgressDto.builder()
+                    .isInProgress(false)
+                    .progressRate(progressRate)
+                    .build();
+        } else {
+            return MyProgressDto.builder()
+                    .isInProgress(true)
+                    .progressRate(progressRate)
+                    .build();
+        }
     }
 
     @Transactional

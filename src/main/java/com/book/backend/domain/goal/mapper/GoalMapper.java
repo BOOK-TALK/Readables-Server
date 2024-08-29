@@ -150,4 +150,9 @@ public class GoalMapper {
         return aWeekRecords;
     }
 
+    public double getFormattedProgressRate(double totalPage, double mostRecentPage) {
+        double progressRate = 100 * mostRecentPage / totalPage;
+        return Double.parseDouble(String.format("%.2f", progressRate));
+    }
+
 }
