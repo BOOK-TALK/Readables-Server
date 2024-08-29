@@ -1,6 +1,9 @@
 package com.book.backend.domain.goal.service;
 
 import com.book.backend.domain.goal.dto.GoalDto;
+import com.book.backend.domain.goal.dto.RecordDto;
+import com.book.backend.domain.goal.dto.RecordIntervalDto;
+import com.book.backend.domain.goal.dto.UserProgressDto;
 import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.goal.mapper.GoalMapper;
 import com.book.backend.domain.goal.repository.GoalRepository;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +56,32 @@ public class GoalService {
         }
 
         return goalDtos;
+    }
+
+    public List<UserProgressDto> getUsersInGoal(String isbn, Boolean isFinished) {
+        log.trace("GoalService > getUsersInGoal()");
+
+        List<Goal> goals;
+        if (isFinished == null) {
+            goals = goalRepository.findByIsbn(isbn);
+        } else {
+            goals = goalRepository.findByIsbnAndIsFinished(isbn, isFinished);
+        }
+
+        List<UserProgressDto> userProgressDtos = new LinkedList<>();
+
+        for (Goal goal : goals) {
+            List<RecordDto> records = goal.getRecords();
+            Integer mostRecentPage = goalMapper.getMostRecentPage(records);
+
+            UserProgressDto userProgressDto = UserProgressDto.builder()
+                    .nickname(goal.getUser().getNickname())
+                    .progressRate((double) mostRecentPage / goal.getTotalPage())
+                    .build();
+            userProgressDtos.add(userProgressDto);
+        }
+
+        return userProgressDtos;
     }
 
     @Transactional
