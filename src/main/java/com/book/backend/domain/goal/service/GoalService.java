@@ -5,7 +5,6 @@ import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.goal.mapper.GoalMapper;
 import com.book.backend.domain.goal.repository.GoalRepository;
 import com.book.backend.domain.user.entity.User;
-import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +34,31 @@ public class GoalService {
         return goalMapper.convertToGoalDto(goal);
     }
 
+    public List<GoalDto> getUserGoals(Boolean isFinished) throws Exception {
+        log.trace("GoalService > getUserGoals()");
+
+        // 유저 검증
+        User user = goalRequestValidate.validateAndGetLoggedInUser();
+
+        List<Goal> goals = user.getGoals();
+        List<GoalDto> goalDtos = new LinkedList<>();
+
+        // GoalDto로 변경
+        for (Goal goal : goals) {
+            if (isFinished == null || isFinished.equals(goal.getIsFinished())) {
+                GoalDto dto = goalMapper.convertToGoalDto(goal);
+                goalDtos.add(dto);
+            }
+        }
+
+        return goalDtos;
+    }
+
     @Transactional
     public GoalDto createGoal(String isbn, Integer totalPage) throws Exception {
         log.trace("GoalService > createGoal()");
 
+        // 유저, 목표 검증
         User user = goalRequestValidate.validateAndGetLoggedInUser();
         goalRequestValidate.validateIsExistGoal(user, isbn);
 
@@ -46,7 +68,6 @@ public class GoalService {
         Goal goal = Goal.builder()
                 .isbn(isbn)
                 .user(user)
-                .recentPage(null)
                 .totalPage(totalPage)
                 .createdAt(now)
                 .updatedAt(now)
@@ -62,12 +83,20 @@ public class GoalService {
     public GoalDto finishGoal(Long goalId) throws Exception {
         log.trace("GoalService > finishGoal()");
 
+        // 유저, 목표 검증
         User user = goalRequestValidate.validateAndGetLoggedInUser();
         Goal goal = goalRequestValidate.validateAndGetGoal(goalId);
         goalRequestValidate.validateUserMatchesGoal(user, goal);
 
+        // 이미 종료되어 있다면 에러 발생
+        if (goal.getIsFinished()) {
+            throw new CustomException(ErrorCode.GOAL_IS_ALREADY_FINISHED);
+        }
+
         // 목표 완료
         goal.setIsFinished(true);
+        goal.setUpdatedAt(LocalDateTime.now());
+
         goalRepository.save(goal);
 
         return goalMapper.convertToGoalDto(goal);
@@ -77,6 +106,7 @@ public class GoalService {
     public void deleteGoal(Long goalId) {
         log.trace("GoalService > deleteGoal()");
 
+        // 유저, 목표 검증
         User user = goalRequestValidate.validateAndGetLoggedInUser();
         Goal goal = goalRequestValidate.validateAndGetGoal(goalId);
         goalRequestValidate.validateUserMatchesGoal(user, goal);
@@ -84,6 +114,5 @@ public class GoalService {
         // 목표 삭제
         goalRepository.delete(goal);
     }
-
 
 }

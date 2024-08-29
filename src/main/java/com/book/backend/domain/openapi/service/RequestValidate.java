@@ -146,12 +146,14 @@ public class RequestValidate {
         }
     }
 
+
+    // 책 페이지 수
     public void isValidBookPageNum(int page) {
         log.trace("RequestValidate > isValidBookPageNum()");
 
         // 1 이상의 숫자인지 확인
         if (page < 1) {
-            throw new CustomException(ErrorCode.INVALID_PAGE_NUM);
+            throw new CustomException(ErrorCode.INVALID_BOOK_PAGE_NUM);
         }
     }
 

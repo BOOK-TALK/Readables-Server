@@ -47,7 +47,7 @@ public class User {
     private List<Message> messages;  // 작성한 메시지
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Goal> goals;
+    private List<Goal> goals;  // 목표
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_libraries", joinColumns = @JoinColumn(name = "user_id"))
