@@ -85,6 +85,8 @@ public class GoalService {
     }
 
     public MyProgressDto getMyProgress(String isbn) {
+        log.trace("GoalService > getMyProcess()");
+
         User user = goalRequestValidate.validateAndGetLoggedInUser();
         Goal goal = goalRepository.findByUserAndIsbn(user, isbn)
                 .orElse(null);
