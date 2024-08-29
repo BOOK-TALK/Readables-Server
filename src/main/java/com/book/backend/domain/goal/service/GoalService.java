@@ -1,8 +1,6 @@
 package com.book.backend.domain.goal.service;
 
-import com.book.backend.domain.goal.dto.GoalDto;
-import com.book.backend.domain.goal.dto.RecordIntervalDto;
-import com.book.backend.domain.goal.dto.UserProgressDto;
+import com.book.backend.domain.goal.dto.*;
 import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.goal.mapper.GoalMapper;
 import com.book.backend.domain.goal.repository.GoalRepository;
@@ -21,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -80,17 +77,49 @@ public class GoalService {
             List<RecordDto> recordDtos = recordMapper.convertToRecordsDto(records);
             Integer mostRecentPage = goalMapper.getMostRecentPage(recordDtos);
 
-            double progressRate = 100 * (double) mostRecentPage / goal.getTotalPage();
-            double formattedProgressRate = Double.parseDouble(String.format("%.2f", progressRate));
+            double progressRate = goalMapper.getFormattedProgressRate((double) goal.getTotalPage(), (double) mostRecentPage);
 
             UserProgressDto userProgressDto = UserProgressDto.builder()
                     .nickname(goal.getUser().getNickname())
-                    .progressRate(formattedProgressRate)
+                    .progressRate(progressRate)
+                    .profileImageUrl(goal.getUser().getProfileImageUrl())
                     .build();
             userProgressDtos.add(userProgressDto);
         }
 
         return userProgressDtos;
+    }
+
+    public MyProgressDto getMyProgress(String isbn) {
+        log.trace("GoalService > getMyProcess()");
+
+        User user = goalRequestValidate.validateAndGetLoggedInUser();
+        Goal goal = goalRepository.findByUserAndIsbn(user, isbn)
+                .orElse(null);
+
+        if (goal == null) {
+            return MyProgressDto.builder()
+                    .isInProgress(false)
+                    .progressRate(null)
+                    .build();
+        }
+        List<Record> records = recordRepository.findAllByGoal(goal);
+        List<RecordDto> recordDtos = recordMapper.convertToRecordsDto(records);
+
+        double progressRate = goalMapper.getFormattedProgressRate((double) goal.getTotalPage(),
+                (double) goalMapper.getMostRecentPage(recordDtos));
+
+        if (goal.getIsFinished() == Boolean.TRUE) {
+            return MyProgressDto.builder()
+                    .isInProgress(false)
+                    .progressRate(progressRate)
+                    .build();
+        } else {
+            return MyProgressDto.builder()
+                    .isInProgress(true)
+                    .progressRate(progressRate)
+                    .build();
+        }
     }
 
     @Transactional
