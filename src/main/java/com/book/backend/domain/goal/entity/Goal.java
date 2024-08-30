@@ -1,10 +1,12 @@
 package com.book.backend.domain.goal.entity;
 
+import com.book.backend.domain.record.entity.Record;
 import com.book.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "goal")
@@ -31,4 +33,7 @@ public class Goal {
     private LocalDateTime updatedAt;
 
     private Boolean isFinished;
+
+    @OneToMany(mappedBy = "goal", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Record> records;
 }
