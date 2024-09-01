@@ -39,6 +39,9 @@ dependencies {
 	// jwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
+	//flyway
+	implementation 'org.flywaydb:flyway-core'
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
 	compileOnly 'org.projectlombok:lombok'
