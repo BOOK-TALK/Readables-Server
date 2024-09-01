@@ -1,5 +1,6 @@
 package com.book.backend.domain.goal.service;
 
+import com.book.backend.domain.book.dto.BookSummaryDto;
 import com.book.backend.domain.goal.dto.*;
 import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.goal.mapper.GoalMapper;
@@ -9,6 +10,7 @@ import com.book.backend.domain.record.entity.Record;
 import com.book.backend.domain.record.mapper.RecordMapper;
 import com.book.backend.domain.record.repository.RecordRepository;
 import com.book.backend.domain.user.entity.User;
+import com.book.backend.domain.userBook.service.UserBookService;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class GoalService {
     private final GoalMapper goalMapper;
     private final RecordRepository recordRepository;
     private final RecordMapper recordMapper;
+    private final UserBookService userBookService;
 
     public GoalDto getGoal(Long goalId) throws Exception {
         log.trace("GoalService > getGoal()");
@@ -164,6 +167,15 @@ public class GoalService {
         // 목표 완료
         goal.setIsFinished(true);
         goal.setUpdatedAt(LocalDateTime.now());
+
+        BookSummaryDto bookSummary = goalMapper.convertToGoalDto(goal).getBookSummary();
+
+        // 읽은 책에 추가
+        userBookService.setReadBooks(
+                bookSummary.getIsbn(),
+                bookSummary.getTitle(),
+                bookSummary.getImageUrl()
+        );
 
         goalRepository.save(goal);
 
