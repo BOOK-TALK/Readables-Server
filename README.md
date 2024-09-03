@@ -1,13 +1,19 @@
 # &nbsp; 읽을거리 <a href="https://apps.apple.com/kr/app/%EC%9D%BD%EC%9D%84%EA%B1%B0%EB%A6%AC/id6664069391"><img src="https://github.com/BOOK-TALK/Readables-Server/blob/main/src/main/resources/static/logo.png" align="left" width="100"></a>
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FBOOK-TALK%2FReadables-Server&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
+<br>
+
 ## Download
 
 - #### [App Store Download](https://apps.apple.com/kr/app/%EC%9D%BD%EC%9D%84%EA%B1%B0%EB%A6%AC/id6664069391)
 
+<br>
+
 ## Introduction
 
 TBU
+
+<br>
 
 ## Server Developers
 
@@ -23,14 +29,18 @@ TBU
     <tr align="center">
         <td>
             <b>이찬우</b>
-            <br>
+        </td>
+        <td>
+            <b>김혜은</b>
+        </td>
+    </tr>
+    <tr align="center">
+        <td>
             <a href="https://github.com/chanwoo7">
                 <img src="https://img.shields.io/badge/chanwoo7-181717?style=for-the-social&logo=github&logoColor=white"/>
             </a>
         </td>
         <td>
-            <b>김혜은</b>
-            <br>
             <a href="https://github.com/hyeesw">
                 <img src="https://img.shields.io/badge/hyeesw-181717?style=for-the-social&logo=github&logoColor=white"/>
             </a>
@@ -38,16 +48,19 @@ TBU
     </tr>
 </table>
 
+<br>
 
 ## System Architecture
 
 TBU
 
+<br>
 
 ## ERD
 
 TBU
 
+<br>
 
 ## Features
 
@@ -64,6 +77,8 @@ TBU
 
 </details>
 
+<br>
+
 ### 도서 검색 및 상세
 
 [대표 이미지 or 영상]
@@ -77,6 +92,8 @@ TBU
 
 </details>
 
+<br>
+
 ### 홈
 
 [대표 이미지 or 영상]
@@ -89,6 +106,8 @@ TBU
 TBU
 
 </details>
+
+<br>
 
 ### 장르 검색
 
@@ -103,6 +122,8 @@ TBU
 
 </details>
 
+<br>
+
 ### 목표
 
 [대표 이미지 or 영상]
@@ -115,6 +136,8 @@ TBU
 TBU
 
 </details>
+
+<br>
 
 ### 오픈톡
 
@@ -129,6 +152,8 @@ TBU
 
 </details>
 
+<br>
+
 ### 홈
 
 [대표 이미지 or 영상]
@@ -142,6 +167,7 @@ TBU
 
 </details>
 
+<br>
 
 ## Trouble Shooting
 
