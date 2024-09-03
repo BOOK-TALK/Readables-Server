@@ -58,7 +58,10 @@ TBU
 
 ## ERD
 
-TBU
+#
+
+<img src="https://github.com/user-attachments/assets/fd91fd65-ef29-4ed6-a7e2-0ebd02f789dd" width="70%">
+
 
 <br>
 
