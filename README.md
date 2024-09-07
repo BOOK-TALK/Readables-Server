@@ -56,6 +56,13 @@
     </tr>
 </table>
 
+
+김혜은 <br>
+- AWS EC2 서버 배포 및 Docker, Github-Actions, Portainer를 활용해 서버 배포 자동화
+- 정보나루 OPEN API 통신 로직과 JSON 파싱 인터페이스 구축
+-  OPEN API 기반 '커스텀 인기대출도서', '책 검색', '책 상세', '도서관 책 대출 여부' API 구현
+- STOMP 프로토콜 기반 실시간 채팅 구현 (오픈톡)
+
 <br>
 
 ## System Architecture
