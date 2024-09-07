@@ -56,6 +56,7 @@
     </tr>
 </table>
 
+#### 📍 맡은 부분들
 - 이찬우
   - JWT Access Token, Refresh Token 기반 **회원 인증** 및 Redis를 활용한 **토큰 재발급** 서비스 구현
   - Spring Data JPA, Spring Security를 활용한 **회원 정보 관리 서비스** 구현
@@ -63,14 +64,12 @@
   - **커스텀 페이지네이션** 구현 및 Open API 기반 **'장르'** 관련 API, **'도서관 검색 및 저장'** API 구현
   - **목표 CRUD** API 및 **기록 추가** API 구현
   - **도메인 관리** 및 **SSL 인증서** 적용
-<br>
 
 - 김혜은
   - **AWS EC2 서버 배포** 및 Docker, Github-Actions, Portainer를 활용해 **서버 배포 자동화**
   - 정보나루 **Open API 통신 로직**과 **JSON 파싱 인터페이스** 구축
   - Open API 기반 **'커스텀 인기대출도서', '책 검색', '책 상세', '도서관 책 대출 여부' API** 구현
   - STOMP 프로토콜 기반 **실시간 채팅 구현** (오픈톡)
-
 
 <br>
 
@@ -83,117 +82,41 @@ TBU
 ## ERD
 
 <img src="https://github.com/user-attachments/assets/fd91fd65-ef29-4ed6-a7e2-0ebd02f789dd" width="70%">
-
-
 <br>
 
 ## Features
 
-### 회원 관리
-
-[대표 이미지 or 영상]
-
-<details>
-<summary>접기/펼치기</summary>
-
-#### TBU
-
 TBU
 
-</details>
+## Directory Structure
 
-<br>
+```
+src/main/
+├── java
+│   └── com
+│       └── book
+│           └── backend
+│               ├── domain
+│               │   ├── auth
+│               │   ├── book
+│               │   ├── detail
+│               │   ├── genre
+│               │   ├── goal
+│               │   ├── library
+│               │   ├── message
+│               │   ├── oidc
+│               │   ├── openapi
+│               │   ├── opentalk
+│               │   ├── record
+│               │   ├── search
+│               │   ├── user
+│               │   ├── userBook
+│               │   └── userOpentalk
+│               ├── exception
+│               ├── global
+│               └── util
+└── resources
+    ├── sql
+    └── static
+```
 
-### 도서 검색 및 상세
-
-[대표 이미지 or 영상]
-
-<details>
-<summary>접기/펼치기</summary>
-
-#### TBU
-
-TBU
-
-</details>
-
-<br>
-
-### 홈
-
-[대표 이미지 or 영상]
-
-<details>
-<summary>접기/펼치기</summary>
-
-#### TBU
-
-TBU
-
-</details>
-
-<br>
-
-### 장르 검색
-
-[대표 이미지 or 영상]
-
-<details>
-<summary>접기/펼치기</summary>
-
-#### TBU
-
-TBU
-
-</details>
-
-<br>
-
-### 목표
-
-[대표 이미지 or 영상]
-
-<details>
-<summary>접기/펼치기</summary>
-
-#### TBU
-
-TBU
-
-</details>
-
-<br>
-
-### 오픈톡
-
-[대표 이미지 or 영상]
-
-<details>
-<summary>접기/펼치기</summary>
-
-#### TBU
-
-TBU
-
-</details>
-
-<br>
-
-### 마이페이지
-
-[대표 이미지 or 영상]
-
-<details>
-<summary>접기/펼치기</summary>
-
-#### TBU
-
-TBU
-
-</details>
-
-<br>
-
-## Trouble Shooting
-
-- #### 링크 추가 예정
