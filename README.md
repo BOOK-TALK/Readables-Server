@@ -75,7 +75,6 @@
 
 ## System Architecture
 
-## 📑 System Architecture
 <table align="center">
     <tr align="center">
         <td>
@@ -84,7 +83,7 @@
     </tr>
     <tr align="center">
       <td>
-        <img src="https://github.com/user-attachments/assets/1adfae6a-1816-45a1-af21-35f041b897cd" width=600px>
+        <img src="https://github.com/user-attachments/assets/1adfae6a-1816-45a1-af21-35f041b897cd" width="100%">
       </td>
     </tr>
   </table>
@@ -97,7 +96,7 @@
     </tr>
     <tr align="center">
       <td>
-        <img src="https://github.com/kookmin-sw/capstone-2024-17/assets/119438312/d632a295-e00e-4828-8bc3-711a066fb987" width=600px>
+        <img src="https://github.com/kookmin-sw/capstone-2024-17/assets/119438312/d632a295-e00e-4828-8bc3-711a066fb987" width="100%">
       </td>
     </tr>
 </table>
@@ -105,7 +104,7 @@
 
 ## ERD
 
-<img src="https://github.com/user-attachments/assets/fd91fd65-ef29-4ed6-a7e2-0ebd02f789dd" width="70%">
+<img src="https://github.com/user-attachments/assets/fd91fd65-ef29-4ed6-a7e2-0ebd02f789dd" width="100%">
 
 <br>
 
