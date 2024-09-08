@@ -67,16 +67,40 @@
 
 - 김혜은
   - **AWS EC2 서버 배포** 및 Docker, Github-Actions, Portainer를 활용해 **서버 배포 자동화**
-  - 정보나루 **Open API 통신 로직**과 **JSON 파싱 인터페이스** 구축
+  - 정보나루 **Open API 통신 로직** 및 **JSON 파싱 인터페이스** 구축
   - Open API 기반 **'커스텀 인기대출도서', '책 검색', '책 상세', '도서관 책 대출 여부' API** 구현
   - STOMP 프로토콜 기반 **실시간 채팅 구현** (오픈톡)
-
+  <!-- flyway 를 활용한 DB migration-->
 <br>
 
 ## System Architecture
 
-TBU
-
+## 📑 System Architecture
+<table align="center">
+    <tr align="center">
+        <td>
+            시스템 아키텍처
+        </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="https://github.com/user-attachments/assets/1adfae6a-1816-45a1-af21-35f041b897cd" width=600px>
+      </td>
+    </tr>
+  </table>
+  <br>
+  <table align="center">
+    <tr align="center">
+        <td>
+            CI/CD 아키텍처
+        </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="https://github.com/kookmin-sw/capstone-2024-17/assets/119438312/d632a295-e00e-4828-8bc3-711a066fb987" width=600px>
+      </td>
+    </tr>
+</table>
 <br>
 
 ## ERD
