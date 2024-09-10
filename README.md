@@ -16,10 +16,25 @@
 <br>
 
 #### 📍 개발 기간
-- 2024.07.18. ~ 진행 중
+- 기능 구현
+  - 2024.07.18. ~ 2024.08.30.
+- 유지 보수 및 업데이트
+  - 2024.09.01. ~ 진행 중
 
 #### 📍 비고
 - 「**2024 도서관 데이터 활용 공모전**」 (국립중앙도서관 주관) - 서비스 아이디어 부문 출품작 (현재 심사 중)
+
+<br>
+
+## Team
+
+### 팀 이음
+
+📪Team contact: contact.ieumteam@gmail.com
+
+| iOS Developer | iOS Developer | Server Developer | Server Developer |
+| --- | --- | --- | --- |
+| [@minnnidev](https://github.com/minnnidev) | [@rafa-e1](https://github.com/rafa-e1) | [@chanwoo7](https://github.com/chanwoo7) | [@hyeesw](https://github.com/hyeesw) |
 
 <br>
 
@@ -61,14 +76,14 @@
   - JWT Access Token, Refresh Token 기반 **회원 인증** 및 Redis를 활용한 **토큰 재발급** 서비스 구현
   - Spring Data JPA, Spring Security를 활용한 **회원 정보 관리 서비스** 구현
   - OIDC(OpenID Connect)를 활용한 ID Token 기반 **카카오, Apple 로그인** 구현 
-  - **커스텀 페이지네이션** 구현 및 Open API 기반 **'장르'** 관련 API, **'도서관 검색 및 저장'** API 구현
-  - **목표 CRUD** API 및 **기록 추가** API 구현
+  - **커스텀 페이지네이션** 로직 구현 및 Open API 기반 **장르 도서 조회** API, **도서관 검색 및 저장** API 구현
+  - **목표 CRUD** API 및 **목표 기록 추가** API 구현
   - **도메인 관리** 및 **SSL 인증서** 적용
 
 - 김혜은
   - **AWS EC2 서버 배포** 및 Docker, Github-Actions, Portainer를 활용해 **서버 배포 자동화**
   - 정보나루 **Open API 통신 로직** 및 **JSON 파싱 인터페이스** 구축
-  - Open API 기반 **'커스텀 인기대출도서', '책 검색', '책 상세', '도서관 책 대출 여부' API** 구현
+  - Open API 기반 **커스텀 인기대출도서, 책 검색, 책 상세, 도서관 책 대출 여부** API 구현
   - STOMP 프로토콜 기반 **실시간 채팅 구현** (오픈톡)
   <!-- flyway 를 활용한 DB migration-->
 <br>
@@ -110,7 +125,7 @@
 
 ## Features
 
-> 이 문단의 내용은 `Readables-iOS` 레포지토리의 [README](https://github.com/BOOK-TALK/Readables-iOS#%EC%84%9C%EB%B9%84%EC%8A%A4-%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5)에서 발췌한 내용입니다.
+> 이 문단의 내용은 `Readables-iOS`(프론트엔드) 레포지토리의 [README](https://github.com/BOOK-TALK/Readables-iOS)에서 발췌한 내용입니다.
 
 #### 1. 회원가입 및 로그인
    - 유저는 애플 로그인, 카카오 로그인 총 2개의 소셜 로그인을 사용할 수 있으며, 입력 폼에서 정보를 입력하면 회원 가입이 완료됩니다. (닉네임만 필수 입력)
