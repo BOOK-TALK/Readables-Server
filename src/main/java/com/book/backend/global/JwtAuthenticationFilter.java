@@ -79,7 +79,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) {
             setJwtException(wrappedRequest, ErrorCode.JWT_EXPIRED);
         } catch (CustomException e) {
-            setJwtException(wrappedRequest, e.getCode());
+            setJwtException(wrappedRequest, ErrorCode.JWT_IS_BLACKLISTED);
         } catch (Exception e) {
             setJwtException(wrappedRequest, ErrorCode.INVALID_CREDENTIALS);
         } finally {
