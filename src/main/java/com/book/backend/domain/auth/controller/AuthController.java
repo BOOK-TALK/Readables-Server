@@ -55,7 +55,7 @@ public class AuthController {
                     description = LoginSuccessResponseDto.description)})
     @PostMapping("/kakaoLogin")
     public ResponseEntity<?> kakaoLogin(@RequestParam String idToken) {
-        LoginSuccessResponseDto loginSuccessResponseDto = OAuthService.oAuthLogin(Provider.KAKAO, idToken);
+        LoginSuccessResponseDto loginSuccessResponseDto = OAuthService.oAuthLogin(Provider.KAKAO, idToken, false);
 
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
     }
@@ -68,7 +68,33 @@ public class AuthController {
                     description = LoginSuccessResponseDto.description)})
     @PostMapping("/appleLogin")
     public ResponseEntity<?> appleLogin(@RequestParam String idToken) {
-        LoginSuccessResponseDto loginSuccessResponseDto = OAuthService.oAuthLogin(Provider.APPLE, idToken);
+        LoginSuccessResponseDto loginSuccessResponseDto = OAuthService.oAuthLogin(Provider.APPLE, idToken, false);
+
+        return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "카카오 로그인 (테스트용)", description = "테스트용 카카오 로그인 API입니다. 만료기한이 3분인 엑세스 토큰을 반환합니다.",
+            parameters = {
+                    @Parameter(name = "idToken", description = "id_token 값")
+            },
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoginSuccessResponseDto.class)),
+                    description = LoginSuccessResponseDto.description)})
+    @PostMapping("/testKakaoLogin")
+    public ResponseEntity<?> customKakaoLogin(@RequestParam String idToken) {
+        LoginSuccessResponseDto loginSuccessResponseDto = OAuthService.oAuthLogin(Provider.KAKAO, idToken, true);
+
+        return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "애플 로그인 (테스트용)", description = "테스트용 애플 로그인 API입니다. 만료기한이 3분인 엑세스 토큰을 반환합니다.",
+            parameters = {
+                    @Parameter(name = "idToken", description = "id_token 값")
+            },
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = LoginSuccessResponseDto.class)),
+                    description = LoginSuccessResponseDto.description)})
+    @PostMapping("/testAppleLogin")
+    public ResponseEntity<?> customAppleLogin(@RequestParam String idToken) {
+        LoginSuccessResponseDto loginSuccessResponseDto = OAuthService.oAuthLogin(Provider.APPLE, idToken, true);
 
         return responseTemplate.success(loginSuccessResponseDto, HttpStatus.OK);
     }
