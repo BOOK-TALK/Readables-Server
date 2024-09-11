@@ -43,11 +43,34 @@ public class JwtUtil {
                 .build();
     }
 
+    // 개발용, 커스텀 유효기간 토큰 생성
+    public JwtTokenDto generateCustomToken(UserDetails userDetails) {
+        Claims claims = Jwts.claims();
+        claims.put("username", userDetails.getUsername());
+
+        return JwtTokenDto.builder()
+                .accessToken(createCustomAccessToken(claims))
+                .refreshToken(createRefreshToken(claims))
+                .build();
+    }
+
     private String createAccessToken(Claims claims) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpireTime))
+                .signWith(SignatureAlgorithm.HS256, secret)
+                .compact();
+    }
+
+    // 개발용, 커스텀 엑세스 토큰 생성
+    private String createCustomAccessToken(Claims claims) {
+        // 개발용, 커스텀 유효기간
+        long customAccessTokenExpireTime = 180000L;
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + customAccessTokenExpireTime))
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
