@@ -1,5 +1,6 @@
 package com.book.backend.global;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -44,5 +45,10 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(new StringRedisSerializer());
 
         return redisTemplate;
+    }
+
+    @PostConstruct
+    public void test(){
+        log.trace("!!!!!! RedisConfig > test() > host: {}, port: {}, password: {}", host, port, password);
     }
 }
