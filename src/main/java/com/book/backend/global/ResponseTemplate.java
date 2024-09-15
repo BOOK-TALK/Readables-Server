@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -32,8 +33,7 @@ public class ResponseTemplate {
 
         final String red = "\033[1;31m";
         final String blue = "\033[1;34m";
-        log.error("\n========### 예외 발생 ###======== \n" + red +"{}"+ blue + "\n{}\n============================" , e.getMessage(), e.getStackTrace());
-
+        log.error("\n========### 예외 발생 ###======== \n" + red +"{}"+ blue + "\n============================" , ExceptionUtils.getStackTrace(e));
         return new ResponseEntity<>(response, status);
     }
 }
