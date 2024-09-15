@@ -38,7 +38,6 @@ services:
       - ./src/main/resources/sql:/docker-entrypoint-initdb.d # src/main/resources/sql 폴더에 있는 script 파일을 컨테이너 내부의 /docker-entrypoint-initdb.d 폴더에 복사
 
   redis-service:
-    hostname: ${REDIS_HOST}
     container_name: redis-container
     image: redis:latest
     healthcheck:
