@@ -65,3 +65,8 @@ jwt:
   refreshTokenExpireTime: ${REFRESH_TOKEN_EXPIRE_TIME}
 
 isLocal: ${IS_LOCAL}
+
+logging:
+  level:
+    org.springframework.data.redis: DEBUG
+    io.lettuce.core: DEBUG
