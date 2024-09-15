@@ -36,7 +36,7 @@ public class OAuthService {
     // 소셜 로그인
     @Transactional
     public LoginSuccessResponseDto oAuthLogin(Provider provider, String idToken, Boolean isCustom) {  // isCustom: 개발용
-        log.trace("OAuthService > oAuthLogin() ??");
+        log.trace("OAuthService > oAuthLogin() !!!");
         if (idToken == null || idToken.isEmpty()){
             throw new CustomException(ErrorCode.ID_TOKEN_IS_NULL);
         }
@@ -90,6 +90,8 @@ public class OAuthService {
 
         // Redis에 RefreshToken 저장
         jwtUtil.storeRefreshTokenInRedis(authentication, jwtTokenDto.getRefreshToken());
+
+        log.trace("???? 94");
 
         return LoginSuccessResponseDto.builder()
                 .userId(user.getUserId())
