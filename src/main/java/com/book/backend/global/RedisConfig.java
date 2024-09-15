@@ -26,7 +26,7 @@ public class RedisConfig {
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
-        log.trace("RedisConfig > redisConnectionFactory() > host: " + host + ", port: " + port + ", password: " + password);
+        log.trace("RedisConfig > redisConnectionFactory() > host: {}, port: {}, password: {}", host, port, password);
         redisConfiguration.setHostName(host);
         redisConfiguration.setPort(port);
         redisConfiguration.setPassword(password);
@@ -35,6 +35,8 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, String> redisTemplate() {
+        log.trace("RedisConfig > redisTemplate() > host: {}, port: {}, password: {}", host, port, password);
+
         // redisTemplate를 받아와서 set, get, delete를 사용
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
 
