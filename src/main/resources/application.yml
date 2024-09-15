@@ -39,6 +39,7 @@ spring:
       host: ${REDIS_HOST}
       port: 6379
       password: '${REDIS_PASSWORD}'
+      url: redis://:${REDIS_PASSWORD}@${REDIS_HOST}:6379
       ssl:
         enabled: true
 
