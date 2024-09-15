@@ -32,7 +32,7 @@ public class ResponseTemplate {
 
         final String red = "\033[1;31m";
         final String blue = "\033[1;34m";
-        log.error("\n========### 예외 발생 ###======== \n" + red +"{}"+ blue + "\n============================", e.getMessage());
+        log.error("\n========### 예외 발생 ###======== \n" + red +"{}"+ blue + "\n{}\n============================" , e.getMessage(), e.getStackTrace());
 
         return new ResponseEntity<>(response, status);
     }
