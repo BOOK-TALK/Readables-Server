@@ -39,7 +39,6 @@ services:
 
   redis-service:
     container_name: redis-container
-    host : redis-container # docker 에서 이 이름으로 reids 와 연결
     image: redis:latest
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
