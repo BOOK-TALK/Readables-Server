@@ -36,7 +36,7 @@ spring:
 
   data:
     redis:
-        host: redis-service
+        host: ${REDIS_HOST}
         port: 6379
 
 spring-doc:
