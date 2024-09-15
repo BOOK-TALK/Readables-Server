@@ -36,7 +36,8 @@ spring:
 
   data:
     redis:
-      command: ["redis-server", "--bind", "redis-service", "--port", "6379"]
+        host: redis-service
+        port: 6379
 
 spring-doc:
   swagger-ui:
