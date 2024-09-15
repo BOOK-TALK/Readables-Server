@@ -1,5 +1,6 @@
 package com.book.backend.global;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@Slf4j
 public class RedisConfig {
 
     @Value("${spring.data.redis.port}")
@@ -24,6 +26,7 @@ public class RedisConfig {
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
+        log.trace("RedisConfig > redisConnectionFactory() > host: " + host + ", port: " + port + ", password: " + password);
         redisConfiguration.setHostName(host);
         redisConfiguration.setPort(port);
         redisConfiguration.setPassword(password);
@@ -36,9 +39,9 @@ public class RedisConfig {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
 
         // setKeySerializer, setValueSerializer 설정
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
 
         return redisTemplate;
     }
