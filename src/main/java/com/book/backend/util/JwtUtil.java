@@ -132,7 +132,13 @@ public class JwtUtil {
     // Redis에 RefreshToken 저장
     public void storeRefreshTokenInRedis(Authentication authentication, String refreshToken) {
         log.trace("JwtUtil > storeRefreshTokenInRedis()");
-        redisTemplate.getClientList().forEach(client -> log.trace(client.getName()));
+        try {
+            log.trace("**** Redis Connection Test Start");
+            String pong = redisTemplate.getConnectionFactory().getConnection().ping();
+            log.trace("Redis Connection Test: " + pong);
+        } catch (Exception e) {
+            log.trace("**** Redis Connection Test Failed {}", e.getMessage());
+        }
         redisTemplate.opsForValue().set(
                 authentication.getName(),
                 refreshToken,
