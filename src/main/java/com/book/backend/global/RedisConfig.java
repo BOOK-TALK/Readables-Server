@@ -26,7 +26,6 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        log.trace("RedisConfig > redisConnectionFactory() > host: {}, port: {}, password: {}", host, port, password);
         RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration(host, port);
         redisConfiguration.setPassword(password);
         return new LettuceConnectionFactory(redisConfiguration);
@@ -34,8 +33,6 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, String> redisTemplate() {
-        log.trace("RedisConfig > redisTemplate() > host: {}, port: {}, password: {}", host, port, password);
-
         // redisTemplate를 받아와서 set, get, delete를 사용
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
 
@@ -45,10 +42,5 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(new StringRedisSerializer());
 
         return redisTemplate;
-    }
-
-    @PostConstruct
-    public void test(){
-        log.trace("!!!!!! RedisConfig > test() > host: {}, port: {}, password: {}", host, port, password);
     }
 }

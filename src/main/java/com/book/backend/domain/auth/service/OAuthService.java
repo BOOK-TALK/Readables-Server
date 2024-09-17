@@ -36,19 +36,16 @@ public class OAuthService {
     // 소셜 로그인
     @Transactional
     public LoginSuccessResponseDto oAuthLogin(Provider provider, String idToken, Boolean isCustom) {  // isCustom: 개발용
-        log.trace("OAuthService > oAuthLogin() !!!");
+        log.trace("OAuthService > oAuthLogin()");
         if (idToken == null || idToken.isEmpty()){
             throw new CustomException(ErrorCode.ID_TOKEN_IS_NULL);
         }
 
         String providerId = oidcProviderFactory.getProviderId(provider, idToken);
-        log.trace("???? 46");
 
         // kakaoId로 유저 조회
         User user = userService.findByUsername(providerId);
         Boolean isNewUser = Boolean.FALSE;
-
-        log.trace("???? 52");
 
         // 조회된 유저가 없을 시 회원가입 처리
         if (user == null) {
@@ -67,8 +64,6 @@ public class OAuthService {
 
         userRepository.save(user);
 
-        log.trace("???? 71");
-
         // UserDetailsService를 사용하여 UserDetails 객체 생성
         UserDetails userDetails = userDetailsService.loadUserByUsername(providerId);
 
@@ -80,18 +75,12 @@ public class OAuthService {
             jwtTokenDto = jwtUtil.generateToken(userDetails);
         }
 
-        log.trace("???? 84");
-
         // 사용자 인증 정보 생성 및 SecurityContext에 저장
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        log.trace("???? 90");
-
         // Redis에 RefreshToken 저장
         jwtUtil.storeRefreshTokenInRedis(authentication, jwtTokenDto.getRefreshToken());
-
-        log.trace("???? 94");
 
         return LoginSuccessResponseDto.builder()
                 .userId(user.getUserId())
