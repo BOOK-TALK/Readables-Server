@@ -14,6 +14,8 @@ import net.minidev.json.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.*;
 
 @Component
 @RequiredArgsConstructor
@@ -25,14 +27,41 @@ public class OpenAPI {
     @Value("${openapi.authKey}")
     private String authKey;
 
-    private final String format = "json";
+    @Value("${openapi.timeoutSeconds}")
+    private int TIMEOUT_SECONDS;  // 타임아웃 시간 (초)
 
+    @Value("${openapi.maxRetryCounts}")
+    private int MAX_RETRY_COUNTS;  // 최대 재시도 횟수
+
+    private final String format = "json";
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public JSONObject connect(String subUrl, OpenAPIRequestInterface dto, OpenAPIResponseInterface responseDto) throws Exception {
         log.trace("OpenAPI > connect()");
-        URL url = setRequest(subUrl, dto); // 요청 만들기
-        InputStreamReader streamResponse = new InputStreamReader(url.openStream(), "UTF-8"); // 요청 보내기
-        return readStreamToJson(streamResponse, responseDto); // 응답 stream 을 json 으로 변환
+        int retryCount = 0;
+
+        while (retryCount < MAX_RETRY_COUNTS) {
+            try {
+                CompletableFuture<JSONObject> future = CompletableFuture.supplyAsync(() -> {
+                    try {
+                        URL url = setRequest(subUrl, dto); // 요청 만들기
+                        InputStreamReader streamResponse = new InputStreamReader(url.openStream(), StandardCharsets.UTF_8); // 요청 보내기
+                        return readStreamToJson(streamResponse, responseDto); // 응답 stream 을 json 으로 변환
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);  // 커스텀 불필요, 런타임 에러로 처리
+                    }
+                }, executorService);
+
+                // 타임아웃 설정 및 결과 가져오기
+                return future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                log.warn("OPEN API 응답을 요청하는 중 타임아웃이 발생했습니다. 재시도합니다...(" + (retryCount + 1) + "/" + MAX_RETRY_COUNTS + ")");
+                retryCount++;
+            }
+        }
+
+        // 재시도 횟수를 초과하면 예외 던지기
+        throw new CustomException(ErrorCode.OPENAPI_REQUEST_TIMEOUT);
     }
 
     private URL setRequest(String subUrl, OpenAPIRequestInterface dto) throws Exception {
@@ -61,6 +90,7 @@ public class OpenAPI {
         // response JSON 파싱
         JSONObject jsonObject = (JSONObject) (new JSONParser()).parse(fullResponse);
         JSONObject response = (JSONObject) jsonObject.get("response");
+
         // API 일일 호출 횟수 초과 에러 (일 최대 500건)
         if(response.get("error") != null){
             throw new CustomException(ErrorCode.API_CALL_LIMIT_EXCEEDED);
