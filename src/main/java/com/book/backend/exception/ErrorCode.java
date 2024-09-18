@@ -55,6 +55,7 @@ public enum ErrorCode {
 
     // 외부 API 에러
     KAKAO_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "카카오 서버에 오류가 발생했습니다."),
+    INVALID_OPENAPI_RESPONSE(HttpStatus.INTERNAL_SERVER_ERROR, "500", "OPEN API 서버에서 잘못된 응답을 전송했습니다."),
     API_CALL_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "429", "OPEN API 일일 호출 횟수를 초과했습니다. (일 최대 500건)"),
     LIBCODE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "존재하는 도서관 코드인지 확인해주세요."),
     OPENAPI_REQUEST_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "408", "OPEN API 응답을 요청하는 중 타임아웃이 발생했습니다."),

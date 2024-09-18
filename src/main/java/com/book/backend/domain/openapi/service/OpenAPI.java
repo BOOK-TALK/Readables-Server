@@ -89,9 +89,15 @@ public class OpenAPI {
     private JSONObject readStreamToJson(InputStreamReader streamResponse, OpenAPIResponseInterface responseDto) throws Exception {
         log.trace("OpenAPI > readStreamToJson()");
         String fullResponse = new BufferedReader(streamResponse).readLine();
+        JSONObject jsonObject;
 
         // response JSON 파싱
-        JSONObject jsonObject = (JSONObject) (new JSONParser()).parse(fullResponse);
+        try {
+            jsonObject = (JSONObject) (new JSONParser()).parse(fullResponse);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INVALID_OPENAPI_RESPONSE);
+        }
+
         JSONObject response = (JSONObject) jsonObject.get("response");
 
         // API 일일 호출 횟수 초과 에러 (일 최대 500건)
