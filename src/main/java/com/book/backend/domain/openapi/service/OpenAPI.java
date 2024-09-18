@@ -45,6 +45,9 @@ public class OpenAPI {
                 CompletableFuture<JSONObject> future = CompletableFuture.supplyAsync(() -> {
                     try {
                         URL url = setRequest(subUrl, dto); // 요청 만들기
+
+                        log.trace("Request URL: " + url);
+
                         InputStreamReader streamResponse = new InputStreamReader(url.openStream(), StandardCharsets.UTF_8); // 요청 보내기
                         return readStreamToJson(streamResponse, responseDto); // 응답 stream 을 json 으로 변환
                     } catch (Exception e) {
