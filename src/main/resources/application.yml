@@ -53,6 +53,8 @@ spring-doc:
 openapi:
   url: ${OPENAPI_URL}
   authKey: ${OPENAPI_AUTH_KEY}
+  timeoutSeconds: ${OPENAPI_TIMEOUT_SECONDS}
+  maxRetryCounts: ${OPENAPI_MAX_RETRY_COUNTS}
 
 kakao:
   publicKeyUri: https://kauth.kakao.com/.well-known/jwks.json
