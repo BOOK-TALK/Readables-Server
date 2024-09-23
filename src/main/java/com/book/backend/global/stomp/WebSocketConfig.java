@@ -33,7 +33,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(final MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/pub"); // 발행요청
         registry.enableSimpleBroker("/sub")// 구독요청
-                .setHeartbeatValue(new long[]{0, 10000}); // 클라이언트로부터 10초마다 ping 받는것으로 소켓 연결 유지
+                .setHeartbeatValue(new long[]{0, 10000}) // 클라이언트로부터 10초마다 ping 받는것으로 소켓 연결 유지
+                .setTaskScheduler(taskScheduler()); // TaskScheduler 설정 추가
     }
 
     // heartbeat 처리를 위한 스케줄러
