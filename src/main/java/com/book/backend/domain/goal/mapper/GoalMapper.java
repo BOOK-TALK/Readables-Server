@@ -68,7 +68,7 @@ public class GoalMapper {
         String subUrl = "usageAnalysisList";
         DetailRequestDto requestDto = new DetailRequestDto(isbn);
 
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new SearchResponseDto());
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new SearchResponseDto(), 1);
         BookInfoDto bookInfo = responseParser.getBookInfo(jsonResponse);
 
         return bookMapper.convertToBookSummaryDto(bookInfo);

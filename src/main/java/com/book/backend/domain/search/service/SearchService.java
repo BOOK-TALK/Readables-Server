@@ -40,13 +40,13 @@ public class SearchService {
 
             // 제목으로 검색
             searchRequestDto.setTitle(requestDto.getInput());
-            JSONObject jsonResponse = openAPI.connect(subUrl, searchRequestDto, new SearchResponseDto());
+            JSONObject jsonResponse = openAPI.connect(subUrl, searchRequestDto, new SearchResponseDto(), 1);
             responseList.addAll(responseParser.search(jsonResponse));
 
             // 작가로 검색
             searchRequestDto.setTitle(null);
             searchRequestDto.setAuthor(requestDto.getInput());
-            jsonResponse = openAPI.connect(subUrl, searchRequestDto, new SearchResponseDto());
+            jsonResponse = openAPI.connect(subUrl, searchRequestDto, new SearchResponseDto(), 1);
             responseList.addAll(responseParser.search(jsonResponse));
 
             return duplicateChecker(responseList);
@@ -57,7 +57,7 @@ public class SearchService {
                     .build();
 
             searchRequestDto.setKeyword(requestDto.getInput());
-            JSONObject jsonResponse = openAPI.connect(subUrl, searchRequestDto, new SearchResponseDto());
+            JSONObject jsonResponse = openAPI.connect(subUrl, searchRequestDto, new SearchResponseDto(), 1);
             return responseParser.search(jsonResponse);
         }
     }

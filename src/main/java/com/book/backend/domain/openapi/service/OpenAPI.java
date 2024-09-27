@@ -27,16 +27,13 @@ public class OpenAPI {
     @Value("${openapi.authKey}")
     private String authKey;
 
-    @Value("${openapi.timeoutSeconds}")
-    private int TIMEOUT_SECONDS;  // 타임아웃 시간 (초)
-
     @Value("${openapi.maxRetryCounts}")
     private int MAX_RETRY_COUNTS;  // 최대 재시도 횟수
 
     private final String format = "json";
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public JSONObject connect(String subUrl, OpenAPIRequestInterface dto, OpenAPIResponseInterface responseDto) throws Exception {
+    public JSONObject connect(String subUrl, OpenAPIRequestInterface dto, OpenAPIResponseInterface responseDto, int timeoutSeconds) throws Exception {
         log.trace("OpenAPI > connect()");
         int retryCount = 0;
 
@@ -56,7 +53,7 @@ public class OpenAPI {
                 }, executorService);
 
                 // 타임아웃 설정 및 결과 가져오기
-                return future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                return future.get(timeoutSeconds, TimeUnit.SECONDS);
             } catch (TimeoutException e) {
                 log.warn("OPEN API 응답을 요청하는 중 타임아웃이 발생했습니다. 재시도합니다...(" + (retryCount + 1) + "/" + MAX_RETRY_COUNTS + ")");
                 retryCount++;
