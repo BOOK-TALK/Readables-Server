@@ -34,12 +34,12 @@ public class BookService {
         LinkedList<RecommendListResponseDto> responseList = new LinkedList<>();
 
         requestDto.setType("mania");
-        JSONObject maniaJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendListResponseDto());
+        JSONObject maniaJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendListResponseDto(), 1);
         ResponseParser maniaResponseParser = new ResponseParser();
         responseList.addAll(maniaResponseParser.recommend(maniaJsonResponse));
 
         requestDto.setType("reader");
-        JSONObject readerJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendListResponseDto());
+        JSONObject readerJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendListResponseDto(), 1);
         ResponseParser readerResponseParser = new ResponseParser();
         responseList.addAll(readerResponseParser.recommend(readerJsonResponse));
 
@@ -59,7 +59,7 @@ public class BookService {
     public LinkedList<HotTrendResponseDto> hotTrend(HotTrendRequestDto requestDto) throws Exception{
         log.trace("BookService > hotTrend()");
         String subUrl = "hotTrend";
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new HotTrendResponseDto());
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new HotTrendResponseDto(), 1);
         ResponseParser responseParser = new ResponseParser();
         return responseParser.hotTrend(jsonResponse);
     }
@@ -67,7 +67,7 @@ public class BookService {
     public LinkedList<MonthlyKeywordsResponseDto> keywords(MonthlyKeywordsRequestDto requestDto) throws Exception{
         log.trace("BookService > keywords()");
         String subUrl = "monthlyKeywords";
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new MonthlyKeywordsResponseDto());
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new MonthlyKeywordsResponseDto(), 1);
         ResponseParser responseParser = new ResponseParser();
         return responseParser.keywords(jsonResponse);
     }
@@ -76,7 +76,7 @@ public class BookService {
         log.trace("BookService > customHotTrend()");
         String subUrl = "loanItemSrch";
         requestDto.setPageSize("25");
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto(), 1);
         ResponseParser responseParser = new ResponseParser();
         LinkedList<LoanItemSrchResponseDto> responseList = responseParser.loanItemSrch(jsonResponse);
         return responseParser.customPageFilter(responseList, "1", "10");

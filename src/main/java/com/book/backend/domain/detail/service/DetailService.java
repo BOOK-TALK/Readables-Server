@@ -37,7 +37,7 @@ public class DetailService {
     public DetailResponseDto detail(DetailRequestDto requestDto) throws Exception {
         log.trace("DetailService > detail()");
         String subUrl = "usageAnalysisList";
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new SearchResponseDto());
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new SearchResponseDto(), 1);
         ResponseParser responseParser = new ResponseParser();
         return responseParser.detail(jsonResponse);
     }
@@ -58,7 +58,7 @@ public class DetailService {
                             .isbn13(isbn).build();
 
                     String subUrl = "bookExist";
-                    JSONObject jsonResponse = openAPI.connect(subUrl, bookExistRequestDto, new BookExistResponseDto());
+                    JSONObject jsonResponse = openAPI.connect(subUrl, bookExistRequestDto, new BookExistResponseDto(), 1);
                     ResponseParser responseParser = new ResponseParser();
                     boolean isLoanable = responseParser.loanAvailable(jsonResponse);
 
