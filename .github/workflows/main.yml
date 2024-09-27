@@ -37,8 +37,6 @@ jobs:
         DB_URL=${{ secrets.GLOBAL_DB_URL }} \
         DB_USERNAME=${{ secrets.GLOBAL_DB_USERNAME }} \
         DB_PASSWORD=${{ secrets.GLOBAL_DB_PASSWORD }} \
-        OPENAPI_TIMEOUT_SECONDS=${{ secrets.OPENAPI_TIMEOUT_SECONDS }}
-        OPENAPI_MAX_RETRY_COUNTS=${{ secrets.OPENAPI_MAX_RETRY_COUNTS }}
         SERVER_URL=${{ secrets.SERVER_URL }} \
         RESTAPI_KEY=${{ secrets.RESTAPI_KEY }} \
         JWT_SECRET=${{ secrets.JWT_SECRET }} \
