@@ -2,7 +2,6 @@ package com.book.backend.domain.opentalk.controller;
 
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
 import com.book.backend.domain.opentalk.dto.OpentalkJoinResponseDto;
-import com.book.backend.domain.opentalk.dto.OpentalkResponseDto;
 import com.book.backend.domain.opentalk.service.OpentalkService;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
@@ -29,27 +28,18 @@ public class OpentalkController {
     private final OpentalkService opentalkService;
     private final ResponseTemplate responseTemplate;
 
-    // 오픈톡 메인 화면 (현재 핫한 오픈톡, 내가 즐찾한 오픈톡)
-    @Operation(summary="오픈톡 메인 화면", description="현재 핫한 오픈톡 top 5의 ID List 와 사용자가 즐겨찾기한 오픈톡 ID List 를 반환합니다.",
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkResponseDto.class)),
-                    description = OpentalkResponseDto.description)})
-    @GetMapping("/main")
-    public ResponseEntity<?> opentalkMain() throws Exception {
+    // 현재 핫한 오픈톡
+    @Operation(summary="현재 핫한 오픈톡", description="현재 핫한 오픈톡 top 3의 ID List를 반환합니다.",
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkDto.class)),
+                    description = OpentalkDto.description)})
+    @GetMapping("/hot")
+    public ResponseEntity<?> getHotOpentalk() throws Exception {
         // 현재 핫한 오픈톡
-        List<Long> hotOpentalkIdList = opentalkService.hotOpentalk();
-        List<OpentalkDto> hotOpentalkList = opentalkService.getBookInfo(hotOpentalkIdList);
+        List<Long> idList = opentalkService.getHotOpentalkIds();
+        List<OpentalkDto> response = opentalkService.getBookInfo(idList);
 
-        // 내가 즐찾한 오픈톡
-        List<Long> favoriteOpentalkIdList = opentalkService.favoriteOpentalk();
-        List<OpentalkDto> favoriteOpentalkList = opentalkService.getBookInfo(favoriteOpentalkIdList);
-
-        OpentalkResponseDto response = OpentalkResponseDto.builder()
-                .hotOpentalkList(hotOpentalkList)
-                .favoriteOpentalkList(favoriteOpentalkList)
-                .build();
         return responseTemplate.success(response, HttpStatus.OK);
     }
-
 
     // [오픈톡 참여하기]
     @Operation(summary="오픈톡 참여하기", description="isbn, pageSize를 입력으로 받아 오픈톡 ID, 즐찾여부, 채팅 내역 반환",
@@ -58,11 +48,23 @@ public class OpentalkController {
                     description = OpentalkJoinResponseDto.description)})
     @PostMapping("/join")
     public ResponseEntity<?> joinOpentalk(@RequestParam String isbn, int pageSize) {
-        RequestLogger.param(new String[]{"isbn, pageSize"}, isbn, pageSize);
+        RequestLogger.param(new String[]{"isbn", "pageSize"}, isbn, pageSize);
         OpentalkJoinResponseDto response = opentalkService.joinOpentalk(isbn, pageSize);
 
         return responseTemplate.success(response, HttpStatus.OK);
     }
+
+    // 즐겨찾기 조회
+    @Operation(summary="즐찾 오픈톡 조회", description="사용자가 즐겨찾기한 오픈톡 ID List 를 반환합니다.",
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkDto.class)),
+                    description = OpentalkDto.description)})
+    @GetMapping("/favorite")
+    public ResponseEntity<?> getFavoriteOpentalk() throws Exception {
+        List<Long> idList = opentalkService.getFavoriteOpentalkIds();
+        List<OpentalkDto> response = opentalkService.getBookInfo(idList);
+        return responseTemplate.success(response, HttpStatus.OK);
+    }
+
 
     // 즐겨찾기 추가
     @Operation(summary="즐찾 오픈톡 추가", description="opentalkId 를 입력으로 받아, 사용자의 최종 즐찾 opentalkId List 반환",

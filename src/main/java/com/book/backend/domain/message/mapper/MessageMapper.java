@@ -34,12 +34,14 @@ public class MessageMapper {
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
+        String type = dto.getType();
         String content = dto.getContent();
         Opentalk opentalk = opentalkRepository.findById(dto.getOpentalkId()).orElseThrow();
 
         Message message = new Message();
         message.setUser(user); // 보낸 사람
         message.setOpentalk(opentalk);
+        message.setType(type);
         message.setContent(content);
         message.setCreatedAt(new Date());
 
@@ -48,13 +50,14 @@ public class MessageMapper {
 
     public MessageResponseDto convertToMessageResponseDto(Message message) {
         log.trace("MessageMapper > convertToMessageResponseDto()");
-        // FIXME : loginId 가 nullable 해서 중복으로 값을 찾아옴
+
         // user DB id 로 조회
         User user = userRepository.findById(message.getUser().getUserId()).orElseThrow();
 
         return MessageResponseDto.builder()
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImageUrl())
+                .type(message.getType())
                 .content(message.getContent())
                 .createdAt(message.getCreatedAt())
                 .build();

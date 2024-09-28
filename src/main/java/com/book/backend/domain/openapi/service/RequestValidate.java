@@ -141,15 +141,27 @@ public class RequestValidate {
     public void isValidPageNum(int num) {
         log.trace("RequestValidate > isValidPageNum()");
         // 1 이상의 숫자인지 확인
-        if(num < 1) {
+        if (num < 1) {
             throw new CustomException(ErrorCode.INVALID_PAGE_NUM);
         }
     }
 
-//    public void isValidSearchDt(String searchDt) {
-//        //yyyy-mm-dd 형식인지 확인
-//        if(!searchDt.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
-//            throw new CustomException(ErrorCode.INVALID_SEARCH_DT_FORMAT);
-//        }
-//    }
+
+    // 책 페이지 수
+    public void isValidBookPageNum(int page) {
+        log.trace("RequestValidate > isValidBookPageNum()");
+
+        // 1 이상의 숫자인지 확인
+        if (page < 1) {
+            throw new CustomException(ErrorCode.INVALID_BOOK_PAGE_NUM);
+        }
+    }
+
+    public void isValidType(String type) {
+        log.trace("RequestValidate > isValidType()");
+        // text, img, goal 중 하나인지 확인
+        if(!(type.equals("text") || type.equals("image") || type.equals("goal"))){
+            throw new CustomException(ErrorCode.INVALID_MESSAGE_TYPE);
+        }
+    }
 }

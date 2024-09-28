@@ -5,6 +5,7 @@ import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.user.dto.LibraryDto;
 import com.book.backend.domain.user.dto.UserInfoDto;
 import com.book.backend.domain.user.dto.UserLibrariesRequestDto;
+import com.book.backend.domain.user.entity.Gender;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.mapper.UserMapper;
 import com.book.backend.domain.user.repository.UserRepository;
@@ -42,26 +43,16 @@ public class UserService {
     public User findByUsername(String username) {
         log.trace("UserService > findByUsername()");
 
-        // TODO: 리팩토링 필요
         try {
-            return findByLoginId(username);
+            return findByKakaoId(username);
         } catch (IllegalArgumentException e1) {
             try {
-                return findByKakaoId(username);
+                return findByAppleId(username);
             } catch (IllegalArgumentException e2) {
-                try {
-                    return findByAppleId(username);
-                } catch (IllegalArgumentException e3) {
-                    return null;
-                }
+                return null;
             }
         }
-    }
 
-    private User findByLoginId(String loginId) {
-        log.trace("UserService > findByLoginId()");
-        return userRepository.findByLoginId(loginId)
-                .orElseThrow(IllegalArgumentException::new);
     }
 
     private User findByKakaoId(String kakaoId) {
@@ -90,7 +81,13 @@ public class UserService {
         }
 
         user.setNickname(requestDto.getNickname());
-        user.setGender(userMapper.convertStringToGender(requestDto.getGender()));
+
+        if (requestDto.getGender().isBlank()) {
+            user.setGender(Gender.G0);
+        } else {
+            user.setGender(userMapper.convertStringToGender(requestDto.getGender()));
+        }
+
         user.setBirthDate(requestDto.getBirthDate());
         user.setProfileImageUrl(requestDto.getProfileImageUrl());
         userRepository.save(user);

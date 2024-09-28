@@ -1,5 +1,6 @@
 package com.book.backend.domain.user.entity;
 
+import com.book.backend.domain.goal.entity.Goal;
 import com.book.backend.domain.message.entity.Message;
 import com.book.backend.domain.user.dto.LibraryDto;
 import com.book.backend.domain.userBook.dto.UserBookDto;
@@ -8,7 +9,6 @@ import jakarta.persistence.*;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,9 +23,6 @@ public class User {
     private Long userId;
 
     @Column(unique = true)
-    private String loginId;
-
-    @Column(unique = true)
     private String kakaoId;
 
     @Column(unique = true)
@@ -35,8 +32,6 @@ public class User {
 
     @Column(unique = true)
     private String nickname;
-
-    private String password;
 
     @Enumerated(EnumType.ORDINAL)
     private Gender gender;
@@ -50,6 +45,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages;  // 작성한 메시지
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Goal> goals;  // 목표
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_libraries", joinColumns = @JoinColumn(name = "user_id"))

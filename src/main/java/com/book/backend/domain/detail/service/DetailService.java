@@ -1,6 +1,5 @@
 package com.book.backend.domain.detail.service;
 
-import com.book.backend.domain.book.entity.Book;
 import com.book.backend.domain.book.repository.BookRepository;
 import com.book.backend.domain.detail.dto.LoanAvailableDto;
 import com.book.backend.domain.openapi.dto.request.BookExistRequestDto;
@@ -14,7 +13,6 @@ import com.book.backend.domain.openapi.service.ResponseParser;
 import java.util.List;
 import java.util.LinkedList;
 
-import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.repository.OpentalkRepository;
 import com.book.backend.domain.user.service.UserService;
 import com.book.backend.exception.CustomException;
@@ -39,7 +37,7 @@ public class DetailService {
     public DetailResponseDto detail(DetailRequestDto requestDto) throws Exception {
         log.trace("DetailService > detail()");
         String subUrl = "usageAnalysisList";
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new SearchResponseDto());
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new SearchResponseDto(), 1);
         ResponseParser responseParser = new ResponseParser();
         return responseParser.detail(jsonResponse);
     }
@@ -60,7 +58,7 @@ public class DetailService {
                             .isbn13(isbn).build();
 
                     String subUrl = "bookExist";
-                    JSONObject jsonResponse = openAPI.connect(subUrl, bookExistRequestDto, new BookExistResponseDto());
+                    JSONObject jsonResponse = openAPI.connect(subUrl, bookExistRequestDto, new BookExistResponseDto(), 1);
                     ResponseParser responseParser = new ResponseParser();
                     boolean isLoanable = responseParser.loanAvailable(jsonResponse);
 
@@ -71,7 +69,7 @@ public class DetailService {
                             .build();
                     loanAvailableList.add(dto);
                 } catch (Exception e) {
-                    throw new RuntimeException(new CustomException(ErrorCode.LIBCODE_EXIST_ERROR));
+                    throw new RuntimeException(new CustomException(ErrorCode.LIBCODE_ERROR));
                 }
             });
         }

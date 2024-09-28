@@ -47,7 +47,7 @@ public class SearchController {
                     description = SearchResponseDto.description)})
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestParam boolean isKeyword, String input, int pageNo, int pageSize) throws Exception {
-        RequestLogger.param(new String[]{"isKeyword, input, pageNo, pageSize"}, isKeyword, input, pageNo, pageSize);
+        RequestLogger.param(new String[]{"isKeyword", "input", "pageNo", "pageSize"}, isKeyword, input, pageNo, pageSize);
         requestValidate.isValidPageNum(pageNo);
         requestValidate.isValidPageNum(pageSize);
 

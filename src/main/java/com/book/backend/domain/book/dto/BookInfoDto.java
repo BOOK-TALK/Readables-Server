@@ -1,4 +1,4 @@
-package com.book.backend.domain.detail.dto;
+package com.book.backend.domain.book.dto;
 
 import lombok.Builder;
 import lombok.Getter;

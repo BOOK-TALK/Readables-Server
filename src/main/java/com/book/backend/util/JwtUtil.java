@@ -10,6 +10,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.PublicKey;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -43,11 +45,34 @@ public class JwtUtil {
                 .build();
     }
 
+    // 개발용, 커스텀 유효기간 토큰 생성
+    public JwtTokenDto generateCustomToken(UserDetails userDetails) {
+        Claims claims = Jwts.claims();
+        claims.put("username", userDetails.getUsername());
+
+        return JwtTokenDto.builder()
+                .accessToken(createCustomAccessToken(claims))
+                .refreshToken(createRefreshToken(claims))
+                .build();
+    }
+
     private String createAccessToken(Claims claims) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpireTime))
+                .signWith(SignatureAlgorithm.HS256, secret)
+                .compact();
+    }
+
+    // 개발용, 커스텀 엑세스 토큰 생성
+    private String createCustomAccessToken(Claims claims) {
+        // 개발용, 커스텀 유효기간
+        long customAccessTokenExpireTime = 180000L;
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + customAccessTokenExpireTime))
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
@@ -108,6 +133,7 @@ public class JwtUtil {
 
     // Redis에 RefreshToken 저장
     public void storeRefreshTokenInRedis(Authentication authentication, String refreshToken) {
+        log.trace("JwtUtil > storeRefreshTokenInRedis()");
         redisTemplate.opsForValue().set(
                 authentication.getName(),
                 refreshToken,

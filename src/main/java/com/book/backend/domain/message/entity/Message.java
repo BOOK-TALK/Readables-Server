@@ -25,17 +25,11 @@ public class Message {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Date createdAt;
+    private String type;
 
-    private String content; // TODO : text로 리팩
+    private String content;
 
     private String imageUrl;
 
-    public void createMessage(Opentalk opentalk, User user, String content, String imageUrl){
-        this.opentalk = opentalk;
-        this.user = user;
-        this.content = content;
-        this.imageUrl = imageUrl;
-        this.createdAt = new Date();
-    }
+    private Date createdAt;
 }

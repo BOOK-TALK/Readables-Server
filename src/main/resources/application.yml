@@ -38,6 +38,11 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: 6379
+      password: '${REDIS_PASSWORD}'
+      url: redis://:${REDIS_PASSWORD}@${REDIS_HOST}:6379
+      ssl:
+        enabled: true
+
 
 spring-doc:
   swagger-ui:
@@ -48,12 +53,9 @@ spring-doc:
 openapi:
   url: ${OPENAPI_URL}
   authKey: ${OPENAPI_AUTH_KEY}
+  maxRetryCounts: 15
 
 kakao:
-  restapiKey: ${RESTAPI_KEY}
-  redirectUri: ${SERVER_URL}/login/oauth2/kakao
-  tokenRequestUri: https://kauth.kakao.com/oauth/token
-  userInfoUri: https://kapi.kakao.com/v2/user/me
   publicKeyUri: https://kauth.kakao.com/.well-known/jwks.json
 
 apple:

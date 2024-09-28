@@ -38,15 +38,27 @@ public enum ErrorCode {
     WRONG_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "401", "JWT 토큰이 잘못되었습니다."),
     NOT_EXIST_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "404", "해당하는 Refresh token이 없습니다."),
 
+    // goal
+    INVALID_BOOK_PAGE_NUM(HttpStatus.BAD_REQUEST, "400", "책 페이지 수는 1 이상의 숫자로 입력해주세요."),
+    INVALID_RECENT_PAGE(HttpStatus.BAD_REQUEST, "400", "마지막 기록보다 이전 페이지를 입력할 수 없습니다."),
+    EXCEED_TOTAL_PAGE(HttpStatus.BAD_REQUEST, "400", "총 페이지를 초과하여 기록할 수 없습니다."),
+    GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 목표를 찾을 수 없습니다."),
+    CANNOT_ACCESS_GOAL(HttpStatus.FORBIDDEN, "403", "해당 목표에 접근할 권한이 없습니다."),
+    GOAL_IS_ALREADY_EXIST(HttpStatus.CONFLICT, "409", "해당 책에 대한 목표가 이미 존재합니다."),
+    GOAL_IS_ALREADY_FINISHED(HttpStatus.BAD_REQUEST, "400", "이미 완료된 목표입니다."),
+
     // opentalk, message
     OPENTALK_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당하는 오픈톡을 찾을 수 없습니다.([오픈톡 참여하기]로 생성해주세요)"),
     MESSAGE_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "메시지 저장에 실패했습니다."),
     USER_OPENTALK_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 오픈톡은 유저의 즐겨찾기 리스트에 없습니다."),
+    INVALID_MESSAGE_TYPE(HttpStatus.BAD_REQUEST, "400", "text, image, goal 중 하나를 입력해주세요."),
 
     // 외부 API 에러
     KAKAO_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "카카오 서버에 오류가 발생했습니다."),
+    INVALID_OPENAPI_RESPONSE(HttpStatus.INTERNAL_SERVER_ERROR, "500", "OPEN API 서버에서 잘못된 응답을 전송했습니다."),
     API_CALL_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "429", "OPEN API 일일 호출 횟수를 초과했습니다. (일 최대 500건)"),
-    LIBCODE_EXIST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "대출 가능 여부 조회 중 오류가 발생했습니다."),
+    LIBCODE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "존재하는 도서관 코드인지 확인해주세요."),
+    OPENAPI_REQUEST_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "408", "OPEN API 응답을 요청하는 중 타임아웃이 발생했습니다."),
 
     // OAuth2
     HEADER_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "Header 파싱 중 에러가 발생했습니다."),

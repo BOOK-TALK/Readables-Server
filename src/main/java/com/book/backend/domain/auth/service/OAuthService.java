@@ -8,6 +8,8 @@ import com.book.backend.domain.user.entity.Gender;
 import com.book.backend.domain.user.entity.User;
 import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.domain.user.service.UserService;
+import com.book.backend.exception.CustomException;
+import com.book.backend.exception.ErrorCode;
 import com.book.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,21 +26,24 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class AppleService {
+public class OAuthService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final CustomUserDetailsService userDetailsService;
-    private final OidcProviderFactory oidcProviderFactory;
     private final JwtUtil jwtUtil;
+    private final OidcProviderFactory oidcProviderFactory;
 
-    // TODO: kakaoLogin과 중복되는 코드 리팩토링 필요
+    // 소셜 로그인
     @Transactional
-    public LoginSuccessResponseDto appleLogin(String idToken) {
-        log.trace("AppleService > appleLogin()");
+    public LoginSuccessResponseDto oAuthLogin(Provider provider, String idToken, Boolean isCustom) {  // isCustom: 개발용
+        log.trace("OAuthService > oAuthLogin()");
+        if (idToken == null || idToken.isEmpty()){
+            throw new CustomException(ErrorCode.ID_TOKEN_IS_NULL);
+        }
 
-        String providerId = oidcProviderFactory.getProviderId(Provider.APPLE, idToken);
+        String providerId = oidcProviderFactory.getProviderId(provider, idToken);
 
-        // appleId로 유저 조회
+        // kakaoId로 유저 조회
         User user = userService.findByUsername(providerId);
         Boolean isNewUser = Boolean.FALSE;
 
@@ -46,11 +51,13 @@ public class AppleService {
         if (user == null) {
             isNewUser = Boolean.TRUE;
             User newUser = new User();
-            newUser.setAppleId(providerId);
+            if (provider == Provider.KAKAO) {  // 카카오 로그인인 경우
+                newUser.setKakaoId(providerId);
+            } else {  // 애플 로그인인 경우
+                newUser.setAppleId(providerId);
+            }
             newUser.setRegDate(LocalDateTime.now());
-            newUser.setPassword("unused");  // 애플 로그인 사용자는 패스워드 사용하지 않음
-            newUser.setLoginId(null);  // 애플 로그인 사용자는 loginId가 null
-            newUser.setNickname("");  // 빈 문자열로 설정
+            newUser.setNickname(null);  // null로 설정
             newUser.setGender(Gender.G0);
             user = newUser;
         }
@@ -59,10 +66,17 @@ public class AppleService {
 
         // UserDetailsService를 사용하여 UserDetails 객체 생성
         UserDetails userDetails = userDetailsService.loadUserByUsername(providerId);
-        JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
+
+        // 개발용
+        JwtTokenDto jwtTokenDto;
+        if (isCustom != null && isCustom) {
+            jwtTokenDto = jwtUtil.generateCustomToken(userDetails);
+        } else {
+            jwtTokenDto = jwtUtil.generateToken(userDetails);
+        }
 
         // 사용자 인증 정보 생성 및 SecurityContext에 저장
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Redis에 RefreshToken 저장
