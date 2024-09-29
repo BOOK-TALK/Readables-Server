@@ -34,32 +34,16 @@ public class BookService {
         LinkedList<RecommendListResponseDto> responseList = new LinkedList<>();
 
         requestDto.setType("mania");
-        JSONObject maniaJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendListResponseDto());
+        JSONObject maniaJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendListResponseDto(), 1);
         ResponseParser maniaResponseParser = new ResponseParser();
         responseList.addAll(maniaResponseParser.recommend(maniaJsonResponse));
 
         requestDto.setType("reader");
-        JSONObject readerJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendListResponseDto());
+        JSONObject readerJsonResponse = openAPI.connect(subUrl, requestDto, new RecommendListResponseDto(), 1);
         ResponseParser readerResponseParser = new ResponseParser();
         responseList.addAll(readerResponseParser.recommend(readerJsonResponse));
 
         return responseList;
-    }
-
-    /* 추천 책 수가 10보다 작으면 추천된 isbn 으로 recommend() 다시 호출 */
-    public void ensureRecommendationsCount(LinkedList<RecommendListResponseDto> list, HashSet<String> set) throws Exception {
-        log.trace("BookService > ensureRecommendationsCount()");
-        LinkedList<RecommendListResponseDto> originalList = new LinkedList<>(list);
-        Iterator<RecommendListResponseDto> iterator = originalList.iterator();
-        while (originalList.size() < 10 && iterator.hasNext()) {
-            RecommendListRequestDto newRequestDto =  RecommendListRequestDto.builder().isbn13(iterator.next().getIsbn13()).build(); // 추천된 다른 책의 isbn13
-            LinkedList<RecommendListResponseDto> newRecommendList = recommend(newRequestDto);
-            // 기존에 추가된 책인지 확인
-            for(RecommendListResponseDto dto : newRecommendList){
-                String key = dto.getBookname() + dto.getAuthors();
-                if(set.add(key)) list.add(dto);
-            }
-        }
     }
 
     public LinkedList<RecommendListResponseDto> duplicateChecker(LinkedList<RecommendListResponseDto> list, HashSet<String> set){
@@ -75,7 +59,7 @@ public class BookService {
     public LinkedList<HotTrendResponseDto> hotTrend(HotTrendRequestDto requestDto) throws Exception{
         log.trace("BookService > hotTrend()");
         String subUrl = "hotTrend";
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new HotTrendResponseDto());
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new HotTrendResponseDto(), 1);
         ResponseParser responseParser = new ResponseParser();
         return responseParser.hotTrend(jsonResponse);
     }
@@ -83,7 +67,7 @@ public class BookService {
     public LinkedList<MonthlyKeywordsResponseDto> keywords(MonthlyKeywordsRequestDto requestDto) throws Exception{
         log.trace("BookService > keywords()");
         String subUrl = "monthlyKeywords";
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new MonthlyKeywordsResponseDto());
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new MonthlyKeywordsResponseDto(), 1);
         ResponseParser responseParser = new ResponseParser();
         return responseParser.keywords(jsonResponse);
     }
@@ -92,7 +76,7 @@ public class BookService {
         log.trace("BookService > customHotTrend()");
         String subUrl = "loanItemSrch";
         requestDto.setPageSize("25");
-        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
+        JSONObject jsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto(), 1);
         ResponseParser responseParser = new ResponseParser();
         LinkedList<LoanItemSrchResponseDto> responseList = responseParser.loanItemSrch(jsonResponse);
         return responseParser.customPageFilter(responseList, "1", "10");

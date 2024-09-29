@@ -32,12 +32,17 @@ spring:
     init:
       encoding: utf-8
       mode: always
-      data-locations: classpath:sql/data.sql
+      data-locations: classpath:sql/data.sql, classpath:sql/dummy.sql
 
   data:
     redis:
       host: ${REDIS_HOST}
       port: 6379
+      password: '${REDIS_PASSWORD}'
+      url: redis://:${REDIS_PASSWORD}@${REDIS_HOST}:6379
+      ssl:
+        enabled: true
+
 
 spring-doc:
   swagger-ui:
@@ -48,6 +53,7 @@ spring-doc:
 openapi:
   url: ${OPENAPI_URL}
   authKey: ${OPENAPI_AUTH_KEY}
+  maxRetryCounts: 15
 
 kakao:
   publicKeyUri: https://kauth.kakao.com/.well-known/jwks.json

@@ -33,11 +33,10 @@ public class OAuthService {
     private final JwtUtil jwtUtil;
     private final OidcProviderFactory oidcProviderFactory;
 
-    // 카카오 로그인
+    // 소셜 로그인
     @Transactional
-    public LoginSuccessResponseDto oAuthLogin(Provider provider, String idToken) {
+    public LoginSuccessResponseDto oAuthLogin(Provider provider, String idToken, Boolean isCustom) {  // isCustom: 개발용
         log.trace("OAuthService > oAuthLogin()");
-
         if (idToken == null || idToken.isEmpty()){
             throw new CustomException(ErrorCode.ID_TOKEN_IS_NULL);
         }
@@ -67,7 +66,14 @@ public class OAuthService {
 
         // UserDetailsService를 사용하여 UserDetails 객체 생성
         UserDetails userDetails = userDetailsService.loadUserByUsername(providerId);
-        JwtTokenDto jwtTokenDto = jwtUtil.generateToken(userDetails);
+
+        // 개발용
+        JwtTokenDto jwtTokenDto;
+        if (isCustom != null && isCustom) {
+            jwtTokenDto = jwtUtil.generateCustomToken(userDetails);
+        } else {
+            jwtTokenDto = jwtUtil.generateToken(userDetails);
+        }
 
         // 사용자 인증 정보 생성 및 SecurityContext에 저장
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

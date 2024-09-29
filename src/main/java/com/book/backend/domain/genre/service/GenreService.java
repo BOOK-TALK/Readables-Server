@@ -83,11 +83,11 @@ public class GenreService {
 
         String subUrl = "loanItemSrch";
 
-        requestDto.setPageSize("500");  // 커스텀 페이지네이션 적용하기 전 페이지 크기 설정
+        requestDto.setPageSize("300");  // 커스텀 페이지네이션 적용하기 전 페이지 크기 설정
         requestDto.setStartDt(startDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         requestDto.setEndDt(endDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
-        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto(), 1);
         return new LinkedList<>(genreResponseParser.periodTrend(JsonResponse, filteredPageNo, filteredPageSize));
     }
 
@@ -96,9 +96,9 @@ public class GenreService {
 
         String subUrl = "loanItemSrch";
 
-        requestDto.setPageSize("500");  // 셔플할 리스트의 페이지 크기 설정
+        requestDto.setPageSize("300");  // 셔플할 리스트의 페이지 크기 설정
 
-        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto(), 1);
 
         return new LinkedList<>(genreResponseParser.random(JsonResponse, maxSize));
     }
@@ -109,11 +109,11 @@ public class GenreService {
 
         String subUrl = "loanItemSrch";
 
-        requestDto.setPageSize("1500");  // 커스텀 페이지네이션 적용하기 전 페이지 크기 설정
+        requestDto.setPageSize("1200");  // 커스텀 페이지네이션 적용하기 전 페이지 크기 설정
         LocalDate today = LocalDate.now();
         int currentYear = Integer.parseInt(today.format(DateTimeFormatter.ofPattern("yyyy")));
 
-        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto());
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LoanItemSrchResponseDto(), 2);
 
         return new LinkedList<>(genreResponseParser.newTrend(JsonResponse, currentYear, filteredPageNo, filteredPageSize));
     }

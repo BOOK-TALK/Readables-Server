@@ -1,8 +1,7 @@
 package com.book.backend.domain.user.dto;
 
+import com.book.backend.domain.user.validator.ValidNickname;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UserInfoDto {
     @NotBlank(message = "닉네임은 필수 입력값입니다.")
+    @ValidNickname
     private String nickname;
 
     private String gender;

@@ -39,7 +39,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()  // Swagger 관련 경로
                         .requestMatchers("/login/oauth2/**").permitAll()  // OAuth2 Callback 경로
-                        .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/kakaoLogin", "/api/auth/appleLogin", "/api/auth/reissueToken").permitAll()  // 회원가입, 로그인 경로
+                        .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/kakaoLogin", "/api/auth/appleLogin", "/api/auth/reissueToken").permitAll()  // 로그인 경로
+                        .requestMatchers("/api/auth/testKakaoLogin", "/api/auth/testAppleLogin").permitAll()  // 테스트용 로그인 경로 (개발용)
                         .requestMatchers("/.well-known/**").permitAll()
                         .requestMatchers("/ws-stomp/**").permitAll()  // stomp 통신
 //                        .requestMatchers("/**").permitAll()  // 모든 API에 대한 인증 비활성화 (개발용)

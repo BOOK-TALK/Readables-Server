@@ -1,6 +1,6 @@
 package com.book.backend.domain.goal.entity;
 
-import com.book.backend.domain.goal.dto.RecordDto;
+import com.book.backend.domain.record.entity.Record;
 import com.book.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,8 +26,6 @@ public class Goal {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Integer recentPage;
-
     private Integer totalPage;
 
     private LocalDateTime createdAt;
@@ -36,8 +34,6 @@ public class Goal {
 
     private Boolean isFinished;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "goal_a_week_records", joinColumns = @JoinColumn(name = "goal_id"))
-    @Column(name = "records")
-    private List<RecordDto> records;
+    @OneToMany(mappedBy = "goal", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Record> records;
 }

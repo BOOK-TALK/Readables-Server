@@ -24,7 +24,7 @@ public class LibraryService {
         log.trace("LibraryService > searchLibraries()");
 
         String subUrl = "libSrch";
-        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LibSrchResponseDto());
+        JSONObject JsonResponse = openAPI.connect(subUrl, requestDto, new LibSrchResponseDto(), 1);
 
         return new LinkedList<>(responseParser.libSrch(JsonResponse));
     }

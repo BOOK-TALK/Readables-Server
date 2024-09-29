@@ -17,7 +17,7 @@ fi
 
 echo "<< spring app 빌드 >>"
 sudo chmod +x gradlew
-sudo ./gradlew build
+sudo ./gradlew clean build
 
 echo "<< 전체 재배포 >>"
 sudo docker compose up -d

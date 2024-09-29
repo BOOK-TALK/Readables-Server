@@ -19,7 +19,7 @@ public class GoalRequestValidate {
 
     // 유저 검증 및 로그인된 유저 로드
     public User validateAndGetLoggedInUser() {
-        log.trace("GoalService > validateAndGetLoggedInUser()");
+        log.trace("GoalRequestValidate > validateAndGetLoggedInUser()");
 
         User user = userService.loadLoggedinUser();
         if (user == null) {
@@ -30,7 +30,7 @@ public class GoalRequestValidate {
 
     // 목표 검증 및 로드
     public Goal validateAndGetGoal(Long goalId) {
-        log.trace("GoalService > validateAndGetLoggedInUser()");
+        log.trace("GoalRequestValidate > validateAndGetLoggedInUser()");
 
         return goalRepository.findById(goalId)
                 .orElseThrow(() -> new CustomException(ErrorCode.GOAL_NOT_FOUND));
@@ -38,7 +38,7 @@ public class GoalRequestValidate {
 
     // 해당 유저의 목표인지 검증
     public void validateUserMatchesGoal(User user, Goal goal) {
-        log.trace("GoalService > validateUserMatchesGoal()");
+        log.trace("GoalRequestValidate > validateUserMatchesGoal()");
 
         if (user != goal.getUser()) {
             throw new CustomException(ErrorCode.CANNOT_ACCESS_GOAL);
@@ -47,7 +47,7 @@ public class GoalRequestValidate {
 
     // 해당 책에 대한 목표가 이미 존재하는지 검증
     public void validateIsExistGoal(User user, String isbn) {
-        log.trace("GoalService > validateIsExistGoal()");
+        log.trace("GoalRequestValidate > validateIsExistGoal()");
 
         if (goalRepository.findByUserAndIsbn(user, isbn).isPresent()) {
             throw new CustomException(ErrorCode.GOAL_IS_ALREADY_EXIST);

@@ -83,7 +83,7 @@ public class AuthService {
         log.trace("refreshToken:      " + refreshToken);
         log.trace("redisRefreshToken: " + redisRefreshToken);
 
-        if (!redisRefreshToken.equals(refreshToken)) {
+        if (redisRefreshToken == null || !redisRefreshToken.equals(refreshToken)) {
             throw new CustomException(ErrorCode.NOT_EXIST_REFRESH_TOKEN);
         }
 

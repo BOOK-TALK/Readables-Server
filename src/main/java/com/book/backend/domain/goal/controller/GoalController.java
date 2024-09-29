@@ -1,6 +1,10 @@
 package com.book.backend.domain.goal.controller;
 
 import com.book.backend.domain.goal.dto.GoalDto;
+import com.book.backend.domain.goal.dto.MyProgressDto;
+import com.book.backend.domain.goal.dto.RecordIntervalDto;
+import com.book.backend.domain.goal.dto.UserProgressDto;
+import com.book.backend.domain.goal.service.GoalRecordsService;
 import com.book.backend.domain.goal.service.GoalService;
 import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.global.ResponseTemplate;
@@ -16,17 +20,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/goal")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "목표", description = "목표 삭제 / 목표 조회 / 목표 생성 / 목표 완료")
+@Tag(name = "목표", description = "목표 삭제 / 목표 조회 / 특정 책의 전체 유저 진행률 조회 / 진행중 목표 & 완료한 목표 / " +
+        "전체 목표에 대한 합산 일주일 기록 조회 / 나의 진행도 조회 / 목표 생성 / 기록 추가 / 목표 완료")
 public class GoalController {
     private final GoalService goalService;
+    private final GoalRecordsService goalRecordsService;
     private final RequestValidate requestValidate;
     private final ResponseTemplate responseTemplate;
 
-    @Operation(summary = "목표 정보 조회", description = "목표 ID에 해당하는 목표의 정보를 조회합니다.",
+    @Operation(summary = "목표 조회", description = "목표 ID에 해당하는 목표의 정보를 조회합니다.",
             parameters = {
                     @Parameter(name = "goalId", description = "목표 ID")
             },
@@ -39,6 +47,48 @@ public class GoalController {
         GoalDto goalDto = goalService.getGoal(goalId);
 
         return responseTemplate.success(goalDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "진행중 목표 & 완료한 목표 조회", description = "isFinished 값으로 null 을 주면 모든 목표 list를, false를 주면 진행중 목표 list를, true를 주면 완료한 목표 list를 반환합니다..",
+            parameters = {
+                    @Parameter(name = "isFinished", description = "완료 여부")
+            },
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
+                    description = GoalDto.description)})
+    @GetMapping("/get/total")
+    public ResponseEntity<?> getUserGoals(@RequestParam(required = false) Boolean isFinished) throws Exception {
+        log.trace("GoalController > getUserGoals()");
+
+        List<GoalDto> goalDtos = goalService.getUserGoals(isFinished);
+
+        return responseTemplate.success(goalDtos, HttpStatus.OK);
+    }
+
+    @Operation(summary = "나의 진행도 조회", description = "책 isbn 값을 입력받아 해당 책에 대한 목표 진행도를 반환합니다.",
+            parameters = {
+                    @Parameter(name = "isbn", description = "책 isbn 번호")
+            },
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MyProgressDto.class)),
+                    description = MyProgressDto.description)})
+    @GetMapping("/get/myProgress")
+    public ResponseEntity<?> getMyProgress(@RequestParam(required = true) String isbn) {
+        log.trace("GoalController > getMyProgress()");
+
+        MyProgressDto myProgressDtos = goalService.getMyProgress(isbn);
+
+        return responseTemplate.success(myProgressDtos, HttpStatus.OK);
+    }
+
+    @Operation(summary = "전체 목표에 대한 합산 일주일 기록 조회", description = "유저의 모든 목표에 대해 합산된 일주일 기록을 반환합니다.",
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RecordIntervalDto.class)),
+                    description = RecordIntervalDto.description)})
+    @GetMapping("/get/totalAWeek")
+    public ResponseEntity<?> getTotalAWeekRecords() {
+        log.trace("GoalController > getTotalAWeekRecords()");
+
+        List<RecordIntervalDto> totalAWeekRecords = goalRecordsService.getTotalAWeekRecords();
+
+        return responseTemplate.success(totalAWeekRecords, HttpStatus.OK);
     }
 
     @Operation(summary = "목표 생성", description = "책 isbn 번호와 총 페이지 수를 입력받아 해당 책에 대한 목표를 생성합니다. " +
@@ -81,7 +131,7 @@ public class GoalController {
                     @Parameter(name = "goalId", description = "목표 ID")
             },
             responses = {@ApiResponse(responseCode = "200")})
-    @DeleteMapping("delete")
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteGoal(@RequestParam Long goalId) {
         log.trace("GoalController > deleteGoal()");
 
@@ -89,4 +139,45 @@ public class GoalController {
 
         return responseTemplate.success("목표가 성공적으로 삭제되었습니다.", HttpStatus.OK);
     }
+
+    @Operation(summary = "기록 추가", description = "목표 ID에 해당하는 목표에 기록을 추가합니다. " +
+            "최근 기록에서 중단한 페이지보다 큰 페이지가 입력되어야 합니다.",
+            parameters = {
+                    @Parameter(name = "goalId", description = "목표 ID"),
+                    @Parameter(name = "recentPage", description = "중단한 페이지")
+            },
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GoalDto.class)),
+                    description = GoalDto.description)})
+    @PostMapping("/addRecord")
+    public ResponseEntity<?> addRecord(@RequestParam Long goalId,
+                                       @RequestParam Integer recentPage) throws Exception {
+        log.trace("GoalController > addRecord()");
+        requestValidate.isValidBookPageNum(recentPage);
+
+        GoalDto goalDto = goalRecordsService.addRecord(goalId, recentPage);
+
+        return responseTemplate.success(goalDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "특정 책의 전체 유저 진행률 조회",
+            description = "책 isbn을 입력으로 받아 해당 책에 대한 목표를 진행한 사용자(닉네임 + 진행률) list를 반환합니다.  \n" +
+                    "isFinished 값으로 null 을 주면 모든 목표 list를, false를 주면 진행중 목표 list를, true를 주면 완료한 목표 list를 반환합니다.  \n" +
+                    "진행률은 소수점 아래 둘째 자리까지 반환됩니다.",
+            parameters = {
+                    @Parameter(name = "isbn", description = "책 isbn"),
+                    @Parameter(name = "isFinished", description = "완료 여부")
+            },
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserProgressDto.class)),
+                    description = UserProgressDto.description)})
+    @GetMapping("/get/usersInGoal")
+    public ResponseEntity<?> getUsersInGoal(@RequestParam String isbn,
+                                            @RequestParam(required = false) Boolean isFinished) {
+        log.trace("GoalController > getUsersInGoal()");
+        requestValidate.isValidIsbn(isbn);
+
+        List<UserProgressDto> usersInGoal = goalService.getUsersInGoal(isbn, isFinished);
+
+        return responseTemplate.success(usersInGoal, HttpStatus.OK);
+    }
+
 }

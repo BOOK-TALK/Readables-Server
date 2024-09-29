@@ -20,6 +20,14 @@ jobs:
         cache: 'gradle'
         working-directory: ./
 
+    - name: MySQL 셋업 # 서버 test 코드 에러
+      uses: samin/mysql-action@v1
+      with:
+        character set server: 'utf8'
+        mysql database: 'booktalk'
+        mysql user: 'root'
+        mysql password: 'booktalk1234'
+
     - name: gradlew 실행 권한 부여
       run: chmod +x gradlew
       working-directory: ./
