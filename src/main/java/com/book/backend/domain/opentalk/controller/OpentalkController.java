@@ -1,5 +1,6 @@
 package com.book.backend.domain.opentalk.controller;
 
+import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
 import com.book.backend.domain.opentalk.dto.OpentalkJoinResponseDto;
 import com.book.backend.domain.opentalk.entity.Opentalk;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class OpentalkController {
     private final OpentalkService opentalkService;
     private final ResponseTemplate responseTemplate;
+    private final RequestValidate requestValidate;
 
     // 현재 핫한 오픈톡
     @Operation(summary="현재 핫한 오픈톡", description="현재 핫한 오픈톡 top 5의 ID List를 반환합니다.",
@@ -48,8 +50,9 @@ public class OpentalkController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkJoinResponseDto.class)),
                     description = OpentalkJoinResponseDto.description)})
     @PostMapping("/join")
-    public ResponseEntity<?> joinOpentalk(@RequestParam String isbn, String bookname, String bookImageURL, int pageSize) {
+    public ResponseEntity<?> joinOpentalk(@RequestParam String isbn, String bookname, @RequestParam(required = false) String bookImageURL, int pageSize) {
         RequestLogger.param(new String[]{"isbn", "bookname", "bookImageURL",  "pageSize"}, isbn, bookname, bookImageURL, pageSize);
+        requestValidate.isValidIsbn(isbn);
         OpentalkJoinResponseDto response = opentalkService.joinOpentalk(isbn, bookname, bookImageURL, pageSize);
         return responseTemplate.success(response, HttpStatus.OK);
     }
