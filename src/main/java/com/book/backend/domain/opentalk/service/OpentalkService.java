@@ -46,7 +46,7 @@ public class OpentalkService {
     private final OpentalkResponseParser opentalkResponseParser;
     private final MessageService messageService;
 
-    /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 3 id 반환*/
+    /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
     public List<Long> getHotOpentalkIds() {
         log.trace("OpentalkService > hotOpentalk()");
         List<Message> recent200Messages = messageRepository.findTop200ByOrderByCreatedAtDesc();
@@ -55,10 +55,10 @@ public class OpentalkService {
         Map<Long, Long> opentalkIdCountMap = recent200Messages.stream().collect(
                 Collectors.groupingBy(message -> message.getOpentalk().getOpentalkId(), Collectors.counting())
         );
-        // value 순으로 정렬해서 top 3 id 반환
+        // value 순으로 정렬해서 top 5 id 반환
         return opentalkIdCountMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .limit(3)
+                .limit(5)
                 .map(Map.Entry::getKey)
                 .toList();
     }
@@ -118,17 +118,21 @@ public class OpentalkService {
         return opentalkIds;
     }
 
-    // 해당 오픈톡 id 와 맵핑되는 책 isbn 을 찾아서 8번 open API 로 title, imageUrl 불러오기
+    // 해당 오픈톡 id의 bookname, bookImageURL 불러오기
     public List<OpentalkDto> getBookInfo(List<Long> opentalkId) throws Exception {
         log.trace("OpentalkService > getBookInfo()");
         List<OpentalkDto> opentalkDtoList = new LinkedList<>();
 
         for(Long id : opentalkId) {
-            OpentalkDto opentalkDto = OpentalkDto.builder().id(id).build();
+            // bookrepository 에서 opentalkid 로 찾기
             Optional<Opentalk> opentalk = opentalkRepository.findByOpentalkId(id);
-            String isbn = opentalk.get().getBook().getIsbn();
-            DetailResponseDto detailResponseDto = detailService.detail(DetailRequestDto.builder().isbn13(isbn).build()); // 정보 가져오기
-            opentalkResponseParser.setSimpleBookInfo(opentalkDto, detailResponseDto); // detailResponseDto 에서 title 이랑 imageUrl 만 추출하기
+            Book book = opentalk.get().getBook();
+            OpentalkDto opentalkDto = OpentalkDto.builder()
+                    .id(id)
+                    .isbn13(book.getIsbn())
+                    .bookName(book.getBookname())
+                    .bookImageURL(book.getBookImageURL())
+                    .build();
             opentalkDtoList.add(opentalkDto);
         }
         return opentalkDtoList;
@@ -137,13 +141,14 @@ public class OpentalkService {
 
     // 오픈톡 참여하기
     @Transactional
-    public OpentalkJoinResponseDto joinOpentalk(String isbn, int pageSize){
+    public OpentalkJoinResponseDto joinOpentalk(String isbn, String bookname, String bookImageURL, int pageSize){
         log.trace("OpentalkService > joinOpentalk()");
         Opentalk opentalk = checkExistOpentalk(isbn);
         if(opentalk == null){
-            opentalk = createOpentalkByIsbn(isbn);
+            opentalk = createOpentalkByIsbn(isbn, bookname, bookImageURL);
             return OpentalkJoinResponseDto.builder().opentalkId(opentalk.getOpentalkId()).messageResponseDto(null).isFavorite(false).build();
         }
+        // 오픈톡이 존재하는 경우
         Pageable pageRequest = PageRequest.of(0, pageSize, Sort.by("createdAt").descending());
         Page<Message> messagePage = messageService.getMessage(opentalk.getOpentalkId(), pageRequest);
         List<MessageResponseDto> response = messageService.pageToDto(messagePage);
@@ -159,16 +164,19 @@ public class OpentalkService {
                 .build();
     }
 
-    @Transactional
-    public Opentalk createOpentalkByIsbn(String isbn) {
-        log.trace("OpentalkService > createOpentalkByIsbn");// 새로운 오픈톡 생성
-        Book newBook = new Book();
-        newBook.setIsbn(isbn);
-        Book book = bookRepository.save(newBook);
 
-        Opentalk newOpentalk = new Opentalk();
-        newOpentalk.setBook(book);
-        return opentalkRepository.save(newOpentalk);
+    @Transactional
+    public Opentalk createOpentalkByIsbn(String isbn, String bookname, String bookImageURL) {
+        log.trace("OpentalkService > createOpentalkByIsbn");
+        Book book = new Book();
+        book.setIsbn(isbn);
+        book.setBookname(bookname);
+        book.setBookImageURL(bookImageURL);
+        bookRepository.save(book);
+
+        Opentalk opentalk = new Opentalk();
+        opentalk.setBook(book);
+        return opentalkRepository.save(opentalk);
     }
 
     public Opentalk checkExistOpentalk(String isbn) {

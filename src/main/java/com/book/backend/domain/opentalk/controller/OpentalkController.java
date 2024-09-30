@@ -1,7 +1,9 @@
 package com.book.backend.domain.opentalk.controller;
 
+import com.book.backend.domain.openapi.service.RequestValidate;
 import com.book.backend.domain.opentalk.dto.OpentalkDto;
 import com.book.backend.domain.opentalk.dto.OpentalkJoinResponseDto;
+import com.book.backend.domain.opentalk.entity.Opentalk;
 import com.book.backend.domain.opentalk.service.OpentalkService;
 import com.book.backend.global.ResponseTemplate;
 import com.book.backend.global.log.RequestLogger;
@@ -27,9 +29,10 @@ import org.springframework.web.bind.annotation.*;
 public class OpentalkController {
     private final OpentalkService opentalkService;
     private final ResponseTemplate responseTemplate;
+    private final RequestValidate requestValidate;
 
     // 현재 핫한 오픈톡
-    @Operation(summary="현재 핫한 오픈톡", description="현재 핫한 오픈톡 top 3의 ID List를 반환합니다.",
+    @Operation(summary="현재 핫한 오픈톡", description="현재 핫한 오픈톡 top 5의 ID List를 반환합니다.",
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkDto.class)),
                     description = OpentalkDto.description)})
     @GetMapping("/hot")
@@ -42,15 +45,15 @@ public class OpentalkController {
     }
 
     // [오픈톡 참여하기]
-    @Operation(summary="오픈톡 참여하기", description="isbn, pageSize를 입력으로 받아 오픈톡 ID, 즐찾여부, 채팅 내역 반환",
-            parameters = {@Parameter(name = "isbn", description = "책 ISBN"), @Parameter(name = "pageSize", description = "페이지 당 개수")},
+    @Operation(summary="오픈톡 참여하기", description="isbn에 해당하는 오픈톡 DB ID, 즐찾여부 반환 & pageSize 만큼의 채팅 내역 반환 (bookname, bookImageURL은 새 오픈톡 생성시 필요한 값입니다.)",
+            parameters = {@Parameter(name = "isbn", description = "책 ISBN"), @Parameter(name = "bookname", description = "책 이름"), @Parameter(name = "bookImageURL", description = "책 이미지 url"), @Parameter(name = "pageSize", description = "채팅 개수")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OpentalkJoinResponseDto.class)),
                     description = OpentalkJoinResponseDto.description)})
     @PostMapping("/join")
-    public ResponseEntity<?> joinOpentalk(@RequestParam String isbn, int pageSize) {
-        RequestLogger.param(new String[]{"isbn", "pageSize"}, isbn, pageSize);
-        OpentalkJoinResponseDto response = opentalkService.joinOpentalk(isbn, pageSize);
-
+    public ResponseEntity<?> joinOpentalk(@RequestParam String isbn, String bookname, @RequestParam(required = false) String bookImageURL, int pageSize) {
+        RequestLogger.param(new String[]{"isbn", "bookname", "bookImageURL",  "pageSize"}, isbn, bookname, bookImageURL, pageSize);
+        requestValidate.isValidIsbn(isbn);
+        OpentalkJoinResponseDto response = opentalkService.joinOpentalk(isbn, bookname, bookImageURL, pageSize);
         return responseTemplate.success(response, HttpStatus.OK);
     }
 
