@@ -1,11 +1,6 @@
 server:
   port: 8080
   address: 0.0.0.0
-#  ssl:
-#    key-store: readables.jks
-#    key-store-password: ${KEY_STORE_PASSWORD}
-#    key-store-type: JKS
-#    key-alias: 1
 
 spring:
   application:
@@ -19,20 +14,24 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update # entity 기반 스키마 생성 // update 로 변경
-
+      ddl-auto: validate # flyway 때문에 validate 으로 변경
     properties:
       hibernate:
         globally_quoted_identifiers: true # sql 예약어와 일치하는 필드명 구분
         format_sql: true
     open-in-view: false
-    defer-datasource-initialization: true # ddl-auto 실행 후 data.sql 로 데이터 삽입
+    defer-datasource-initialization: false # ddl-auto 실행 후 data.sql 로 데이터 삽입
+    generate-ddl: false
 
   sql: #data.sql 의 DDL 실행
     init:
       encoding: utf-8
       mode: always
       data-locations: classpath:sql/data.sql, classpath:sql/dummy.sql
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
 
   data:
     redis:

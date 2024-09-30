@@ -1,0 +1,2 @@
+ALTER TABLE book ADD COLUMN bookname VARCHAR(255);
+ALTER TABLE book ADD COLUMN book_imageurl VARCHAR(255);
