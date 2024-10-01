@@ -26,10 +26,13 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseGet(() -> userRepository.findByAppleId(username)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
 
-        return org.springframework.security.core.userdetails.User.builder()
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                 .username(username)
                 .password("unused")
                 .authorities("ROLE_USER")
                 .build();
+
+        log.trace("CustomUserDetailsService > loadUserByUsername() > userDetails: {}", userDetails);
+        return userDetails;
     }
 }

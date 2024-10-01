@@ -94,6 +94,7 @@ public class MessageService {
         validateToken(token);
 
         // message DB에 저장
+        log.trace("saveMessage() 유저 이름 : {}", userService.loadLoggedinUser());
         Message message = messageMapper.convertToMessage(messageRequestDto);
         try{
             messageRepository.save(message);
@@ -105,6 +106,7 @@ public class MessageService {
 
 
     public void validateToken(String token) {
+        log.trace("MessageService > validateToken()");
         try{
             String username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
             // 현재 SecurityContextHolder에 인증객체가 있는지 확인
@@ -113,10 +115,13 @@ public class MessageService {
                 userDetails = userDetailsService.loadUserByUsername(username);
 
                 // 토큰 유효성 검증
-                if (jwtUtil.isValidToken(token, userDetails)) {
+                if (!jwtUtil.isValidToken(token, userDetails)) {
+                    throw new CustomException(ErrorCode.WRONG_JWT_TOKEN);
+                } else {
                     UsernamePasswordAuthenticationToken authenticated
                             = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authenticated);
+                    log.trace("validateToken() 유저 이름 : {}", userService.loadLoggedinUser());
                 }
             }
         } catch (ExpiredJwtException e) {

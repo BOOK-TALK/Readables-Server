@@ -41,19 +41,6 @@ public class MessageController {
     private final RequestValidate requestValidate;
     private final GoalService goalService;
 
-    // HTTP 단방향 채팅 저장
-    @Operation(summary="메세지 저장 (HTTP)", description="임시 채팅 저장 API 입니다. opentalkId, type, text 를 입력으로 받아 저장 결과를 반환합니다.",
-            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "type", description = "메세지 타입 (text, img)"), @Parameter(name = "content", description = "메세지 내용(goal 인 경우 null)")},
-            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
-                    description = MessageResponseDto.description)})
-    @PostMapping("/api/message/save")
-    public ResponseEntity<?> httpChat(@RequestParam Long opentalkId, String type, String content){
-        requestValidate.isValidType(type);
-
-        MessageResponseDto response = messageService.saveHttpMessage(opentalkId, type, content);
-        return responseTemplate.success(response, HttpStatus.OK);
-    }
-
     // 목표 공유하기
     @Operation(summary="목표 공유하기", description="opentalkId, isbn 을 입력으로 받아 해당 목표가 있는지 확인 후 채팅방에 전송합니다.",
             parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "isbn", description = "책 ISBN")},
@@ -86,6 +73,8 @@ public class MessageController {
     // 채팅 저장하기 (apic 으로 테스트)
     @MessageMapping("/message")
     public void chat(MessageRequestDto messageRequestDto) {
+        log.trace("---------------------------------------------");
+        log.trace("stomp URL : /pub/message"); // Endpoint URL 로깅
         RequestLogger.body(messageRequestDto);
         MessageResponseDto response = messageService.saveMessage(messageRequestDto);
         sendingOperations.convertAndSend("/sub/message/" + messageRequestDto.getOpentalkId(), response); // 수신자들에게 전송
@@ -101,5 +90,26 @@ public class MessageController {
     @PutMapping("")
     public void chatForSwagger(MessageRequestDto messageRequestDto) {
         return;
+    }
+
+    // HTTP 단방향 채팅 저장
+    @Operation(summary="메세지 저장 (HTTP)", description="임시 채팅 저장 API 입니다. opentalkId, type, text 를 입력으로 받아 저장 결과를 반환합니다.",
+            parameters = {@Parameter(name = "opentalkId", description = "오픈톡 DB ID"), @Parameter(name = "type", description = "메세지 타입 (text, img)"), @Parameter(name = "content", description = "메세지 내용(goal 인 경우 null)")},
+            responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageResponseDto.class)),
+                    description = MessageResponseDto.description)})
+
+    @PostMapping("/api/message/save")
+    public ResponseEntity<?> httpChat(@RequestParam Long opentalkId, String type, String content, String jwtToken){
+        requestValidate.isValidType(type);
+        MessageRequestDto messageRequestDto = MessageRequestDto.builder()
+                .opentalkId(opentalkId)
+                .type(type)
+                .content(content)
+                .jwtToken(jwtToken)
+                .build();
+        MessageResponseDto response = messageService.saveMessage(messageRequestDto);
+
+//        MessageResponseDto response = messageService.saveHttpMessage(opentalkId, type, content);
+        return responseTemplate.success(response, HttpStatus.OK);
     }
 }
