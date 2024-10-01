@@ -1,6 +1,7 @@
 package com.book.backend.util;
 
 import com.book.backend.domain.auth.dto.JwtTokenDto;
+import com.book.backend.domain.user.repository.UserRepository;
 import com.book.backend.exception.CustomException;
 import com.book.backend.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 public class JwtUtil {
+    private final UserRepository userRepository;
     @Value("${jwt.secretKey}")
     private String secret;
     @Value("${jwt.accessTokenExpireTime}")

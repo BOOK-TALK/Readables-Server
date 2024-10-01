@@ -105,27 +105,35 @@ public class MessageService {
         return messageMapper.convertToMessageResponseDto(message);
     }
 
-
+    @Transactional
     public void validateToken(String token) {
         log.trace("MessageService > validateToken()");
         try{
             String username = jwtUtil.getUsernameFromToken(token);  // username 가져옴
+            log.trace("validateToken() username : {}", username);
             // 현재 SecurityContextHolder에 인증객체가 있는지 확인
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if(SecurityContextHolder.getContext().getAuthentication() == null){
+                log.trace("validateToken() SecurityContextHolder에 인증객체 없음");
+            }
+
+//            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                log.trace("여기 들어왔나?");
                 UserDetails userDetails;
                 userDetails = userDetailsService.loadUserByUsername(username);
+                log.trace("!!! : {}", userDetails.getUsername());
 
                 // 토큰 유효성 검증
                 if (!jwtUtil.isValidToken(token, userDetails)) {
                     log.trace("validateToken() 토큰 유효성 검증 실패 !!");
                     throw new CustomException(ErrorCode.WRONG_JWT_TOKEN);
                 } else {
+                    log.trace("여기 들어왔음.");
                     UsernamePasswordAuthenticationToken authenticated
                             = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authenticated);
                     log.trace("validateToken() userid : {}", userService.loadLoggedinUser().getUserId());
                 }
-            }
+//            }
         } catch (ExpiredJwtException e) {
             throw new CustomException(ErrorCode.JWT_EXPIRED);
         } catch (Exception e) {
