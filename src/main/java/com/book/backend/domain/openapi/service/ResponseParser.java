@@ -270,10 +270,14 @@ public class ResponseParser {
         }
 
         LinkedList<String> keywordList = new LinkedList<>();
+        // 키워드 10개만 추출 (10개보다 적게 들어있는 경우가 있어 아래 로직으로 작성)
         if(!keywords.isEmpty()){
-            for(int i=0; i<10; i++) { //10개만 추출
-                JSONObject o = (JSONObject) ((JSONObject) keywords.get(i)).get("keyword");
+            int maxCnt = 10, curCnt = 0;
+            for(Object keyword : keywords){
+                if(curCnt >= maxCnt) break;
+                JSONObject o = (JSONObject) ((JSONObject) keyword).get("keyword");
                 keywordList.add(o.getAsString("word"));
+                curCnt++;
             }
         }
 
