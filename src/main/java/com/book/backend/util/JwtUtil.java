@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 public class JwtUtil {
-    private final UserRepository userRepository;
     @Value("${jwt.secretKey}")
     private String secret;
     @Value("${jwt.accessTokenExpireTime}")

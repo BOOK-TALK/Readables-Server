@@ -22,7 +22,6 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Slf4j
 public class MessageMapper {
-    private final ModelMapper mapper;
     private final UserService userService;
     private final UserRepository userRepository;
     private final OpentalkRepository opentalkRepository;
@@ -31,7 +30,6 @@ public class MessageMapper {
     public Message convertToMessage(MessageRequestDto dto) {
         log.trace("MessageMapper > convertToMessage()");
         User user = userService.loadLoggedinUser();
-        log.trace("convertToMessage() message 객체 생성 때의 userid", user.getUserId());
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }

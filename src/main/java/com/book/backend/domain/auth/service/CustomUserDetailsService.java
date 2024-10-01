@@ -32,7 +32,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .authorities("ROLE_USER")
                 .build();
 
-        log.trace("CustomUserDetailsService > loadUserByUsername() > userDetails: {}", userDetails.getUsername());
         return userDetails;
     }
 }
