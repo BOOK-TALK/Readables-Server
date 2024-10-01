@@ -94,8 +94,9 @@ public class MessageService {
         validateToken(token);
 
         // message DB에 저장
-        log.trace("saveMessage() 유저 이름 : {}", userService.loadLoggedinUser());
+        log.trace("saveMessage() userId : {}", userService.loadLoggedinUser().getUserId());
         Message message = messageMapper.convertToMessage(messageRequestDto);
+        log.trace("saveMessage() message user : {}", message.getUser().getUserId());
         try{
             messageRepository.save(message);
         } catch (Exception e){
@@ -116,12 +117,13 @@ public class MessageService {
 
                 // 토큰 유효성 검증
                 if (!jwtUtil.isValidToken(token, userDetails)) {
+                    log.trace("validateToken() 토큰 유효성 검증 실패 !!");
                     throw new CustomException(ErrorCode.WRONG_JWT_TOKEN);
                 } else {
                     UsernamePasswordAuthenticationToken authenticated
                             = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authenticated);
-                    log.trace("validateToken() 유저 이름 : {}", userService.loadLoggedinUser());
+                    log.trace("validateToken() userid : {}", userService.loadLoggedinUser().getUserId());
                 }
             }
         } catch (ExpiredJwtException e) {

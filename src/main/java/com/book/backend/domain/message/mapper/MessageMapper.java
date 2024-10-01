@@ -31,6 +31,7 @@ public class MessageMapper {
     public Message convertToMessage(MessageRequestDto dto) {
         log.trace("MessageMapper > convertToMessage()");
         User user = userService.loadLoggedinUser();
+        log.trace("convertToMessage() message 객체 생성 때의 userid", user.getUserId());
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
