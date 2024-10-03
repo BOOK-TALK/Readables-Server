@@ -100,8 +100,10 @@ public class GoalService {
         Goal goal = goalRepository.findByUserAndIsbn(user, isbn)
                 .orElse(null);
 
+        // 목표가 없으면
         if (goal == null) {
             return MyProgressDto.builder()
+                    .goalId(null)
                     .isInProgress(false)
                     .progressRate(null)
                     .build();
@@ -112,13 +114,18 @@ public class GoalService {
         double progressRate = goalMapper.getFormattedProgressRate((double) goal.getTotalPage(),
                 (double) goalMapper.getMostRecentPage(recordDtos));
 
+        // 완료된 목표이면
         if (goal.getIsFinished() == Boolean.TRUE) {
             return MyProgressDto.builder()
+                    .goalId(goal.getGoalId())
                     .isInProgress(false)
                     .progressRate(progressRate)
                     .build();
-        } else {
+        }
+        // 진행 중인 목표이면
+        else {
             return MyProgressDto.builder()
+                    .goalId(goal.getGoalId())
                     .isInProgress(true)
                     .progressRate(progressRate)
                     .build();
