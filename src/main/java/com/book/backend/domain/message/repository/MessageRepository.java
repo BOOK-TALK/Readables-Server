@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findTop200ByOrderByCreatedAtDesc();
+    List<Message> findTop50ByOrderByCreatedAtDesc();
 
     // 특정 opentalk Id 를 갖는 데이터 조회 (페이지네이션)
     Page<Message> findAllByOpentalk(Opentalk opentalk, Pageable pageable);

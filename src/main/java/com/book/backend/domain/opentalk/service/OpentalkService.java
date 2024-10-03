@@ -49,7 +49,7 @@ public class OpentalkService {
     /* message 테이블에서 최근 200개 데이터 조회 -> opentalkId 기준으로 count 해서 가장 빈번하게 나오는 top 5 id 반환*/
     public List<Long> getHotOpentalkIds() {
         log.trace("OpentalkService > hotOpentalk()");
-        List<Message> recent200Messages = messageRepository.findTop200ByOrderByCreatedAtDesc();
+        List<Message> recent200Messages = messageRepository.findTop50ByOrderByCreatedAtDesc();
 
         // (key : opentalk_id, value : 출현빈도)
         Map<Long, Long> opentalkIdCountMap = recent200Messages.stream().collect(
